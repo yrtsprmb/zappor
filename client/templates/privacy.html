@@ -1,0 +1,31 @@
+{# SIGNUP HTML #}
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+  <h1>welcome to the privacy page</h1>
+  <p>privacy settings for RAPPOR</p>
+  <form action="{{url_for('thankyou')}}">
+    <label for="p">p</label>
+    <input type="text" name="p" size="3">
+    <br>
+    <label for="q">q</label>
+    <input type="text" name="q" size="3">
+    <br>
+    <label for="r">r</label>
+    <input type="text" name="r" size="3">
+    <br>
+    <input type="submit" value="Save Your Data">
+  </form>
+
+  <form>
+    <div class="form-group">
+      <label for="formControlRange">Utility vs. Privacy Slider</label>
+      <input type="range" class="form-control-range" id="formControlRange">
+    </div>
+  </form>
+
+</div>
+
+
+
+{% endblock %}

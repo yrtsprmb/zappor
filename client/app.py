@@ -5,6 +5,22 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/personal')
+def personal_page():
+    return render_template('personal.html')
+
+@app.route('/privacy')
+def privacy_page():
+    return render_template('privacy.html')
+
+@app.route('/radio')
+def radio_page():
+    return render_template('radio.html')
+
+@app.route('/about')
+def about_page():
+    return render_template('about.html')
+
 @app.route('/signup_form')
 def signup_form():
     return render_template('signup.html')
