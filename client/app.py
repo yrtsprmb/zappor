@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from forms import InfoForm, RapporForm
 
 #Formularzeugs
 from flask_wtf import FlaskForm
@@ -16,26 +17,6 @@ app = Flask(__name__)
 #todo: als umgebungsvariable verwenden
 app.config['SECRET_KEY'] = 'geheimnis'
 
-
-
-#todo: eigene validatoren verwenden
-#todo: Schieberegler anpassen/einbinden
-class PrivacyForm(FlaskForm):
-    p = IntegerField("Insert p value:", validators=[DataRequired()])
-    q = IntegerField("Insert q value:")
-    r = IntegerField("Insert r value:")
-    submit = SubmitField("Submit")
-
-### testarea
-
-class InfoForm(FlaskForm):
-    breed = StringField("What breed are you?", validators=[DataRequired()])
-    neutered = BooleanField("Have you been neutered?")
-    mood = RadioField('Please choose your mood:', choices=[('mood_one','Happy'),('mood_two','Excited')])
-    food_choice = SelectField(u'Pick your favorite food:', # das u steht fuer unicode, um fehler vorzubeugen
-                              choices=[('chi','Chicken'),('bf','Beef'),('fi','Fish')])
-    feedback = TextAreaField()
-    submit = SubmitField('Submit')
 
 
 @app.route('/test', methods=['GET','POST'])
@@ -68,13 +49,17 @@ def personal_page():
 @app.route('/privacy',methods=['GET','POST'])
 def privacy_page():
     p = False
-    form = PrivacyForm()
+    q = False
+    r = False
+    form = RapporForm()
     if form.validate_on_submit():
         flash('You just clicked the button')
         p = form.p.data
+        q = form.q.data
+        r = form.r.data
         form.p.data = ''
         return redirect(url_for('privacy_page'))
-    return render_template('privacy.html',form=form,p=p)
+    return render_template('privacy.html',form=form,p=p,q=q,r=r)
 
 @app.route('/radio')
 def radio_page():
@@ -90,9 +75,9 @@ def signup_form():
 
 @app.route('/thankyou')
 def thankyou():
-    first = request.args.get('first')
-    last = request.args.get('last')
-    return render_template('thankyou.html', first=first, last=last)
+    radioname = request.args.get('radioname')
+    programmname = request.args.get('programmname')
+    return render_template('thankyou.html', radioname=radioname, programmname=programmname)
 
 
 @app.errorhandler(404)

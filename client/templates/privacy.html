@@ -24,6 +24,8 @@
   <form method="POST">
     {{ form.hidden_tag()}}  <!-- CSRF security feature -->
     {{ form.p.label }} {{ form.p(class="border border-success") }}
+    {{ form.q.label }} {{ form.q(class="border border-success") }}
+    {{ form.r.label }} {{ form.r(class="border border-success") }}
     {{ form.submit() }}
   </form>
 
