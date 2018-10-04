@@ -8,8 +8,7 @@ from security import authenticate, identity
 from resources.user import UserRegister
 from resources.item import Item, ItemList
 # eigene Resourcen
-from resources.survey import SurveyAvailable, ReceiveSurvey, ManageReports, CreateSurvey, DeleteSurvey
-from resources.survey import Survey
+from resources.survey import Survey, SurveyList, SurveyAvailable
 from resources.report import Report
 
 app = Flask(__name__)
@@ -26,16 +25,14 @@ api.add_resource(ItemList, '/items')
 api.add_resource(UserRegister, '/register')
 
 ####### Resourcen vom Server nach aussen zum Client
-api.add_resource(SurveyAvailable, '/surveyavailable')
-api.add_resource(ReceiveSurvey, '/receivesurvey/<string:name>')
+api.add_resource(Report, '/report/<string:surveyid>') # client -> server, sends an Report
+api.add_resource(SurveyAvailable, '/surveyavailable') # server -> client, server answers with available Surveys
 
-api.add_resource(Report, '/receivereport/<string:surveyid>')
 
 ####### Resourcen vom Server nach innen zum Serviceprovider
-api.add_resource(Survey, '/survey/<string:surveyname>')
+api.add_resource(Survey, '/survey/<string:name>') #  create & delete surveys
+api.add_resource(SurveyList, '/surveys') # lists all available surveys
 
-api.add_resource(ManageReports, '/surveys')
-api.add_resource(DeleteSurvey, '/delete/<string:name>')
 
 ####### Server wird nur gestartet, wenn app.py ausgefuehrt wird
 if __name__ == '__main__':
