@@ -1,7 +1,8 @@
 import sqlite3
 from flask_restful import Resource, reqparse
 
-from models.survey import SurveyModel #wird noch nicht benoetigt
+from models.survey import SurveyModel
+#from models.survey import SurveyModel #wird noch nicht benoetigt
 
 
 ############################################
@@ -11,6 +12,69 @@ from models.survey import SurveyModel #wird noch nicht benoetigt
 #umfragen = []
 #umfrageids = ['helgassurvey']
 #offeneumfragen = []
+
+
+class Survey(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('surveyid',
+        type=str,
+        required=True,
+        help="surveyid is missing"
+    )
+    parser.add_argument('serviceprovider',
+        type=str,
+        required=True,
+        help="serviceprovider is missing"
+    )
+    parser.add_argument('surveyname',
+        type=str,
+        required=True,
+        help="name of the survey is missing"
+    )
+    parser.add_argument('status',
+        type=str,
+        required=True,
+        help="status value is missing"
+    )
+    parser.add_argument('comment',
+        type=float,
+        required=False,
+        help="no comment"
+    )
+    parser.add_argument('questions',
+        type=float,
+        required=True,
+        help="q value is missing"
+    )
+
+    #eine Umfragen wird generiert und in die DB Gespeichert
+    def post(self, surveyname):
+        if SurveyModel.find_survey_by_name(surveyname):
+            return {'message': "a survey with name '{}' already exists.".format(surveyname)}, 400 #bad request
+
+        data = Survey.parser.parse_args()
+        survey = SurveyModel(data['surveyid'],data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions']) #todo
+
+        try:
+            survey.createsurvey()
+        except:
+            return {'message': "erro while trying to gerneate survey '{}'".format(surveyname)}, 500 #internal server error
+        return survey.json(), 201 #created
+
+
+    #deletes an survey from the Database
+    def delete(self,surveyname):
+        if SurveyModel.find_survey_by_name(surveyname):
+            connection = sqlite3.connect('data.db')
+            cursor = connection.cursor()
+
+            query = "DELETE FROM umfragen WHERE surveyname=?"
+            cursor.execute(query, (surveyname,))
+
+            connection.commit()
+            connection.close()
+            return {'message': "Survey with name '{}' deleted".format(surveyname)}
+        return {'message': 'Survey not in db'}, 400
 
 
 # check if there is a survey and send it back if yes, status must be 'active' for survey in db
