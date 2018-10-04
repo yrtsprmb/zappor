@@ -26,7 +26,7 @@ class ReportModel:
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        query = "INSERT INTO testreport VALUES (?,?,?,?,?,?,?)"
+        query = "INSERT INTO reports VALUES (?,?,?,?,?,?,?)"
         cursor.execute(query, (self.surveyid, self.prr, self.irr, self.f, self.p, self.q, self.answers))
         connection.commit()
         connection.close()

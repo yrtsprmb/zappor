@@ -37,20 +37,20 @@ class Survey(Resource):
         help="status value is missing"
     )
     parser.add_argument('comment',
-        type=float,
-        required=False,
+        type=str,
+        required=True,
         help="no comment"
     )
     parser.add_argument('questions',
-        type=float,
+        type=str,
         required=True,
-        help="q value is missing"
+        help="error with questions"
     )
 
     #eine Umfragen wird generiert und in die DB Gespeichert
-    def post(self, surveyname):
-        if SurveyModel.find_survey_by_name(surveyname):
-            return {'message': "a survey with name '{}' already exists.".format(surveyname)}, 400 #bad request
+    def post(self, name):
+        if SurveyModel.find_survey_by_name(name):
+            return {'message': "a survey with name '{}' already exists.".format(name)}, 400 #bad request
 
         data = Survey.parser.parse_args()
         survey = SurveyModel(data['surveyid'],data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions']) #todo
@@ -58,29 +58,40 @@ class Survey(Resource):
         try:
             survey.createsurvey()
         except:
-            return {'message': "erro while trying to gerneate survey '{}'".format(surveyname)}, 500 #internal server error
+            return {'message': "error while trying to gerneate survey '{}'".format(surveyname)}, 500 #internal server error
         return survey.json(), 201 #created
 
 
     #deletes an survey from the Database
-    def delete(self,surveyname):
-        if SurveyModel.find_survey_by_name(surveyname):
-            connection = sqlite3.connect('data.db')
-            cursor = connection.cursor()
+    def delete(self,name):
 
-            query = "DELETE FROM umfragen WHERE surveyname=?"
-            cursor.execute(query, (surveyname,))
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
 
-            connection.commit()
-            connection.close()
-            return {'message': "Survey with name '{}' deleted".format(surveyname)}
-        return {'message': 'Survey not in db'}, 400
+        query = "DELETE FROM surveys WHERE surveyid=?"
+        cursor.execute(query, (name,))
 
+        connection.commit()
+        connection.close()
+        return {'message': "Survey with id '{}' deleted".format(name)}
+
+
+# returns a list with all surveys in the datebase
+class SurveyList(Resource):
+    def get(self):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM surveys"
+        result = cursor.execute(query)
+        surveys = []
+        for row in result:
+            surveys.append({'surveyid': row[0], 'serviceprovider': row[1], 'surveyname': row[2], 'status': row[3], 'comment': row[4], 'questions': row[5]})
+
+        connection.close()
+        return {'surveys in database': surveys}
 
 # check if there is a survey and send it back if yes, status must be 'active' for survey in db
-# aktuell gibt es nur die erste verfuegbare umfrage zurueck, und eine meldung wenn keine da.
-# todo:
-# muss die jsons ausgeben in der form von survey.json
 class SurveyAvailable(Resource):
     def get(self):
         connection = sqlite3.connect('data.db')
@@ -91,7 +102,7 @@ class SurveyAvailable(Resource):
         result = cursor.execute(query)
         availablesurveys = []
         for row in result:
-            availablesurveys.append({'surveyid': row[0], 'service-provider': row[1], 'questions': "muessen noch implementiert werden"})
+            availablesurveys.append({'surveyid': row[0], 'service-provider': row[1], 'questions': row[5]})
         connection.close()
         return {'surveys': availablesurveys}, 200
 
@@ -105,34 +116,6 @@ class SurveyAvailable(Resource):
 
 
 
-##### Schnittstelle nach aussen, ueber diese werden Umfragen entgegengenommen und in die DB gespeichert,
-##### falls die surveyid in der DB vorhanden ist
-class ReceiveSurvey(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument('f',
-        type=float,
-        required=True,
-        help="RAPPOR value f missing/not correct"
-    )
-    parser = reqparse.RequestParser()
-    parser.add_argument('p',
-        type=float,
-        required=True,
-        help="RAPPOR value p missing/not correct"
-    )
-    parser = reqparse.RequestParser()
-    parser.add_argument('q',
-        type=float,
-        required=True,
-        help="RAPPOR value q missing/not correct"
-    )
-    # if survey exists, save it to the id in the database, if not discard
-    def post(self, name):
-        #if next(filter(lambda x: x['surveyid'] == item,items), none)
-        data = request.get_json()
-        survey = {'surveyid': data['surveyid'], 'service-provider': data['service-provider'], 'questions': data['questions']}
-        umfragen.append(survey)
-        return survey, 201
 
 
 
@@ -140,43 +123,3 @@ class ReceiveSurvey(Resource):
 ############################################
 ######## Ressourcen nach innen fuer den Serviceprovider
 ############################################
-
-class ManageReports(Resource):
-    #Umfragen werden verwaltet
-    def get(self):
-        # zeigt alle Umfragen an, die in DB liegen
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "SELECT * FROM surveys"
-        result = cursor.execute(query)
-        umfragen = []
-        for row in result:
-            umfragen.append({'ID der Umfrage': row[0], 'Radiosender': row[1], 'Titel der Umfrage': row[2], 'status der umfrage': row[3]})
-        connection.close()
-        return {'vorhandene Umfragen': umfragen}
-
-
-# loescht ein survey aus der Datenbank durch den Serviceprovider
-class DeleteSurvey(Resource):
-    def delete(self,name):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "DELETE FROM surveys WHERE name=?"
-        cursor.execute(query, (name,))
-
-        connection.commit()
-        connection.close()
-        return {'message': "Survey with the name '{}' deleted".format(name)}
-
-
-# erstellt eine survey durch den serviceprovider
-class CreateSurvey(Resource):
-    #eine Umfragen wird generiert und in die DB Gespeichert
-    def post(self):
-        pass
-
-# gibt eine Liste aller
-class SurveyList(Resource):
-    pass

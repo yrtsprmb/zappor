@@ -4,7 +4,7 @@ from flask_restful import Resource, reqparse
 from models.report import ReportModel
 
 ############################################
-######## Ressourcen Tutorial
+######## ressourcen for reports
 ############################################
 
 
@@ -51,7 +51,6 @@ class Report(Resource):
         # TODO: check if surveyid is in db: if not, ignore report
 
         data = Report.parser.parse_args()
-        #item = ItemModel(name, data['price'])
         report = ReportModel(surveyid,
             data['prr'],
             data['irr'],
@@ -66,4 +65,4 @@ class Report(Resource):
         #except:
         #    return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500
 
-        return report.json(), 201
+        return report.json(), 201 # status CREATED
