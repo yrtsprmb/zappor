@@ -12,10 +12,12 @@ from resources.survey import Survey, SurveyList, SurveyAvailable
 from resources.report import Report
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # tells sqlachemy where the database is
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # to save resources, sqlalchmey has its own modification tracker
 app.secret_key = 'zappor'
 api = Api(app)
 
-jwt = JWT(app, authenticate, identity)
+jwt = JWT(app, authenticate, identity) # responsible for the /auth path
 
 ######## Ressourcen Tutorial
 api.add_resource(Item, '/item/<string:name>')
@@ -30,10 +32,14 @@ api.add_resource(SurveyAvailable, '/surveyavailable') # server -> client, server
 
 
 ####### Resourcen vom Server nach innen zum Serviceprovider
-api.add_resource(Survey, '/survey/<string:name>') #  create & delete surveys
+api.add_resource(Survey, '/survey/<string:surveyid>') #  create & delete surveys
 api.add_resource(SurveyList, '/surveys') # lists all available surveys
 
 
 ####### Server wird nur gestartet, wenn app.py ausgefuehrt wird
+####### Startet SQLAlchemy fuer den Server
 if __name__ == '__main__':
+    from db import db
+    db.init_app(app)
+
     app.run(port=5000,debug=True)

@@ -1,9 +1,24 @@
 import sqlite3
+from db import db
 
 ## internal representation of an Report
 
-class ReportModel:
+class ReportModel(db.Model):
+    #infos for sqlalchemy
+    __tablename__ = "reports"
+    #__abstract__ = True #no idea why this works
+
+    #rid = db.Column(db.Integer)
+    surveyid = db.Column(db.String(30), primary_key = True)
+    prr = db.Column(db.Integer)
+    irr = db.Column(db.Integer)
+    f = db.Column(db.Float(precision=5))
+    p = db.Column(db.Float(precision=5))
+    q = db.Column(db.Float(precision=5))
+    answers = db.Column(db.String(1000))
+
     def __init__(self, surveyid, prr, irr, f, p, q, answers):
+        #self.rid = rid
         self.surveyid = surveyid
         self.prr = prr
         self.irr = irr

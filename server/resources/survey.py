@@ -1,26 +1,20 @@
 import sqlite3
 from flask_restful import Resource, reqparse
-
 from models.survey import SurveyModel
-#from models.survey import SurveyModel #wird noch nicht benoetigt
-
 
 ############################################
 ######## Ressourcen nach aussen fuer die Clients
 ############################################
 
-#umfragen = []
-#umfrageids = ['helgassurvey']
-#offeneumfragen = []
 
 
 class Survey(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('surveyid',
-        type=str,
-        required=True,
-        help="surveyid is missing"
-    )
+    #parser.add_argument('surveyid',
+    #    type=str,
+    #    required=True,
+    #    help="surveyid is missing"
+    #)
     parser.add_argument('serviceprovider',
         type=str,
         required=True,
@@ -48,32 +42,39 @@ class Survey(Resource):
     )
 
     #eine Umfragen wird generiert und in die DB Gespeichert
-    def post(self, name):
-        if SurveyModel.find_survey_by_name(name):
-            return {'message': "a survey with name '{}' already exists.".format(name)}, 400 #bad request
+    def post(self, surveyid):
+        if SurveyModel.find_survey_by_id(surveyid):
+            return {'message': "a survey with name '{}' already exists.".format(surveyid)}, 400 #bad request
 
         data = Survey.parser.parse_args()
-        survey = SurveyModel(data['surveyid'],data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions']) #todo
+        #survey = SurveyModel(data['surveyid'],data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions']) #todo
+        survey = SurveyModel(surveyid,data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions']) #todo
 
         try:
-            survey.createsurvey()
+            survey.save_survey_to_db()
         except:
-            return {'message': "error while trying to gerneate survey '{}'".format(surveyname)}, 500 #internal server error
+            return {'message': "error while trying to save the survey"}, 500 #internal server error
         return survey.json(), 201 #created
+        #return {'message': "A new survey was created and stored into the database"}, 201
 
 
     #deletes an survey from the Database
-    def delete(self,name):
+    def delete(self,surveyid):
+        survey = SurveyModel.find_survey_by_id(surveyid)
+        if survey:
+            survey.delete_survey_from_db()
+            return {'message': "Survey with id '{}' deleted".format(surveyid)}
+        return {'message': " No survey with this id"}
 
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "DELETE FROM surveys WHERE surveyid=?"
-        cursor.execute(query, (name,))
-
-        connection.commit()
-        connection.close()
-        return {'message': "Survey with id '{}' deleted".format(name)}
+        # connection = sqlite3.connect('data.db')
+        # cursor = connection.cursor()
+        #
+        # query = "DELETE FROM surveys WHERE surveyid=?"
+        # cursor.execute(query, (name,))
+        #
+        # connection.commit()
+        # connection.close()
+        # return {'message': "Survey with id '{}' deleted".format(name)}
 
 
 # returns a list with all surveys in the datebase

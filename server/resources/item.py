@@ -1,7 +1,6 @@
 import sqlite3
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
-
 from models.item import ItemModel
 
 ############################################
@@ -23,21 +22,21 @@ class Item(Resource):
         item = ItemModel.find_by_name(name)
         if item:
             return item.json()
-        return {'message': 'Item not found'}, 404
+        return {'message': 'Item not found'}, 404 #not found
 
 
     ## schreibt ein neues item in die db, falls es den namen nicht schon gibt
     def post(self, name):
         # first, deal with errors
         if ItemModel.find_by_name(name):
-            return {'message': "An item with name '{}' already exists.".format(name)}, 400
+            return {'message': "An item with name '{}' already exists.".format(name)}, 400 #bad request
 
         # second: do things
         data = Item.parser.parse_args()
         item = ItemModel(name, data['price'])
 
         try:
-            item.insert()
+            item.save_to_db()
         except:
             return {'message': "ein Fehler ist beim einfugen aufgetreten"}, 500 #internal server error
         return item.json(), 201
@@ -45,36 +44,26 @@ class Item(Resource):
 
     # loescht ein item aus der DB
     def delete(self,name):
-        if ItemModel.find_by_name(name):
-            connection = sqlite3.connect('data.db')
-            cursor = connection.cursor()
-
-            query = "DELETE FROM items WHERE name=?"
-            cursor.execute(query, (name,))
-
-            connection.commit()
-            connection.close()
+        item = ItemModel.find_by_name(name)
+        if item:
+            item.delete_from_db()
             return {'message': 'Item deleted'}
         return {'message': 'not in db'}, 400
+
 
     # ueberschreibt den preis eines items, wenn dieses vorhanden ist, ansonsten legt es ein neues item an
     def put(self,name):
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
-        updated_item = ItemModel(name, data['price'])
-
         #data = request.get_json() #uebergibt python payolad an variable data
         if item is None:
-            try:
-                updated_item.insert()
-            except:
-                return {"message": "An error occured inserting"}, 500
+            item = ItemModel(name, data['price']) # da nichts gefunden wurde, wird ein neues item kreiert
         else:
-            try:
-                updated_item.update()
-            except:
-                return {"message": "An error occured updating"}, 500
-        return updated_item.json()
+            item.price = data['price']
+
+        item.save_to_db()
+
+        return item.json()
 
 # gibt eine Liste aller Items an
 class ItemList(Resource):

@@ -1,6 +1,12 @@
-import sqlite3
+from db import db
 
-class ItemModel:
+class ItemModel(db.Model):
+    #infos for sqlalchemy
+    __tablename__ = "items"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    price = db.Column(db.Float(precision=2))
+
     def __init__(self,name,price):
         self.name = name
         self.price = price
@@ -13,36 +19,15 @@ class ItemModel:
     #find an item by its name, should be classmethod, because it returns an object of ItemModel
     @classmethod
     def find_by_name(cls, name):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
+        return ItemModel.query.filter_by(name=name).first()
+        # return cls.query.filter_by(name=name).first() also possible
+        # SELECT * FROM items WHERE name=name LIMIT 1
+        #returns an ItemModel object, that has self.name and self.price
 
-        query = "SELECT * FROM items WHERE name=?"
-        result = cursor.execute(query, (name,))
-        row = result.fetchone()
-        connection.close()
+    def save_to_db(self): # saving to the db
+        db.session.add(self) # session is collection of objects we want to write into the db
+        db.session.commit()
 
-        if row:
-            return cls(row[0], row[1]) #works also cls(*row)
-
-
-    def insert(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "INSERT INTO items VALUES (?,?)"
-        cursor.execute(query, (self.name, self.price))
-
-        connection.commit()
-        connection.close()
-
-
-    def update(self): #item parameter is a dictionary of name and price
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "UPDATE items SET price=? WHERE name=?"
-        cursor.execute(query, (self.price, self.name)) #reihenfolge muss wie bei query eingehalten werden
-
-        connection.commit()
-        connection.close()
-        return {'message': 'Item wurde upgedatet'}
+    def delete_from_db(self): #item parameter is a dictionary of name and price
+        db.session.delete(self) # session is collection of objects we want to write into the db
+        db.session.commit()
