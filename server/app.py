@@ -9,7 +9,7 @@ from resources.user import UserRegister
 from resources.item import Item, ItemList
 # eigene Resourcen
 from resources.survey import Survey, SurveyList, SurveyAvailable
-from resources.report import Report
+from resources.report import Report, ReportList
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # tells sqlachemy where the database is
@@ -30,10 +30,12 @@ api.add_resource(UserRegister, '/register')
 api.add_resource(Report, '/report/<string:surveyid>') # client -> server, sends an Report
 api.add_resource(SurveyAvailable, '/surveyavailable') # server -> client, server answers with available Surveys
 
-
-####### Resourcen vom Server nach innen zum Serviceprovider
+####### Internal apis - resourcen from server to the serviceprovider
 api.add_resource(Survey, '/survey/<string:surveyid>') #  create & delete surveys
 api.add_resource(SurveyList, '/surveys') # lists all available surveys
+
+####### Resourcen for API tests
+api.add_resource(ReportList, '/reports') # lists all reports in the db
 
 
 ####### Server wird nur gestartet, wenn app.py ausgefuehrt wird

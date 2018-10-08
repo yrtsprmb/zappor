@@ -6,7 +6,8 @@ from db import db
 class SurveyModel(db.Model):
     #infos for sqlalchemy
     __tablename__ = "surveys"
-    surveyid = db.Column(db.String(30), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    surveyid = db.Column(db.String(30))
     serviceprovider = db.Column(db.String(50))
     surveyname = db.Column(db.String(50))
     status = db.Column(db.String(15))
@@ -21,15 +22,24 @@ class SurveyModel(db.Model):
         self.comment = comment
         self.questions = questions
 
-    # returns a json representation of the survey model
+    # returns a json representation of the survey model for the serviceprovider
     def json(self):
         return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': self.questions}
+
+    #creates a json representation for clients which are asking for new surveys
+    def jsonforclient(self):
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'status': self.status, 'questions': self.questions}
 
 
     #find a survey by its name, returns an object of Survey Model
     @classmethod
     def find_survey_by_id(cls, surveyid):
         return SurveyModel.query.filter_by(surveyid=surveyid).first()
+
+    #find an active survey by its name, returns an object of Survey Model
+    @classmethod
+    def find_active_survey_by_id(cls, surveyid):
+        return SurveyModel.query.filter_by(surveyid=surveyid).filter_by(status='active').first()
         # connection = sqlite3.connect('data.db')
         # cursor = connection.cursor()
         #
@@ -44,6 +54,8 @@ class SurveyModel(db.Model):
     @classmethod
     def find_survey_by_name(cls, surveyname):
         return SurveyModel.query.filter_by(surveyname=surveyname).first()
+
+
         # connection = sqlite3.connect('data.db')
         # cursor = connection.cursor()
         #
@@ -53,7 +65,6 @@ class SurveyModel(db.Model):
         # connection.close()
         # if row:
         #     return cls(row[2]) #works also cls(*row)
-
 
     def save_survey_to_db(self): # like save_to_db
         db.session.add(self) # session is a collection of objects we going to write into the db

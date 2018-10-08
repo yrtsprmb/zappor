@@ -1,4 +1,4 @@
-import sqlite3
+#import sqlite3
 from db import db
 
 ## internal representation of an Report
@@ -7,9 +7,8 @@ class ReportModel(db.Model):
     #infos for sqlalchemy
     __tablename__ = "reports"
     #__abstract__ = True #no idea why this works
-
-    #rid = db.Column(db.Integer)
-    surveyid = db.Column(db.String(30), primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
+    surveyid = db.Column(db.String(30))
     prr = db.Column(db.Integer)
     irr = db.Column(db.Integer)
     f = db.Column(db.Float(precision=5))
@@ -18,7 +17,6 @@ class ReportModel(db.Model):
     answers = db.Column(db.String(1000))
 
     def __init__(self, surveyid, prr, irr, f, p, q, answers):
-        #self.rid = rid
         self.surveyid = surveyid
         self.prr = prr
         self.irr = irr
@@ -32,16 +30,24 @@ class ReportModel(db.Model):
         return {'surveyid': self.surveyid, 'prr': self.prr, 'irr': self.irr, 'f': self.f, 'p': self.p,'q': self.q, 'answers': self.answers}
 
 
-    #find a survey by its name, should be classmethod, because it returns an object of Survey Model
+    #find all reports belonging to one survey
     @classmethod
     def find_report_by_surveyid(cls, surveyid):
-        pass
+        return ReportModel.query.filter_by(surveyid=surveyid).all()
 
-    def insert(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
+    def save_report_to_db(self):
+            db.session.add(self)
+            db.session.commit()
 
-        query = "INSERT INTO reports VALUES (?,?,?,?,?,?,?)"
-        cursor.execute(query, (self.surveyid, self.prr, self.irr, self.f, self.p, self.q, self.answers))
-        connection.commit()
-        connection.close()
+    def delete_report_from_db(self):
+            db.session.delete(self)
+            db.session.commit()
+
+    # def insert(self):
+    #     connection = sqlite3.connect('data.db')
+    #     cursor = connection.cursor()
+    #
+    #     query = "INSERT INTO reports VALUES (?,?,?,?,?,?,?)"
+    #     cursor.execute(query, (self.surveyid, self.prr, self.irr, self.f, self.p, self.q, self.answers))
+    #     connection.commit()
+    #     connection.close()
