@@ -1,5 +1,7 @@
 import sqlite3
 
+#this file is only for testing
+
 connection = sqlite3.connect('data.db')
 cursor = connection.cursor()
 
@@ -22,13 +24,17 @@ cursor.execute(create_table)
 create_table = "CREATE TABLE IF NOT EXISTS reports (id INTEGER PRIMARY KEY, surveyid text, prr BOOLEAN, irr BOOLEAN,f real, p real, q real, answers text)"
 cursor.execute(create_table)
 
-cursor.execute("INSERT INTO items VALUES (1,'test', 1333)")
+#cursor.execute("INSERT INTO items VALUES (1,'test', 1333)")
 # test surveys
-cursor.execute("INSERT INTO surveys VALUES (1,'survey8976', 'radio ulla', 'toergelenumfrage', 'created', 'wir testen hier nur, gehen sie weiter','test')")
-cursor.execute("INSERT INTO surveys VALUES (2,'survey8977', 'radio helga', 'penisumfrage', 'active', 'wir testen hier nur, gehen sie weiter','test')")
-cursor.execute("INSERT INTO surveys VALUES (3,'testsurvey', 'radio horst', 'charts', 'active', 'wir testen hier nur, gehen sie weiter','test')")
+cursor.execute("INSERT INTO surveys VALUES (1,'surveycreated', 'radio ulla', 'toergelen', 'created', 'wir testen hier nur, gehen sie weiter','test')")
+cursor.execute("INSERT INTO surveys VALUES (2,'surveyactive', 'radio helga', 'umfrage', 'active', 'wir testen hier nur, gehen sie weiter','test')")
+cursor.execute("INSERT INTO surveys VALUES (3,'surveyended', 'radio horst', 'charts', 'ended', 'wir testen hier nur, gehen sie weiter','test')")
+
+cursor.execute("INSERT INTO surveys VALUES (11,'surveycreated2', 'radio ulla', 'toergelen', 'created', 'wir testen hier nur, gehen sie weiter','test')")
+cursor.execute("INSERT INTO surveys VALUES (22,'surveyactive2', 'radio helga', 'umfrage', 'active', 'wir testen hier nur, gehen sie weiter','test')")
+cursor.execute("INSERT INTO surveys VALUES (33,'surveyended2', 'radio horst', 'charts', 'ended', 'wir testen hier nur, gehen sie weiter','test')")
 # test reports
-cursor.execute("INSERT INTO reports VALUES (1, 'testsurvey', 1, 0, 0.898, 0.733, 0.566,'wir testen hier nur, gehen sie weiter')")
+#cursor.execute("INSERT INTO reports VALUES (1, 'surveyactive', 1, 0, 0.898, 0.733, 0.566,'wir testen hier nur, gehen sie weiter')")
 
 connection.commit()
 connection.close()

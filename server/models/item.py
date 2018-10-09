@@ -15,7 +15,6 @@ class ItemModel(db.Model):
     def json(self):
         return {'name': self.name, 'price': self.price}
 
-
     #find an item by its name, should be classmethod, because it returns an object of ItemModel
     @classmethod
     def find_by_name(cls, name):

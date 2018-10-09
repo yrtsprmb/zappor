@@ -8,7 +8,7 @@ from security import authenticate, identity
 from resources.user import UserRegister
 from resources.item import Item, ItemList
 # eigene Resourcen
-from resources.survey import Survey, SurveyList, SurveyAvailable
+from resources.survey import Survey, SurveyList, SurveyAvailable, SurveyStatus
 from resources.report import Report, ReportList
 
 app = Flask(__name__)
@@ -19,26 +19,27 @@ api = Api(app)
 
 jwt = JWT(app, authenticate, identity) # responsible for the /auth path
 
-######## Ressourcen Tutorial
+#Ressources tutorial
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 
-######## Ressourcen Login/Registrierung
+#Ressources login/registration
 api.add_resource(UserRegister, '/register')
 
-####### Resourcen vom Server nach aussen zum Client
+#Server resources for the client
 api.add_resource(Report, '/report/<string:surveyid>') # client -> server, sends an Report
 api.add_resource(SurveyAvailable, '/surveyavailable') # server -> client, server answers with available Surveys
 
 ####### Internal apis - resourcen from server to the serviceprovider
 api.add_resource(Survey, '/survey/<string:surveyid>') #  create & delete surveys
 api.add_resource(SurveyList, '/surveys') # lists all available surveys
+api.add_resource(SurveyStatus, '/surveystatus/<string:surveyid>') # changes status of a survey
 
 ####### Resourcen for API tests
 api.add_resource(ReportList, '/reports') # lists all reports in the db
 
 
-####### Server wird nur gestartet, wenn app.py ausgefuehrt wird
+####### Server only starts when it will be executed over the file app.py
 ####### Startet SQLAlchemy fuer den Server
 if __name__ == '__main__':
     from db import db

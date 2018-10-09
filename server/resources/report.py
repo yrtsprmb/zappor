@@ -70,7 +70,7 @@ class Report(Resource):
                 return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500
             return report.json(), 201 # status CREATED
         else:
-            return {'message': "no report inserted, surveyid '{}' unknown or not active anymore".format(surveyid)}, 500
+            return {'message': "no report inserted, surveyid '{}' unknown or not active".format(surveyid)}, 400
 
 
 # Testing Resource: returns a list with all reports in the database

@@ -1,8 +1,6 @@
-import sqlite3
 from db import db
 
-## internal representation
-
+# internal representation of a survey
 class SurveyModel(db.Model):
     #infos for sqlalchemy
     __tablename__ = "surveys"
@@ -30,7 +28,6 @@ class SurveyModel(db.Model):
     def jsonforclient(self):
         return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'status': self.status, 'questions': self.questions}
 
-
     #find a survey by its name, returns an object of Survey Model
     @classmethod
     def find_survey_by_id(cls, surveyid):
@@ -40,31 +37,11 @@ class SurveyModel(db.Model):
     @classmethod
     def find_active_survey_by_id(cls, surveyid):
         return SurveyModel.query.filter_by(surveyid=surveyid).filter_by(status='active').first()
-        # connection = sqlite3.connect('data.db')
-        # cursor = connection.cursor()
-        #
-        # query = "SELECT * FROM surveys WHERE surveyid=?"
-        # result = cursor.execute(query, (name,))
-        # row = result.fetchone()
-        # connection.close()
-        # if row:
-        #     return cls(row[0]) #works also cls(*row)
 
     #find a survey by its name, returns an object of Survey Model
     @classmethod
     def find_survey_by_name(cls, surveyname):
         return SurveyModel.query.filter_by(surveyname=surveyname).first()
-
-
-        # connection = sqlite3.connect('data.db')
-        # cursor = connection.cursor()
-        #
-        # query = "SELECT * FROM surveys WHERE surveyname=?"
-        # result = cursor.execute(query, (name,))
-        # row = result.fetchone()
-        # connection.close()
-        # if row:
-        #     return cls(row[2]) #works also cls(*row)
 
     def save_survey_to_db(self): # like save_to_db
         db.session.add(self) # session is a collection of objects we going to write into the db
@@ -73,11 +50,3 @@ class SurveyModel(db.Model):
     def delete_survey_from_db(self):
         db.session.delete(self) # session is a collection of objects we going to write into the db
         db.session.commit()
-
-
-        # connection = sqlite3.connect('data.db')
-        # cursor = connection.cursor()
-        # query = "INSERT INTO surveys VALUES (?,?,?,?,?,?)"
-        # cursor.execute(query, (self.surveyid, self.serviceprovider, self.surveyname, self.status, self.comment, self.questions))
-        # connection.commit()
-        # connection.close()
