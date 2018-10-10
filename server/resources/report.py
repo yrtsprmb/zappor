@@ -68,7 +68,7 @@ class Report(Resource):
                 report.save_report_to_db()
             except:
                 return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500
-            return report.json(), 201 # status CREATED
+            return report.json(), 201 # status created
         else:
             return {'message': "no report inserted, surveyid '{}' unknown or not active".format(surveyid)}, 400
 

@@ -8,14 +8,13 @@ class UserModel(db.Model):
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
 
-    def __init__(self, _id, username, password):
-        self.id = _id
+    def __init__(self, username, password):
         self.username = username
         self.password = password
 
     def save_to_db(self): # saving to the db
         db.session.add(self) # session is collection of objects we want to write into the db
-        db.session.commit()    
+        db.session.commit()
 
     @classmethod
     def find_by_username(cls, username):

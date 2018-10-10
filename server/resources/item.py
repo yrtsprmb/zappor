@@ -15,6 +15,11 @@ class Item(Resource):
         required=True,
         help="Fehler in der Payload"
     )
+    parser.add_argument('store_id',
+        type=float,
+        required=True,
+        help="Fehler in der Payload"
+    )
 
     # gibt ein item zurueck, das durch seinen namen gesucht wird
     @jwt_required()
@@ -33,7 +38,7 @@ class Item(Resource):
 
         # second: do things
         data = Item.parser.parse_args()
-        item = ItemModel(name, data['price'])
+        item = ItemModel(name, data['price'], data['store_id'])
 
         try:
             item.save_to_db()

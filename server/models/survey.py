@@ -12,6 +12,7 @@ class SurveyModel(db.Model):
     comment = db.Column(db.String(200))
     questions = db.Column(db.String(1000))
 
+    #TODO: surveyid shoud be generated out of systemtime and servicprovidername
     def __init__(self, surveyid, serviceprovider, surveyname, status, comment, questions):
         self.surveyid = surveyid
         self.serviceprovider = serviceprovider

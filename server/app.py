@@ -7,6 +7,7 @@ from security import authenticate, identity
 # Import der Resourcen
 from resources.user import UserRegister
 from resources.item import Item, ItemList
+from resources.store import Store, StoreList
 # eigene Resourcen
 from resources.survey import Survey, SurveyList, SurveyAvailable, SurveyStatus
 from resources.report import Report, ReportList
@@ -17,11 +18,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # to save resources, sqlalc
 app.secret_key = 'zappor'
 api = Api(app)
 
+#creates tables on startup when first request ist made
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
 jwt = JWT(app, authenticate, identity) # responsible for the /auth path
 
 #Ressources tutorial
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
+api.add_resource(Store, '/store/<string:name>')
+api.add_resource(StoreList, '/stores')
 
 #Ressources login/registration
 api.add_resource(UserRegister, '/register')
