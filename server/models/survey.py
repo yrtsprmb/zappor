@@ -1,3 +1,4 @@
+import json
 from db import db
 
 # internal representation of a survey
@@ -5,12 +6,14 @@ class SurveyModel(db.Model):
     #infos for sqlalchemy
     __tablename__ = "surveys"
     id = db.Column(db.Integer, primary_key=True)
-    surveyid = db.Column(db.String(30))
+    surveyid = db.Column(db.String(100))
     serviceprovider = db.Column(db.String(50))
     surveyname = db.Column(db.String(50))
     status = db.Column(db.String(15))
     comment = db.Column(db.String(200))
-    questions = db.Column(db.String(1000))
+    questions = db.Column(db.String)
+
+    reports = db.relationship('ReportModel', lazy='dynamic') # a list of report models
 
     #TODO: surveyid shoud be generated out of systemtime and servicprovidername
     def __init__(self, surveyid, serviceprovider, surveyname, status, comment, questions):
@@ -23,11 +26,14 @@ class SurveyModel(db.Model):
 
     # returns a json representation of the survey model for the serviceprovider
     def json(self):
-        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': self.questions}
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions)}
 
     #creates a json representation for clients which are asking for new surveys
     def jsonforclient(self):
-        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'status': self.status, 'questions': self.questions}
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'status': self.status, 'questions': json.loads(self.questions)}
+
+    def jsonwithreports(self):
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions), 'reports': [report.json() for report in self.reports.all()]}
 
     #find a survey by its name, returns an object of Survey Model
     @classmethod

@@ -1,5 +1,5 @@
-import sqlite3
-from flask_restful import Resource, reqparse
+import json
+from flask_restful import Resource, reqparse, request
 
 from models.report import ReportModel
 from models.survey import SurveyModel
@@ -42,7 +42,8 @@ class Report(Resource):
         help="q value is missing"
     )
     parser.add_argument('answers',
-        type=str,
+        type=dict,
+        action='append',
         required=True,
         help="answers are missing"
     )
@@ -52,17 +53,19 @@ class Report(Resource):
         return {'reports': [ x.json() for x in ReportModel.query.filter_by(surveyid=surveyid)]}
 
     # writes an report from the client to the db, only if the surveyid is known to the server
+    #TODO: check if the input data is correct
     def post(self, surveyid):
         if SurveyModel.find_active_survey_by_id(surveyid):
-            #schreibe zeugs in db
+            #data = request.get_json()
             data = Report.parser.parse_args()
+            #print(data['answers'])
             report = ReportModel(surveyid,
                 data['prr'],
                 data['irr'],
                 data['f'],
                 data['p'],
                 data['q'],
-                data['answers']
+                json.dumps(data['answers'])
             )
             try:
                 report.save_report_to_db()

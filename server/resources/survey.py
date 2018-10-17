@@ -1,3 +1,4 @@
+import json
 from flask_restful import Resource, reqparse
 from models.survey import SurveyModel
 
@@ -33,26 +34,29 @@ class Survey(Resource):
         help="no comment"
     )
     parser.add_argument('questions',
-        type=str,
-        required=True,
-        help="error with questions"
+         type=dict,
+         action='append',
+         required=True,
+         help="error with questions"
     )
 
     #shows information about a survey by id
     def get(self, surveyid):
         survey = SurveyModel.find_survey_by_id(surveyid)
         if survey:
-            return survey.json()
+            #return survey.json()
+            return survey.jsonwithreports()
         return {'message': "Survey with id '{}' not found".format(surveyid)}, 404 #not found
 
     #generates a new survey
+    #TODO: check if the parsed elements are correct, z.B. status feld
     def post(self, surveyid):
         if SurveyModel.find_survey_by_id(surveyid):
             return {'message': "a survey with the surveyid '{}' already exists.".format(surveyid)}, 400 #bad request
 
         data = Survey.parser.parse_args()
-        #survey = SurveyModel(data['surveyid'],data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions']) #todo
-        survey = SurveyModel(surveyid,data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions']) #todo
+        #survey = SurveyModel(data['surveyid'],data['serviceprovider'],data['surveyname'],data['status'],data['comment'], data['questions'])
+        survey = SurveyModel(surveyid,data['serviceprovider'],data['surveyname'],data['status'],data['comment'], json.dumps(data['questions']))
 
         try:
             survey.save_survey_to_db()
@@ -62,6 +66,7 @@ class Survey(Resource):
         #return {'message': "A new survey was created and stored into the database"}, 201
 
     #deletes a survey from the database
+    #TODO: when deleting survey, delete also all reports belonging to this survey
     def delete(self,surveyid):
         survey = SurveyModel.find_survey_by_id(surveyid)
         if survey:
@@ -91,7 +96,7 @@ class SurveyStatus(Resource):
         if survey is None:
             return {'message': "can not change status, surveyid '{}' does not exist".format(surveyid)}, 400 #bad request
 
-        if (survey.status == 'created' or survey.status == 'active') and (data['status'] == 'active' or data['status'] == 'done' ):
+        if (survey.status == 'created' or survey.status == 'active') and (data['status'] == 'active' or data['status'] == 'done'):
             old_status = survey.status
             survey.status = data['status']
             survey.save_survey_to_db()
