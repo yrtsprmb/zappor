@@ -41,7 +41,7 @@ class Question(Resource):
 
     def post(self,qname):
         data = Question.parser.parse_args()
-        #write question only in db if it belongs unique to a surveyid
+        #write question only and only in db if it is unique to a surveyid
         if QuestionModel.find_by_name(qname).find_by_surveyid(data['surveyid']):
              return {'message': "question '{}' already exist in database with same surveyid '{}'.".format(qname,data['surveyid'])}, 400 #bad request
 
@@ -56,7 +56,14 @@ class Question(Resource):
             return {'message': "error while inserting question '{}'. ".format(qname)}, 500
         return question.tojson(), 201 # created
 
+    def delete(self,qname):
+        question = QuestionModel.find_by_name(qname)
+        if question:
+            question.delete_from_db()
+            return {'message': "Question '{}' deleted from client-db".format(qname)}, 202 #accepted
+        return {'message': "Question '{}' not found in client-db".format(qname)}, 404 #not found
+
 
 class ListQuestions(Resource):
     def get(self):
-        return {'questions in db': [ x.tojson() for x in QuestionModel.query.all()]}
+        return {'questions from the serviceprovider, stored in the client db': [ x.tojson() for x in QuestionModel.query.all()]}

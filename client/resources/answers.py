@@ -60,7 +60,7 @@ class Answer(Resource):
         if answer:
             #return survey.json()
             return answer.tojson()
-        return {'message': "Answer '{}' not found".format(name)}, 404 #not found
+        return {'message': "Answer '{}' not found in client-db".format(name)}, 404 #not found
 
     def post(self,name):
         if AnswerModel.find_by_name(name):
@@ -82,6 +82,12 @@ class Answer(Resource):
             return {'message': "error while inserting answer '{}'. ".format(name)}, 500
         return answer.tojson(), 201 # status created
 
+    def delete(self,name):
+        answer = AnswerModel.find_by_name(name)
+        if answer:
+            answer.delete_from_db()
+            return {'message': "Answer '{}' deleted from client-db".format(name)}, 202 #accepted
+        return {'message': "Answer '{}' not found in client-db".format(name)}, 404 #not found
 
 class ListAnswers(Resource):
     def get(self):

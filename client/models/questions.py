@@ -19,7 +19,6 @@ class QuestionModel(db.Model):
         self.qtype = qtype
         self.qoptions = qoptions
 
-
     #json represtation of a question from a service provider
     def tojson(self):
         return {'qid': self.qid,

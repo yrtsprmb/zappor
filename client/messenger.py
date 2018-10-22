@@ -40,7 +40,6 @@ Messenger.ask_for_survey(server)
 ###########################################
 
 
-
 data = {
    "prr": True,
    "irr": True,
@@ -51,12 +50,12 @@ data = {
    [
       {
 		 "qid": 1,
-		 "question": "pimmelhorst",
+		 "question": "geilo",
          "data": [1,0,0]
       },
       {
 		 "qid": 2,
-		 "question": "age",
+		 "question": "geilstens",
          "data": 26
       },
       {
@@ -68,7 +67,7 @@ data = {
    ]
 }
 
-#Messenger.send_report(server,"testsurvey",data)
+Messenger.send_report(server,"testsurvey",data)
 
 
 ## tests

@@ -4,7 +4,9 @@ from flask_restful import Api
 # Import der Resourcen
 from resources.questions import Question, ListQuestions
 from resources.answers import Answer, ListAnswers
-from resources.list import Liste, ListAll
+from resources.surveys import Survey, ListSurveys
+#from resources.settings import Settings
+
 
 app = Flask(__name__)
 
@@ -19,15 +21,18 @@ def create_tables():
     db.create_all()
 
 
-#Ressources Testing
-api.add_resource(Liste, '/liste/<string:name>')
-api.add_resource(ListAll, '/listen')
-
 #Rest Resources for Client
 api.add_resource(Answer, '/answer/<string:name>')
 api.add_resource(ListAnswers, '/answers')
+
 api.add_resource(Question, '/question/<string:qname>')
 api.add_resource(ListQuestions, '/questions')
+
+api.add_resource(Survey, '/survey/<string:surveyid>')
+api.add_resource(ListSurveys, '/surveys')
+
+#api.add_resource(Settings, '/settings/<string:clientname>')
+
 
 ####### Server only starts when it will be executed over the file app.py
 if __name__ == '__main__':
