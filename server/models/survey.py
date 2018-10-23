@@ -25,15 +25,15 @@ class SurveyModel(db.Model):
         self.questions = questions
 
     # returns a json representation of the survey model for the serviceprovider
-    def json(self):
+    def tojson(self):
         return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions)}
 
     #creates a json representation for clients which are asking for new surveys
-    def jsonforclient(self):
-        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'status': self.status, 'questions': json.loads(self.questions)}
+    def tojsonforclient(self):
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'questions': json.loads(self.questions)}
 
-    def jsonwithreports(self):
-        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions), 'reports': [report.json() for report in self.reports.all()]}
+    def tojsonwithreports(self):
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions), 'reports': [report.tojson() for report in self.reports.all()]}
 
     #find a survey by its name, returns an object of Survey Model
     @classmethod
@@ -50,10 +50,10 @@ class SurveyModel(db.Model):
     def find_survey_by_name(cls, surveyname):
         return SurveyModel.query.filter_by(surveyname=surveyname).first()
 
-    def save_survey_to_db(self): # like save_to_db
+    def save_to_db(self):
         db.session.add(self) # session is a collection of objects we going to write into the db
         db.session.commit()
 
-    def delete_survey_from_db(self):
-        db.session.delete(self) # session is a collection of objects we going to write into the db
+    def delete_from_db(self):
+        db.session.delete(self)
         db.session.commit()

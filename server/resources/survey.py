@@ -45,7 +45,7 @@ class Survey(Resource):
         survey = SurveyModel.find_survey_by_id(surveyid)
         if survey:
             #return survey.json()
-            return survey.jsonwithreports()
+            return survey.tojsonwithreports()
         return {'message': "Survey with id '{}' not found".format(surveyid)}, 404 #not found
 
     #generates a new survey
@@ -59,10 +59,10 @@ class Survey(Resource):
         survey = SurveyModel(surveyid,data['serviceprovider'],data['surveyname'],data['status'],data['comment'], json.dumps(data['questions']))
 
         try:
-            survey.save_survey_to_db()
+            survey.save_to_db()
         except:
             return {'message': "error while trying to save the survey"}, 500 #internal server error
-        return survey.json(), 201 #created
+        return survey.tojson(), 201 #created
         #return {'message': "A new survey was created and stored into the database"}, 201
 
     #deletes a survey from the database
@@ -70,7 +70,7 @@ class Survey(Resource):
     def delete(self,surveyid):
         survey = SurveyModel.find_survey_by_id(surveyid)
         if survey:
-            survey.delete_survey_from_db()
+            survey.delete_from_db()
             return {'message': "Survey with id '{}' deleted".format(surveyid)}
         return {'message': " No survey with this id"}
 
@@ -78,7 +78,7 @@ class Survey(Resource):
 # returns a list with all surveys in the datebase
 class SurveyList(Resource):
     def get(self):
-        return {'surveys': [ x.json() for x in SurveyModel.query.all()]}
+        return {'surveys': [ x.tojson() for x in SurveyModel.query.all()]}
 
 
 # allows to change the status of a survey in this order: created -> active -> done
@@ -99,7 +99,7 @@ class SurveyStatus(Resource):
         if (survey.status == 'created' or survey.status == 'active') and (data['status'] == 'active' or data['status'] == 'done'):
             old_status = survey.status
             survey.status = data['status']
-            survey.save_survey_to_db()
+            survey.save_to_db()
             return {'message': "surveyid '{}' status changed from '{}' to '{}' ".format(surveyid,old_status,survey.status)}, 200
 
         return {'message': "no changes"}, 200
@@ -112,4 +112,4 @@ class SurveyStatus(Resource):
 # check if there is a survey and send it back if yes, status must be 'active' for survey in db
 class SurveyAvailable(Resource):
     def get(self):
-        return {'surveys': [ x.jsonforclient() for x in SurveyModel.query.filter_by(status='active')]}
+        return {'surveys': [ x.tojsonforclient() for x in SurveyModel.query.filter_by(status='active')]}

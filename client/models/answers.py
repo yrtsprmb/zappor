@@ -4,7 +4,7 @@ from db import db
 # represents all answers a client has to offer
 class AnswerModel(db.Model):
 
-    __tablename__ = "answers"
+    __tablename__ = "client_answers"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     type = db.Column(db.String(15))

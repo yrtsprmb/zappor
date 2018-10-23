@@ -4,16 +4,13 @@ from flask_jwt import JWT
 
 from security import authenticate, identity
 
-# Import der Resourcen
+# import of resources
 from resources.user import UserRegister
-from resources.item import Item, ItemList
-from resources.store import Store, StoreList
-# eigene Resourcen
 from resources.survey import Survey, SurveyList, SurveyAvailable, SurveyStatus
 from resources.report import Report, ReportList
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # tells sqlachemy where the database is
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///serverdata.db' # tells sqlachemy where the database is
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # to save resources, sqlalchmey has its own modification tracker
 app.secret_key = 'zappor'
 api = Api(app)
@@ -24,12 +21,6 @@ def create_tables():
     db.create_all()
 
 jwt = JWT(app, authenticate, identity) # responsible for the /auth path
-
-#Ressources tutorial
-api.add_resource(Item, '/item/<string:name>')
-api.add_resource(ItemList, '/items')
-api.add_resource(Store, '/store/<string:name>')
-api.add_resource(StoreList, '/stores')
 
 #Ressources login/registration
 api.add_resource(UserRegister, '/register')

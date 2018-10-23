@@ -15,6 +15,11 @@ class Question(Resource):
         required=True,
         help="surveyid is missing"
     )
+    parser.add_argument('serviceprovider',
+        type=str,
+        required=True,
+        help="serviceprovider is missing"
+    )
     # parser.add_argument('qname',
     #     type=str,
     #     required=True,
@@ -42,11 +47,12 @@ class Question(Resource):
     def post(self,qname):
         data = Question.parser.parse_args()
         #write question only and only in db if it is unique to a surveyid
-        if QuestionModel.find_by_name(qname).find_by_surveyid(data['surveyid']):
+        if QuestionModel.find_by_name(qname): #find_by_surveyid(data['surveyid'])
              return {'message': "question '{}' already exist in database with same surveyid '{}'.".format(qname,data['surveyid'])}, 400 #bad request
 
         question = QuestionModel(data['qid'],
                                 data['surveyid'],
+                                data['serviceprovider'],
                                 qname,
                                 data['qtype'],
                                 json.dumps(data['qoptions']))

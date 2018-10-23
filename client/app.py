@@ -1,11 +1,12 @@
 from flask import Flask
 from flask_restful import Api
 
-# Import der Resourcen
+#import of the resources
 from resources.questions import Question, ListQuestions
 from resources.answers import Answer, ListAnswers
 from resources.surveys import Survey, ListSurveys
-#from resources.settings import Settings
+from resources.clientconf import ClientConf
+#import survey_to_db
 
 
 app = Flask(__name__)
@@ -31,7 +32,7 @@ api.add_resource(ListQuestions, '/questions')
 api.add_resource(Survey, '/survey/<string:surveyid>')
 api.add_resource(ListSurveys, '/surveys')
 
-#api.add_resource(Settings, '/settings/<string:clientname>')
+api.add_resource(ClientConf, '/configuration/<string:clientname>')
 
 
 ####### Server only starts when it will be executed over the file app.py

@@ -1,8 +1,8 @@
 from flask_restful import Resource, reqparse
 
-from models.settings import SettingModel
+from models.clientconf import ClientConfModel
 
-class Setttings(Resource):
+class ClientConf(Resource):
     parser = reqparse.RequestParser()
     # parser.add_argument('clientname',
     #     type=str,
@@ -29,33 +29,32 @@ class Setttings(Resource):
         required=True,
         help="global q missing"
     )
-    parser.add_argument('global_slider',
+    parser.add_argument('slider',
         type=float,
-        action='append',
-        required=False,
+        required=True,
         help="global slider"
     )
 
     def get(self,clientname):
-        setting = SettingModel.find_by_name(clientname)
-        if setting:
-            return setting.tojson()
+        configuration = ClientConfModel.find_by_name(clientname)
+        if configuration:
+            return configuration.tojson()
         return {'message': "Client settings not found"}, 404 #not found
 
     def post(self,clientname):
-        data = Settings.parser.parse_args()
+        data = ClientConf.parser.parse_args()
         #write question only in db if it belongs unique to a surveyid
-        if SettingModel.find_by_name(clientname):
+        if ClientConfModel.find_by_name(clientname):
              return {'message': "client with name '{}' already exist in database.".format(clientname)}, 400 #bad request
 
-        setting = SettingModel(clientname,
+        configuration = ClientConfModel(clientname,
                                 data['serveraddress'],
                                 data['global_f'],
                                 data['global_p'],
                                 data['global_q'],
-                                data['global_slider'])
+                                data['slider'])
         try:
-            setting.save_to_db()
+            configuration.save_to_db()
         except:
             return {'message': "error while setting personal settings for '{}'. ".format(clientname)}, 500
-        return setting.tojson(), 201 # created
+        return configuration.tojson(), 201 # created
