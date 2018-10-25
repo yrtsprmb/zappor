@@ -2,43 +2,43 @@ import json
 from db import db
 
 # represents all questions which a client can answer
-class QuestionModel(db.Model):
+class ServerInquiriesModel(db.Model):
 
-    __tablename__ = "client_questions"
+    __tablename__ = "server_inquiries"
     id = db.Column(db.Integer, primary_key=True)
     qid = db.Column(db.Integer)
     surveyid = db.Column(db.String(100))
     serviceprovider = db.Column(db.String(100))
-    qname = db.Column(db.String(30))
-    qtype = db.Column(db.String(30))
-    qoptions = db.Column(db.String)
+    name = db.Column(db.String(30))
+    type = db.Column(db.String(30))
+    options = db.Column(db.String)
 
-    def __init__(self, qid, surveyid, serviceprovider, qname, qtype, qoptions):
+    def __init__(self, qid, surveyid, serviceprovider, name, type, options):
         self.qid = qid
         self.surveyid = surveyid
         self.serviceprovider = serviceprovider
-        self.qname = qname
-        self.qtype = qtype
-        self.qoptions = qoptions
+        self.name = name
+        self.type = type
+        self.options = options
 
-    #json represtation of a question from a service provider
+    #json represtation of a service provider question
     def tojson(self):
         return {'qid': self.qid,
             'surveyid': self.surveyid,
             'serviceprovider': self.serviceprovider,
-            'qname': self.qname,
-            'qtpye': self.qtype,
-            'qoptions': json.loads(self.qoptions)}
+            'name': self.name,
+            'tpye': self.type,
+            'options': json.loads(self.options)}
 
     @classmethod
-    def find_by_name(cls, qname):
-        return QuestionModel.query.filter_by(qname=qname).first()
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
 
     @classmethod
     def find_by_surveyid(cls, surveyid):
-        return QuestionModel.query.filter_by(surveyid=surveyid).first()
+        return cls.query.filter_by(surveyid=surveyid).first()
 
-    def save_to_db(self): # saving to the db
+    def save_to_db(self):
         db.session.add(self) # session is collection of objects we want to write into the db
         db.session.commit()
 

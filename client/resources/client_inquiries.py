@@ -1,10 +1,10 @@
 import json
 from flask_restful import Resource, reqparse
 
-from models.answers import AnswerModel
+from models.client_inquiries import ClientInquiriesModel
 
-#REST API for Answers
-class Answer(Resource):
+#REST API to Access the client questions with their answers
+class ClientInquiries(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('name',
         type=str,
@@ -28,11 +28,11 @@ class Answer(Resource):
         required=True,
         help="answer is missing"
     )
-    parser.add_argument('arandom',
+    parser.add_argument('randomanswer',
         type=str,
         action='append',
         required=True,
-        help="arandom is missing"
+        help="randomanswer is missing"
     )
     parser.add_argument('locked',
         type=bool,
@@ -56,22 +56,21 @@ class Answer(Resource):
     )
 
     def get(self,name):
-        answer = AnswerModel.find_by_name(name)
+        answer = ClientInquiriesModel.find_by_name(name)
         if answer:
-            #return survey.json()
             return answer.tojson()
         return {'message': "Answer '{}' not found in client-db".format(name)}, 404 #not found
 
     def post(self,name):
-        if AnswerModel.find_by_name(name):
-            return {'message': "answer '{}' already exist as answer in the clientdatabase for answers.".format(name)}, 400 #bad request
+        if ClientInquiriesModel.find_by_name(name):
+            return {'message': "Answer '{}' already exist in client-db.".format(name)}, 400 #bad request
             #schreibe zeugs in db
-        data = Answer.parser.parse_args()
-        answer = AnswerModel(name,
+        data = ClientInquiries.parser.parse_args()
+        answer = ClientInquiriesModel(name,
                                 data['type'],
                                 json.dumps(data['options']),
                                 json.dumps(data['answer']),
-                                json.dumps(data['arandom']),
+                                json.dumps(data['randomanswer']),
                                 data['locked'],
                                 data['f'],
                                 data['p'],
@@ -79,16 +78,16 @@ class Answer(Resource):
         try:
             answer.save_to_db()
         except:
-            return {'message': "error while inserting answer '{}'. ".format(name)}, 500
+            return {'message': "error while inserting answer '{}'.".format(name)}, 500
         return answer.tojson(), 201 # status created
 
     def delete(self,name):
-        answer = AnswerModel.find_by_name(name)
+        answer = ClientInquiriesModel.find_by_name(name)
         if answer:
             answer.delete_from_db()
-            return {'message': "Answer '{}' deleted from client-db".format(name)}, 202 #accepted
-        return {'message': "Answer '{}' not found in client-db".format(name)}, 404 #not found
+            return {'message': "answer '{}' deleted".format(name)}, 202 #accepted
+        return {'message': "answer '{}' not found".format(name)}, 404 #not found
 
-class ListAnswers(Resource):
+class ListClientInquiries(Resource):
     def get(self):
-        return {'answers in client-db': [ x.tojson() for x in AnswerModel.query.all()]}
+        return {'clientinquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
