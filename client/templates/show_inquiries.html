@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="jumbotron">
+  <h2>Here is a list of all server and client inquiries:</h2>
+  <ul>
+    {% for question in questions %}
+    <li>{{question}}</li>
+    {% endfor %}
+  </ul>
+  <br>
+  <ul>
+    {% for answer in answers %}
+    <li>{{answer}}</li>
+    {% endfor %}
+  </ul>
+
+</div>
+
+{% endblock %}

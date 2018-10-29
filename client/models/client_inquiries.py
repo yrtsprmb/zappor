@@ -27,6 +27,10 @@ class ClientInquiriesModel(db.Model):
         self.p = p
         self.q = q
 
+    #representation of the object for the GUI
+    def __repr__(self):
+        return f" name: {self.name}, type: {self.type}, options: {self.options}, answer: {self.answer}, randomanswer: {self.randomanswer}, locked: {self.locked}, f: {self.f}, p: {self.p}, q: {self.q}"
+
     #json representation of a client privacy data set
     def tojson(self):
         return {'name': self.name,

@@ -18,7 +18,7 @@ class Messenger():
 
         print(surveys.text) #debug
         #pprint(statuscode) #debug
-        return print(statuscode)
+        return statuscode
 
 
     # sends a post request to the service provider
@@ -68,6 +68,3 @@ data = {
 }
 
 Messenger.send_report(server,"testsurvey",data)
-
-
-## tests

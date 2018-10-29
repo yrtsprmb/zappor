@@ -21,6 +21,10 @@ class ServerInquiriesModel(db.Model):
         self.type = type
         self.options = options
 
+    #representation of the object for the GUI
+    def __repr__(self):
+        return f" qid: {self.qid}, surveyid: {self.surveyid}, serviceprovider: {self.serviceprovider}, name: {self.name}, type: {self.type}, options: {self.options}"
+
     #json represtation of a service provider question
     def tojson(self):
         return {'qid': self.qid,

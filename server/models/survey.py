@@ -6,11 +6,11 @@ class SurveyModel(db.Model):
     #infos for sqlalchemy
     __tablename__ = "surveys"
     id = db.Column(db.Integer, primary_key=True)
-    surveyid = db.Column(db.String(100))
+    surveyid = db.Column(db.String(100), unique=True)
     serviceprovider = db.Column(db.String(50))
     surveyname = db.Column(db.String(50))
     status = db.Column(db.String(15))
-    comment = db.Column(db.String(200))
+    comment = db.Column(db.String(300))
     questions = db.Column(db.String)
 
     reports = db.relationship('ReportModel', lazy='dynamic') # a list of report models
@@ -23,6 +23,11 @@ class SurveyModel(db.Model):
         self.status = status
         self.comment = comment
         self.questions = questions
+
+
+    #representation of the object for the GUI
+    def __repr__(self):
+        return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, comment: {self.comment}"     
 
     # returns a json representation of the survey model for the serviceprovider
     def tojson(self):
