@@ -43,9 +43,9 @@ api.add_resource(Report, '/reports/<string:surveyid>') # client -> server, sends
 api.add_resource(AvailableSurveys, '/availablesurveys') # server -> client, server answers with available Surveys
 
 ####### Internal apis - resourcen from server to the serviceprovider
-api.add_resource(Survey, '/surveys/<string:surveyid>') #  create & delete surveys
+api.add_resource(Survey, '/surveys/<string:surveyname>') #  create & delete surveys
 api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
-api.add_resource(SurveyStatus, '/surveystatus/<string:surveyid>') # changes status of a survey
+api.add_resource(SurveyStatus, '/surveystatus/<string:surveyname>') # changes status of a survey
 
 ####### Resources for API tests
 api.add_resource(ListReports, '/listreports') # lists all reports in the db

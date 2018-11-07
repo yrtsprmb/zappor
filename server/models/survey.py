@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from db import db
 
 # internal representation of a survey
@@ -17,7 +18,7 @@ class SurveyModel(db.Model):
 
     #TODO: surveyid shoud be generated out of systemtime and servicprovidername
     def __init__(self, surveyid, serviceprovider, surveyname, status, comment, questions):
-        self.surveyid = surveyid
+        self.surveyid = serviceprovider + "_" + datetime.now().strftime('%Y-%m-%d_%H%M%S')
         self.serviceprovider = serviceprovider
         self.surveyname = surveyname
         self.status = status
@@ -27,7 +28,7 @@ class SurveyModel(db.Model):
 
     #representation of the object for the GUI
     def __repr__(self):
-        return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, comment: {self.comment}"     
+        return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, comment: {self.comment}"
 
     # returns a json representation of the survey model for the serviceprovider
     def tojson(self):

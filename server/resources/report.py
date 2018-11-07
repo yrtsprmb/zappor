@@ -49,6 +49,9 @@ class Report(Resource):
 
     # returns a list with all reports to a specific survey in the database
     def get(self,surveyid):
+        reports = [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]
+        if reports == []:
+            return {'message': "no reports found for surveyid '{}' ".format(surveyid)}, 400
         return {'reports': [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]}
 
     # writes an report from the client to the db, only if the surveyid is known to the server
