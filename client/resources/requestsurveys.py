@@ -9,12 +9,13 @@ class RequestSurvey(Resource):
         ## TODO: server variable auslagern.
         # request surveys from the server
         server = 'http://127.0.0.1:5000/'
-        r = requests.get(server + "surveyavailable")
+        r = requests.get(server + "availablesurveys")
         umfragen = r.json()
         listevonsurveys = (umfragen['surveys'])
 
         # creates questions and save the to the db
         for survey in listevonsurveys: #fuer jedes dictonairy in der liste
+
             #generate surveyids, serviceprovider for the questions format
             surveyid = (survey['surveyid'])
             serviceprovider = (survey['serviceprovider'])
@@ -28,14 +29,16 @@ class RequestSurvey(Resource):
                 qtype = question['type']
                 options = question['options']
 
-                print("surveyid: " + surveyid)                  #debug
-                print("serviceprovider: " + serviceprovider)    #debug
-                print("qid: " + str(qid))                       #debug
-                print("qname: " + name)                         #debug
-                print("qtype: " + qtype)                        #debug
-                print("qoptions: " + json.dumps(options))       #debug
-                print("____________________________")           #debug
-
-                #save question to the db
-                frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options))
-                frage.save_to_db()
+                #save question to the db, only if it is not already known by surveyid
+                if ServerInquiriesModel.schon_in_db(surveyid,name):
+                    print("survey and matching inquiries already in DB")
+                else:
+                    print("surveyid: " + surveyid)                  #debug
+                    print("serviceprovider: " + serviceprovider)    #debug
+                    print("qid: " + str(qid))                       #debug
+                    print("qname: " + name)                         #debug
+                    print("qtype: " + qtype)                        #debug
+                    print("qoptions: " + json.dumps(options))       #debug
+                    print("____________________________")           #debug
+                    frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options))
+                    frage.save_to_db()

@@ -31,12 +31,22 @@ class ServerInquiriesModel(db.Model):
             'surveyid': self.surveyid,
             'serviceprovider': self.serviceprovider,
             'name': self.name,
+            'type': self.type,
+            'options': json.loads(self.options)}
+
+    def compare_json(self):
+        return {
+            'name': self.name,
             'tpye': self.type,
             'options': json.loads(self.options)}
 
     @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).first()
+
+    @classmethod    
+    def schon_in_db(cls, surveyid, name):
+        return cls.query.filter_by(surveyid=surveyid).filter_by(name=name).first()
 
     @classmethod
     def find_by_surveyid(cls, surveyid):

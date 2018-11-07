@@ -71,4 +71,4 @@ class ServerInquiries(Resource):
 
 class ListServerInquiries(Resource):
     def get(self):
-        return {'serverinquiries': [ x.tojson() for x in ServerInquiriesModel.query.all()]}
+        return {'inquiries': [ x.tojson() for x in ServerInquiriesModel.query.all()]}

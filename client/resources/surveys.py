@@ -25,7 +25,7 @@ class Survey(Resource):
             return survey.tojson()
         return {'message': "Survey not found"}, 404 #not found
 
-    #only for testing, surveys are filled by the messenger, which asks the server for new surveys
+    #only for testing, surveys will be received by the server
     def post(self,surveyid):
         data = Survey.parser.parse_args()
         #write question only in db if it belongs unique to a surveyid

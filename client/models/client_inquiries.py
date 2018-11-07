@@ -44,6 +44,12 @@ class ClientInquiriesModel(db.Model):
             'q': self.q,
             }
 
+    def compare_json(self):
+        return {
+            'name': self.name,
+            'tpye': self.type,
+            'options': json.loads(self.options)}
+
     @classmethod
     def find_by_name(cls, name):
         return ClientInquiriesModel.query.filter_by(name=name).first()

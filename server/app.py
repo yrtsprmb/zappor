@@ -7,10 +7,10 @@ from security import authenticate, identity
 
 # import of resources
 from resources.user import UserRegister
-from resources.survey import Survey, SurveyList, SurveyAvailable, SurveyStatus
-from resources.report import Report, ReportList
+from resources.survey import Survey, ListSurveys, AvailableSurveys, SurveyStatus
+from resources.report import Report, ListReports
 
-#
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///serverdata.db' # tells sqlachemy where the database is
@@ -23,27 +23,38 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
+#authentication (prepared but not fully implemented)
 jwt = JWT(app, authenticate, identity) # responsible for the /auth path
+
+#Register error pages
+from handlers import error_pages
+app.register_blueprint(error_pages)
+
+##################################################################
+######## Client Ressources (external ressources)
+##################################################################
+
 
 #Ressources login/registration
 api.add_resource(UserRegister, '/register')
 
 #Server resources for the client
-api.add_resource(Report, '/report/<string:surveyid>') # client -> server, sends an Report
-api.add_resource(SurveyAvailable, '/surveyavailable') # server -> client, server answers with available Surveys
+api.add_resource(Report, '/reports/<string:surveyid>') # client -> server, sends an Report
+api.add_resource(AvailableSurveys, '/availablesurveys') # server -> client, server answers with available Surveys
 
 ####### Internal apis - resourcen from server to the serviceprovider
-api.add_resource(Survey, '/survey/<string:surveyid>') #  create & delete surveys
-api.add_resource(SurveyList, '/surveys') # lists all available surveys
+api.add_resource(Survey, '/surveys/<string:surveyid>') #  create & delete surveys
+api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 api.add_resource(SurveyStatus, '/surveystatus/<string:surveyid>') # changes status of a survey
 
-####### Resourcen for API tests
-api.add_resource(ReportList, '/reports') # lists all reports in the db
+####### Resources for API tests
+api.add_resource(ListReports, '/listreports') # lists all reports in the db
 
 
-### views ##############################################
-## routes for the web GUI #TODO: move them to an own py. file
-########################################################
+### views ########################################################
+## routes for the web GUI
+## TODO: move them to an own py. file
+##################################################################
 
 @app.route('/')
 @app.route('/index')

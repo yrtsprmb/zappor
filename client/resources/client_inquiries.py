@@ -59,11 +59,11 @@ class ClientInquiries(Resource):
         answer = ClientInquiriesModel.find_by_name(name)
         if answer:
             return answer.tojson()
-        return {'message': "Answer '{}' not found in client-db".format(name)}, 404 #not found
+        return {'message': "Inquiry with name'{}' not found in client-db".format(name)}, 404 #not found
 
     def post(self,name):
         if ClientInquiriesModel.find_by_name(name):
-            return {'message': "Answer '{}' already exist in client-db.".format(name)}, 400 #bad request
+            return {'message': "Inquiry with name '{}' already exist in client-db.".format(name)}, 400 #bad request
             #schreibe zeugs in db
         data = ClientInquiries.parser.parse_args()
         answer = ClientInquiriesModel(name,
@@ -90,4 +90,4 @@ class ClientInquiries(Resource):
 
 class ListClientInquiries(Resource):
     def get(self):
-        return {'clientinquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
+        return {'inquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}

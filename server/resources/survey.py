@@ -76,7 +76,7 @@ class Survey(Resource):
 
 
 # returns a list with all surveys in the datebase
-class SurveyList(Resource):
+class ListSurveys(Resource):
     def get(self):
         return {'surveys': [ x.tojson() for x in SurveyModel.query.all()]}
 
@@ -110,6 +110,6 @@ class SurveyStatus(Resource):
 ##################################################################
 
 # check if there is a survey and send it back if yes, status must be 'active' for survey in db
-class SurveyAvailable(Resource):
+class AvailableSurveys(Resource):
     def get(self):
         return {'surveys': [ x.tojsonforclient() for x in SurveyModel.query.filter_by(status='active')]}

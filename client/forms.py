@@ -15,6 +15,11 @@ class QuestionForm(FlaskForm):
     q = FloatField('Insert q value:', validators=[DataRequired(), Length(min=0, max=1.0, message='value must between 0 and 1')])
     submit = SubmitField('Add Rappor')
 
+
+class RequestSurveyTestForm(FlaskForm):
+    submit_request_survey = SubmitField('Request Survey')
+    submit_send_reports = SubmitField('Send Reports')
+
 ### old stuff ##########################################
 ## altes zeugs
 ########################################################

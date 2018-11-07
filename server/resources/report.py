@@ -43,7 +43,7 @@ class Report(Resource):
     parser.add_argument('answers',
         type=dict,
         action='append',
-        required=False,
+        required=True,
         help="answers are missing"
     )
 
@@ -78,6 +78,6 @@ class Report(Resource):
 
 
 # Testing Resource: returns a list with all reports in the database
-class ReportList(Resource):
+class ListReports(Resource):
     def get(self):
         return {'reports': [ x.tojson() for x in ReportModel.query.all()]}

@@ -8,15 +8,17 @@ class ClientConfModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     clientname = db.Column(db.String(30))
     serveraddress = db.Column(db.String(50))
+    serverport = db.Column(db.Integer())
     global_f = db.Column(db.Float(precision=5))
     global_p = db.Column(db.Float(precision=5))
     global_q = db.Column(db.Float(precision=5))
     slider = db.Column(db.Float(precision=5))
 
     #if there is no specific privacy setting for a client, the global settings are applied
-    def __init__(self, clientname, serveraddress, global_f, global_p, global_q, slider):
+    def __init__(self, clientname, serveraddress, serverport, global_f, global_p, global_q, slider):
         self.clientname = "rapporclient"
         self.serveraddress = serveraddress
+        self.serverport = 5000
         self.global_f = global_f
         self.global_p = global_p
         self.global_q = global_q
@@ -26,6 +28,7 @@ class ClientConfModel(db.Model):
     def tojson(self):
         return {'clientname': self.clientname,
             'serveraddress': self.serveraddress,
+            'serverport': self.serverport,
             'f': self.global_f,
             'p': self.global_p,
             'q': self.global_q,
