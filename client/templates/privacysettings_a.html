@@ -9,9 +9,9 @@
   <form method="POST">
       {# This hidden_tag is a CSRF security feature. #}
       {{ form.hidden_tag() }}
+      {{ form.f.label }} {{ form.f() }}
       {{ form.p.label }} {{ form.p() }}
       {{ form.q.label }} {{ form.q() }}
-      {{ form.r.label }} {{ form.r() }}
       {{ form.submit() }}
   </form>
 

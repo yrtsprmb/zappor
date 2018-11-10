@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+  <h1>this is for tests</h1>
+  <p></p>
+
+  <form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+      <div class="form-group">
+  <input type="submit" name="submit_request" value="Request Surveys">
+  <input type="submit" name="submit_report" value="Send Reports">
+  <input type="submit" name="submit_match" value="Match Inquiries">
+  </div>
+  </form>
+
+
+{% endblock %}

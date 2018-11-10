@@ -8,8 +8,8 @@ class ClientInquiries(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('name',
         type=str,
-        required=True,
-        help="name is missing"
+        required=False,
+        help="name error through parsing"
     )
     parser.add_argument('type',
         type=str,
@@ -80,6 +80,28 @@ class ClientInquiries(Resource):
         except:
             return {'message': "error while inserting answer '{}'.".format(name)}, 500
         return answer.tojson(), 201 # status created
+
+
+    def put(self,name):
+        if ClientInquiriesModel.find_by_name(name):
+            data = ClientInquiries.parser.parse_args()
+            answer = ClientInquiriesModel(name,
+                                    data['type'],
+                                    json.dumps(data['options']),
+                                    json.dumps(data['answer']),
+                                    json.dumps(data['randomanswer']),
+                                    data['locked'],
+                                    data['f'],
+                                    data['p'],
+                                    data['q'])
+            try:
+                answer.save_to_db()
+            except:
+                return {'message': "error while inquiry with name: '{}'.".format(name)}, 500
+            return answer.tojson(), 201 # status created
+
+        return {'message': "No client inquiry with name '{}' in db.".format(name)}, 400 #bad request
+
 
     def delete(self,name):
         answer = ClientInquiriesModel.find_by_name(name)

@@ -2,16 +2,23 @@
 {% block content %}
 
 <div class="jumbotron">
-  <h2>Here is a list of all server and client inquiries:</h2>
+  <h3>Server inquiries:</h3>
   <ul>
     {% for question in questions %}
     <li>{{question}}</li>
     {% endfor %}
   </ul>
   <br>
+  <h3>Client inquiries:</h3>
   <ul>
     {% for answer in answers %}
     <li>{{answer}}</li>
+    {% endfor %}
+  </ul>
+  <h3>Saved Reports:</h3>
+  <ul>
+    {% for report in reports %}
+    <li>{{report}}</li>
     {% endfor %}
   </ul>
 

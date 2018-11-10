@@ -24,18 +24,22 @@ from forms import RequestSurveyTestForm
 ##################################################################
 
 #TEST formulare:
-from forms import AddForm, DelForm, AddOwnerForm, RapporForm, PersonalForm
-from web import Puppy, Owner, PersonalModel, RapporModel
+#from forms import RapporForm
+#from web import RapporModel
 
 # for requests
-from resources.requestsurveys import RequestSurvey
-from resources.sendreports import SendReport
+from resources.request_surveys import RequestSurvey
+from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
+
+
+### app #########################################################
+## app and db settings
+##################################################################
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///clientdata.db' # tells sqlachemy where the database is
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#db = SQLAlchemy(app)
 app.secret_key = 'zappor'
 api = Api(app)
 
@@ -45,7 +49,7 @@ def create_tables():
     db.create_all()
 
 #starts background jobs
-@app.before_first_request
+#@app.before_first_request
 def activate_job():
     def request_survey():
         while True:
@@ -110,22 +114,28 @@ def index():
 def show_inquiries():
     from models.server_inquiries import ServerInquiriesModel
     from models.client_inquiries import ClientInquiriesModel
+    from models.reports import ReportModel
+
     answers = ClientInquiriesModel.query.all()
     questions = ServerInquiriesModel.query.all()
-    return render_template('show_inquiries.html', answers=answers, questions=questions, title='list of inquiries')
+    reports = ReportModel.query.all()
+    return render_template('show_inquiries.html', answers=answers, questions=questions, reports=reports, title='list of inquiries')
 
 
 @app.route('/privacy',methods=['GET','POST'])
 def add_privacy():
+    from models.rappor import RapporModel
+    from forms import RapporForm
+
     form = RapporForm()
 
     if form.validate_on_submit():
+        f = form.f.data
         p = form.p.data
         q = form.q.data
-        r = form.r.data
 
         # Add new Puppy to database
-        new_rap = RapporModel(p,q,r)
+        new_rap = RapporModel(f,p,q)
         db.session.add(new_rap)
         db.session.commit()
 
@@ -159,6 +169,10 @@ def tests():
             print("Send report button pressed") #debug
             r = requests.get('http://127.0.0.1:5001/sendreport/')
 
+        elif 'submit_match' in request.form:
+            print("Match inquiries button pressed") #debug
+            r = requests.get('http://127.0.0.1:5001/match/')
+
 
     return render_template('tests.html', form=form, title='client tests')
 
@@ -167,14 +181,6 @@ def tests():
 ### oldstuff ###########################################
 ## not needed in future
 ########################################################
-
-@app.route('/listall')
-def list_all():
-    # Grab a list of puppies from database.
-    puppies = Puppy.query.all()
-    rapport = RapporModel.query.all()
-
-    return render_template('listall.html', puppies=puppies, rapport=rapport)
 
 
 @app.route('/test')
