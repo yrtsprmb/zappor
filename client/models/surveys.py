@@ -9,6 +9,8 @@ class SurveyModel(db.Model):
     longterm = db.Column(db.Integer)
     processed = db.Column(db.Integer)
 
+    reports = db.relationship('ReportModel', lazy='dynamic')
+
     def __init__(self, surveyid, longterm, processed):
         self.surveyid = surveyid
         self.longterm = longterm

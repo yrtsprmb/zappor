@@ -1,236 +1,8 @@
 import json
+from pprint import pprint
 
-client = {
-    "inquiries": [
-        {
-            "name": "lrz",
-            "type": "ordinal",
-            "options": [
-                "a",
-                "b",
-                "c",
-                "d"
-            ],
-            "answer": [
-                0,
-                1,
-                0,
-                1
-            ],
-            "randomanswer": [
-                0,
-                1,
-                0,
-                1
-            ],
-            "locked": 1,
-            "f": 0.5,
-            "p": 0.5,
-            "q": 0.5
-        },
-        {
-            "name": "bmw",
-            "type": "ordinal",
-            "options": [
-                "d",
-                "e",
-                "f"
-            ],
-            "answer": [
-                "0",
-                "1",
-                "0"
-            ],
-            "randomanswer": [
-                0,
-                1,
-                1
-            ],
-            "locked": 1,
-            "f": 0.5,
-            "p": 0.5,
-            "q": 0.5
-        },
-        {
-            "name": "mtu",
-            "type": "numeric",
-            "options": [
-                "a",
-                "b"
-            ],
-            "answer": [
-                [23455.5]
-            ],
-            "randomanswer": [
-                0,
-                1,
-                1
-            ],
-            "locked": 1,
-            "f": 0.5,
-            "p": 0.5,
-            "q": 0.5
-        },
-        {
-            "name": "lmu",
-            "type": "ordinal",
-            "options": [
-                "v",
-                "w",
-                "x",
-                "y",
-                "z"
-            ],
-            "answer": [
-                1,
-                0,
-                0,
-                0,
-                0
-            ],
-            "randomanswer": [
-                0,
-                1,
-                1,
-                1,
-                0
-            ],
-            "locked": 1,
-            "f": 0.5,
-            "p": 0.5,
-            "q": 0.5
-        },
-        {
-            "name": "nintendo",
-            "type": "ordinal",
-            "options": [
-                "a",
-                "b",
-                "c"
-            ],
-            "answer": [
-                1,
-                0,
-                1
-
-            ],
-            "randomanswer": [
-                0,
-                1,
-                0
-            ],
-            "locked": 1,
-            "f": 0.5,
-            "p": 0.5,
-            "q": 0.5
-        },
-        {
-            "name": "sega",
-            "type": "ordinal",
-            "options": [
-                "a",
-                "b",
-                "c"
-            ],
-            "answer": [
-                1,
-                0,
-                1
-
-            ],
-            "randomanswer": [
-                0,
-                1,
-                0
-            ],
-            "locked": 1,
-            "f": 0.5,
-            "p": 0.5,
-            "q": 0.5
-        }
-    ]
-}
-###################################################
-
-server = {
-    "inquiries": [
-        {
-            "qid": 66,
-            "surveyid": "analoghorsta",
-            "serviceprovider": "radiohorsta",
-            "name": "sega",
-            "type": "ordinal",
-            "options": [
-                "a",
-                "b",
-                "c"
-            ]
-        },
-        {
-            "qid": 88,
-            "surveyid": "digitalhelga",
-            "serviceprovider": "radiohorsta",
-            "name": "sega",
-            "type": "ordinal",
-            "options": [
-                "a",
-                "b",
-                "c"
-            ]
-        },
-        {
-            "qid": 1,
-            "surveyid": "digitalhelga",
-            "serviceprovider": "radiohorsta",
-            "name": "lrz",
-            "type": "ordinal",
-            "options": [
-                "a",
-                "b",
-                "c"
-            ]
-        },
-        {
-            "qid": 2,
-            "surveyid": "digitalhelga",
-            "serviceprovider": "radiohorsta",
-            "name": "bmw",
-            "type": "ordinal",
-            "options": [
-                "d",
-                "x",
-                "f",
-                "g"
-            ]
-        },
-        {
-            "qid": 3,
-            "surveyid": "digitalhelga",
-            "serviceprovider": "radiohorsta",
-            "name": "mtu",
-            "type": "ordinal",
-            "options": [
-                "a",
-                "b"
-            ]
-        },
-        {
-            "qid": 4,
-            "surveyid": "digitalhelga",
-            "serviceprovider": "radiohorsta",
-            "name": "lmu",
-            "type": "ordinal",
-            "options": [
-                "v",
-                "w",
-                "x",
-                "y",
-                "z"
-            ]
-        }
-    ]
-}
-
+#tests
+#from test_matching import servertest, clienttest
 
 #############################################################
 # operates on all answer and question inquiries
@@ -292,18 +64,18 @@ def generate_answers_by_surveyid(surveyid,results):
 
 ###########################################################
 
-#
-# #1) match client and server inquiries
-# matches = find_matches(client,server)
-# print(matches)
+
+# # #1) match client and server inquiries
+# matches = find_matches(clienttest,servertest)
+# pprint(matches)
 # print("++++++++++++++++++++++++")
 #
-# # 2) identify all surveyids which have an match
+# # # 2) identify all surveyids which have an match
 # surveys = allmatchingsurveys(matches)
 # print("surveys with matches")
-# print(surveys)
+# pprint(surveys)
 #
 # # 3) generate answers by surveyid
 # print("++++++++++++++++++++++++")
-# ergebnis = generate_answers_by_surveyid('analoghorsta',matches)
+# ergebnis = generate_answers_by_surveyid('matchtest',matches)
 # print(ergebnis)

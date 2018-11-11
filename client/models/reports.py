@@ -6,13 +6,17 @@ class ReportModel(db.Model):
     #infos for sqlalchemy
     __tablename__ = "reports"
     id = db.Column(db.Integer, primary_key=True)
-    surveyid = db.Column(db.String(30))
+
+    #surveyid = db.Column(db.String(30))
     prr = db.Column(db.Integer)
     irr = db.Column(db.Integer)
     f = db.Column(db.Float(precision=5))
     p = db.Column(db.Float(precision=5))
     q = db.Column(db.Float(precision=5))
     answers = db.Column(db.String())
+
+    surveyid = db.Column(db.String, db.ForeignKey('surveys.surveyid'))
+    survey = db.relationship('SurveyModel')
 
     def __init__(self, surveyid, prr, irr, f, p, q, answers):
         self.surveyid = surveyid
@@ -34,7 +38,7 @@ class ReportModel(db.Model):
     #find all reports belonging to one survey
     @classmethod
     def find_report_by_surveyid(cls, surveyid):
-        return ReportModel.query.filter_by(surveyid=surveyid).all()
+        return ReportModel.query.filter_by(surveyid=surveyid).all()    
 
     #saves a report to the db
     def save_to_db(self):

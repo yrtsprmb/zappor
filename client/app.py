@@ -24,8 +24,7 @@ from forms import RequestSurveyTestForm
 ##################################################################
 
 #TEST formulare:
-#from forms import RapporForm
-#from web import RapporModel
+from intern.config import repeat_send_reports, repeat_request_surveys
 
 # for requests
 from resources.request_surveys import RequestSurvey
@@ -55,7 +54,7 @@ def activate_job():
         while True:
             print("Request Survey")
             r = requests.get('http://127.0.0.1:5001/requestsurveys/')
-            time.sleep(3)
+            time.sleep(repeat_request_surveys)
     thread_survey = threading.Thread(target=request_survey)
     thread_survey.start()
 
@@ -63,7 +62,7 @@ def activate_job():
         while True:
             print("Send Report")
             r = requests.get('http://127.0.0.1:5001/sendreports/')
-            time.sleep(6)
+            time.sleep(repeat_send_reports)
     thread_report = threading.Thread(target=send_report)
     thread_report.start()
 

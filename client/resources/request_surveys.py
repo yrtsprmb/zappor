@@ -2,14 +2,15 @@ import json
 import requests
 from flask_restful import Resource, reqparse
 from models.server_inquiries import ServerInquiriesModel
+from intern.config import serviceprovider_surveys
 
+# requests surveys from the serviceprovider and modifies the surveys
+# into server inquiries
 class RequestSurvey(Resource):
 
     def get(self):
-        ## TODO: server variable auslagern.
-        # request surveys from the server
-        server = 'http://127.0.0.1:5000/'
-        r = requests.get(server + "availablesurveys")
+
+        r = requests.get(serviceprovider_surveys)
         umfragen = r.json()
         listevonsurveys = (umfragen['surveys'])
 
@@ -42,3 +43,6 @@ class RequestSurvey(Resource):
                     print("____________________________")           #debug
                     frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options))
                     frage.save_to_db()
+                    return frage.tojson(), 201 # created
+
+        return {'message': "request survey done" } , 201 # created
