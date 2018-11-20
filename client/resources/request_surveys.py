@@ -31,7 +31,7 @@ class RequestSurvey(Resource):
                 options = question['options']
 
                 #save question to the db, only if it is not already known by surveyid
-                if ServerInquiriesModel.schon_in_db(surveyid,name):
+                if ServerInquiriesModel.already_in_db(surveyid,name):
                     print("survey and matching inquiries already in DB")
                 else:
                     print("surveyid: " + surveyid)                  #debug

@@ -4,7 +4,7 @@ from db import db
 from flask_sqlalchemy import SQLAlchemy
 
 #import of the resources
-from resources.client_inquiries import ClientInquiries, ListClientInquiries
+from resources.client_inquiries import ClientInquiries, ListClientInquiries, EditClientInquiries
 from resources.server_inquiries import ServerInquiries, ListServerInquiries
 
 from resources.surveys import Survey, ListSurveys
@@ -23,14 +23,14 @@ from forms import RequestSurveyTestForm
 ## imports for testing
 ##################################################################
 
-#TEST formulare:
-from intern.config import repeat_send_reports, repeat_request_surveys
+# import of configurations:
+from intern.config import repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
 
 # for requests
 from resources.request_surveys import RequestSurvey
 from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
-
+from resources.reports import Report, ListReports
 
 ### app #########################################################
 ## app and db settings
@@ -53,7 +53,7 @@ def activate_job():
     def request_survey():
         while True:
             print("Request Survey")
-            r = requests.get('http://127.0.0.1:5001/requestsurveys/')
+            r = requests.get(serviceprovider_surveys)
             time.sleep(repeat_request_surveys)
     thread_survey = threading.Thread(target=request_survey)
     thread_survey.start()
@@ -61,7 +61,7 @@ def activate_job():
     def send_report():
         while True:
             print("Send Report")
-            r = requests.get('http://127.0.0.1:5001/sendreports/')
+            r = requests.get(serviceprovider_reports)
             time.sleep(repeat_send_reports)
     thread_report = threading.Thread(target=send_report)
     thread_report.start()
@@ -83,6 +83,8 @@ app.register_blueprint(error_pages)
 
 api.add_resource(ClientInquiries, '/ci/<string:name>')
 api.add_resource(ListClientInquiries, '/lci')
+api.add_resource(EditClientInquiries, '/edit_ci/<string:name>')
+
 
 api.add_resource(ServerInquiries, '/si/<string:name>')
 api.add_resource(ListServerInquiries, '/lsi')
@@ -96,6 +98,8 @@ api.add_resource(ClientConf, '/configuration/<string:clientname>')
 api.add_resource(RequestSurvey, '/requestsurveys/')
 api.add_resource(SendReport, '/sendreports/')
 api.add_resource(MatchInquiries, '/match/')
+api.add_resource(Report, '/reports/<string:surveyid>')
+api.add_resource(ListReports, '/listreports/')
 
 
 ### views ########################################################

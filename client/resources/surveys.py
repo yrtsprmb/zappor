@@ -3,11 +3,6 @@ from models.surveys import SurveyModel
 
 class Survey(Resource):
     parser = reqparse.RequestParser()
-    # parser.add_argument('surveyid',
-    #     type=str,
-    #     required=True,
-    #     help="surveyid is missing"
-    # )
     parser.add_argument('longterm',
         type=bool,
         required=True,

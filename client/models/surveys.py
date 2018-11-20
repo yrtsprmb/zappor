@@ -4,12 +4,12 @@ from db import db
 class SurveyModel(db.Model):
 
     __tablename__ = "surveys"
-    id = db.Column(db.Integer, primary_key=True)
+    sid = db.Column(db.Integer, primary_key=True)
     surveyid = db.Column(db.String(100))
     longterm = db.Column(db.Integer)
     processed = db.Column(db.Integer)
 
-    reports = db.relationship('ReportModel', lazy='dynamic')
+    reports = db.relationship('ReportModel', backref='author', lazy='dynamic')
 
     def __init__(self, surveyid, longterm, processed):
         self.surveyid = surveyid

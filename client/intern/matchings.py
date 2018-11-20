@@ -14,19 +14,24 @@ from pprint import pprint
 def find_matches(client,server):
     # compare client inquiries with server inquieres and returns matching qids
     def compare_data(c, s, results):
-        if (
-                c['name'] == s['name'] and
-                c['type'] == s['type'] and
-                sorted(c['options']) == sorted(s['options'])):
+        #c['name'] == s['name'] and
+        #c['type'] == s['type'] and
+        #sorted(c['options']) == sorted(s['options'])
+        if (c.name == s.name and
+            c.type == s.type and
+            sorted(c.options) == sorted(s.options)):
 
-            results.append({'surveyid': s["surveyid"], 'qid': s["qid"], 'question': s["name"], 'options': c["randomanswer"], 'f': c["f"], 'p': c["p"], 'q': c["q"] })
+            #results.append({'surveyid': s["surveyid"], 'qid': s["qid"], 'question': s["name"], 'options': c["randomanswer"], 'f': c["f"], 'p': c["p"], 'q': c["q"] })
+            results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': c.randomanswer, 'f': c.f, 'p': c.p, 'q': c.q })
             return True
         else:
             return False
 
     results = []
-    for q in client['inquiries']:
-        for p in server['inquiries']:
+    #for q in client['inquiries']:
+    #    for p in server['inquiries']:
+    for q in client:
+        for p in server:
             r = compare_data(q, p, results)
 
     return results

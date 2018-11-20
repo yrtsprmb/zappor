@@ -24,7 +24,7 @@ global_f = 0.75
 global_p = 0.5
 global_q = 0.5
 
-
+global_slider = 0
 
 
 

@@ -8,9 +8,9 @@ class ServerInquiriesModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qid = db.Column(db.Integer)
     surveyid = db.Column(db.String(100))
-    serviceprovider = db.Column(db.String(100))
+    serviceprovider = db.Column(db.String(50))
     name = db.Column(db.String(30))
-    type = db.Column(db.String(30))
+    type = db.Column(db.String(15))
     options = db.Column(db.String)
 
     def __init__(self, qid, surveyid, serviceprovider, name, type, options):
@@ -44,8 +44,8 @@ class ServerInquiriesModel(db.Model):
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).first()
 
-    @classmethod    
-    def schon_in_db(cls, surveyid, name):
+    @classmethod
+    def already_in_db(cls, surveyid, name):
         return cls.query.filter_by(surveyid=surveyid).filter_by(name=name).first()
 
     @classmethod

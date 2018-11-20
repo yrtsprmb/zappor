@@ -23,13 +23,13 @@ class ClientInquiries(Resource):
         help="options are missing"
     )
     parser.add_argument('answer',
-        type=str,
+        type=int,
         action='append',
         required=True,
         help="answer is missing"
     )
     parser.add_argument('randomanswer',
-        type=str,
+        type=int,
         action='append',
         required=True,
         help="randomanswer is missing"
@@ -78,38 +78,89 @@ class ClientInquiries(Resource):
         try:
             answer.save_to_db()
         except:
-            return {'message': "error while inserting answer '{}'.".format(name)}, 500
-        return answer.tojson(), 201 # status created
+            return {'message': "error while inserting answer '{}'.".format(name)}, 500 #internal server error
+        return answer.tojson(), 201 #created
 
 
     def put(self,name):
-        if ClientInquiriesModel.find_by_name(name):
-            data = ClientInquiries.parser.parse_args()
-            answer = ClientInquiriesModel(name,
-                                    data['type'],
-                                    json.dumps(data['options']),
-                                    json.dumps(data['answer']),
-                                    json.dumps(data['randomanswer']),
-                                    data['locked'],
-                                    data['f'],
-                                    data['p'],
-                                    data['q'])
-            try:
-                answer.save_to_db()
-            except:
-                return {'message': "error while inquiry with name: '{}'.".format(name)}, 500
-            return answer.tojson(), 201 # status created
+        data = ClientInquiries.parser.parse_args()
+        inquiry = ClientInquiriesModel.find_by_name(name)
+        if inquiry is None:
+            return {'message': "Can not change - inquiry '{}' does not exist".format(name)}, 400 #bad request
 
-        return {'message': "No client inquiry with name '{}' in db.".format(name)}, 400 #bad request
+        inquiry.type = data['type']
+        inquiry.options = json.dumps(data['options'])
+        inquiry.answer = json.dumps(data['answer'])
+        inquiry.randomanswer = json.dumps(data['randomanswer'])
+        inquiry.locked = data['locked']
+        inquiry.f = data['f']
+        inquiry.p = data['p']
+        inquiry.q = data['q']
+
+        try:
+            inquiry.save_to_db()
+        except:
+            return {'message': "error while editing inquiry with name: '{}'.".format(name)}, 500 #internal server error
+        return inquiry.tojson(), 202 # accepted
+        #return {'message': "Sucessfully changend inquiry with name '{}'.".format(name)}, 400 #bad request
 
 
     def delete(self,name):
-        answer = ClientInquiriesModel.find_by_name(name)
-        if answer:
-            answer.delete_from_db()
-            return {'message': "answer '{}' deleted".format(name)}, 202 #accepted
-        return {'message': "answer '{}' not found".format(name)}, 404 #not found
+        inquiry = ClientInquiriesModel.find_by_name(name)
+        if inquiry:
+            inquiry.delete_from_db()
+            return {'message': "client inquiry '{}' deleted".format(name)}, 202 #accepted
+        return {'message': "client inquiry '{}' not found".format(name)}, 404 #not found
 
 class ListClientInquiries(Resource):
     def get(self):
         return {'inquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
+
+
+# allows to change the status of an inquiry through a GUI
+# a user can change his answer, f,p and q values, as well if he wants to lock the question
+class EditClientInquiries(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('answer',
+    type=int,
+    action='append',
+    required=False,
+    help="answer is missing"
+    )
+    parser.add_argument('locked',
+        type=bool,
+        required=False,
+        help="status is missing or not correct"
+    )
+    parser.add_argument('f',
+        type=float,
+        required=False,
+        help="status is missing or not correct"
+    )
+    parser.add_argument('p',
+        type=float,
+        required=False,
+        help="status is missing or not correct"
+    )
+    parser.add_argument('q',
+        type=float,
+        required=False,
+        help="status is missing or not correct"
+    )
+    def put(self,name):
+        data = EditClientInquiries.parser.parse_args()
+        inquiry = ClientInquiriesModel.find_by_name(name)
+        if inquiry is None:
+            return {'message': "Can not change status, inquiry '{}' does not exist".format(name)}, 400 #bad request
+
+        inquiry.answer = json.dumps(data['answer'])
+        inquiry.locked = data['locked']
+        inquiry.f = data['f']
+        inquiry.p = data['p']
+        inquiry.q = data['q']
+        try:
+            inquiry.save_to_db()
+        except:
+            return {'message': "error while saving inquiry with name: '{}'.".format(name)}, 500 #internal server error
+        return inquiry.tojson(), 200 #ok
+        #return {'message': " inquiry '{}' changed.".format(name)}, 200 #ok

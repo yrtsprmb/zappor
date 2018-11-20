@@ -20,11 +20,6 @@ class ServerInquiries(Resource):
         required=True,
         help="serviceprovider is missing"
     )
-    # parser.add_argument('qname',
-    #     type=str,
-    #     required=True,
-    #     help="qname is missing"
-    # )
     parser.add_argument('type',
         type=str,
         required=True,
@@ -45,9 +40,9 @@ class ServerInquiries(Resource):
 
     def post(self,name):
         data = ServerInquiries.parser.parse_args()
-        #write question only and only in db if it is unique to a surveyid
-        if ServerInquiriesModel.find_by_name(name): #find_by_surveyid(data['surveyid'])
-             return {'message': "question '{}' already exist in database with same surveyid '{}'.".format(name,data['surveyid'])}, 400 #bad request
+        #write question only in db if it is unique to a surveyid
+        if ServerInquiriesModel.find_by_name(name) and ServerInquiriesModel.find_by_surveyid(data['surveyid']):
+             return {'message': "a question '{}' already exist under the surveyid '{}'.".format(name,data['surveyid'])}, 400 #bad request
 
         question = ServerInquiriesModel(data['qid'],
                                 data['surveyid'],

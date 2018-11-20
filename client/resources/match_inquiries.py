@@ -7,30 +7,33 @@ from models.reports import ReportModel
 from intern.matchings import generate_answers_by_surveyid, allmatchingsurveys, find_matches
 from intern.config import global_f, global_p, global_q, global_irr, global_prr
 
-#tests
-from intern.test_matching import clienttest, servertest
 
 class MatchInquiries(Resource):
     def get(self):
 
+        # {'inquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
 
         client = ClientInquiriesModel.query.all()
         server = ServerInquiriesModel.query.all()
-        #print(client) #debug
-        #print(server) #debug
+        print(client) #debug
+        print(server) #debug
+
+        #print(clienttest) #debug
+        #print(servertest) #debug
+        print("---------------------") #debug
 
         # 1st: find all matches
-        #matches = find_matches(client,server)
-        matches = find_matches(clienttest,servertest)
+        matches = find_matches(client,server)
+        #matches = find_matches(client,servertest)
         #print("---------------------")
-        #print("matches")
-        #print(matches)
+        print("matches")
+        print(matches)
 
         # 2nd: identify all surveyids which have an match
         surveys = allmatchingsurveys(matches)
-        #print("---------------------")
-        #print("surveys which have matches matches")
-        #print(surveys)
+        print("---------------------")
+        print("surveys which have matches matches")
+        print(surveys)
 
         # 3d) generate answers by surveyid
         #for survey in surveys:
@@ -56,4 +59,4 @@ class MatchInquiries(Resource):
                     return {'message': "report sucessful matched and saved to db"}, 202 #accepted
                 except:
                     return {'message': "error while inserting report for surveyid'{}'. ".format(surveyid)}, 500
-        return {'message': " surveyids already known in reports table"}, 200
+        return {'message': "no new matches, all available matches already in reports"}, 200
