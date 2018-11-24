@@ -11,6 +11,13 @@ from pprint import pprint
 # in the following form:
 # {'qid': 3, 'surveyid': 'digitalhelga', 'name': 'mtu'},
 #############################################################
+
+
+def check_correctness(client,server):
+    # should check if the values are correct
+    pass
+
+
 def find_matches(client,server):
     # compare client inquiries with server inquieres and returns matching qids
     def compare_data(c, s, results):
@@ -20,9 +27,9 @@ def find_matches(client,server):
         if (c.name == s.name and
             c.type == s.type and
             sorted(c.options) == sorted(s.options)):
-
+            # data from client and server inquiries are gone be mixed here
             #results.append({'surveyid': s["surveyid"], 'qid': s["qid"], 'question': s["name"], 'options': c["randomanswer"], 'f': c["f"], 'p': c["p"], 'q': c["q"] })
-            results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': c.randomanswer, 'f': c.f, 'p': c.p, 'q': c.q })
+            results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': c.irr_answer, 'f': c.f, 'p': c.p, 'q': c.q })
             return True
         else:
             return False
@@ -39,7 +46,7 @@ def find_matches(client,server):
 #############################################################
 # returs a list with surveyids which have matches
 #############################################################
-def allmatchingsurveys(items):
+def find_matching_surveys(items):
     results = []
     for item in items:
         if item['surveyid'] not in results:
@@ -47,9 +54,8 @@ def allmatchingsurveys(items):
     return(results)
 
 
-
 #############################################################
-# returns answers in form of list filled with dictionairis
+# returns answers in form of list filled with dictionaries
 #############################################################
 def generate_answers_by_surveyid(surveyid,results):
     answers = []
@@ -69,7 +75,7 @@ def generate_answers_by_surveyid(surveyid,results):
 
 ###########################################################
 
-
+# testing
 # # #1) match client and server inquiries
 # matches = find_matches(clienttest,servertest)
 # pprint(matches)
