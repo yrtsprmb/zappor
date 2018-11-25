@@ -4,7 +4,7 @@ from db import db
 from flask_sqlalchemy import SQLAlchemy
 
 #import of the resources
-from resources.client_inquiries import ClientInquiries, ListClientInquiries, EditClientInquiries
+from resources.client_inquiries import ClientInquiries, ListClientInquiries
 from resources.server_inquiries import ServerInquiries, ListServerInquiries
 
 from resources.surveys import Survey, ListSurveys
@@ -31,6 +31,8 @@ from resources.request_surveys import RequestSurvey
 from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
 from resources.reports import Report, ListReports
+
+from resources.send_reports_new import SendReportNew
 
 ### app #########################################################
 ## app and db settings
@@ -83,7 +85,6 @@ app.register_blueprint(error_pages)
 
 api.add_resource(ClientInquiries, '/ci/<string:name>')
 api.add_resource(ListClientInquiries, '/lci')
-api.add_resource(EditClientInquiries, '/edit_ci/<string:name>')
 
 
 api.add_resource(ServerInquiries, '/si/<string:name>')
@@ -101,6 +102,18 @@ api.add_resource(MatchInquiries, '/match/')
 api.add_resource(Report, '/reports/<string:surveyid>')
 api.add_resource(ListReports, '/listreports/')
 
+api.add_resource(SendReportNew, '/send/')
+
+#############################################################
+# testing:
+# allows full access to the values through the REST API
+#############################################################
+
+from resources.client_inquiries import TestClientInquiries
+api.add_resource(TestClientInquiries, '/ci_test/<string:name>')
+
+from resources.server_inquiries import TestServerInquiries
+api.add_resource(TestServerInquiries, '/si_test/<string:name>')
 
 ### views ########################################################
 ## routes for the web GUI

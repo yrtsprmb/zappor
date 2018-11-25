@@ -1,5 +1,5 @@
 import json
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
 from models.reports import ReportModel
