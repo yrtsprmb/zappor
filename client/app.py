@@ -32,7 +32,7 @@ from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
 from resources.reports import Report, ListReports
 
-from resources.send_reports_new import SendReportNew
+
 
 ### app #########################################################
 ## app and db settings
@@ -93,6 +93,8 @@ api.add_resource(ListServerInquiries, '/lsi')
 api.add_resource(Survey, '/survey/<string:surveyid>')
 api.add_resource(ListSurveys, '/surveys')
 
+api.add_resource(ListReports, '/listreports/')
+
 api.add_resource(ClientConf, '/configuration/<string:clientname>')
 
 #test for requesting
@@ -100,9 +102,8 @@ api.add_resource(RequestSurvey, '/requestsurveys/')
 api.add_resource(SendReport, '/sendreports/')
 api.add_resource(MatchInquiries, '/match/')
 api.add_resource(Report, '/reports/<string:surveyid>')
-api.add_resource(ListReports, '/listreports/')
 
-api.add_resource(SendReportNew, '/send/')
+
 
 #############################################################
 # testing:

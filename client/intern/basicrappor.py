@@ -9,15 +9,6 @@ test = [0,1,0,1,0]
 
 
 
-
-#def bla(x): return random.choices([0, 1, x], [0.4, 0.4, 0.2])
-#
-# print(bla(1))
-# print(bla(1))
-# print(bla(1))
-
-
-
 #############################################################
 # takes the f value and an ordinal list of 0 and 1 digits,
 # returns the PRR of that list.

@@ -52,6 +52,12 @@ class ServerInquiriesModel(db.Model):
     def find_by_surveyid(cls, surveyid):
         return cls.query.filter_by(surveyid=surveyid).first()
 
+    @classmethod
+    def find_all_by_surveyid(cls, surveyid):
+        return cls.query.filter_by(surveyid=surveyid).all()
+
+    #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
+
     def save_to_db(self):
         db.session.add(self) # session is collection of objects we want to write into the db
         db.session.commit()

@@ -13,29 +13,27 @@ from intern.config import global_f, global_p, global_q, global_irr, global_prr
 class MatchInquiries(Resource):
     def get(self):
 
-        # {'inquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
-
-        client = ClientInquiriesModel.query.all() # all client inquiries
+        client = ClientInquiriesModel.query.filter_by(locked='0').all() # only inquiries which are not locked by the user
         server = ServerInquiriesModel.query.all() # all server inquiries
         print('client inquiries')       #debug
         print(client)                   #debug
-        print('server inquiries')       #debug
-        print(server)                   #debug
-        print("---------------------")  #debug
+        # print('server inquiries')       #debug
+        # print(server)                   #debug
+        # print("---------------------")  #debug
 
         # 1st: find all matches
         matches = find_matches(client,server)
         #matches = find_matches(client,servertest)
 
-        print("matches")                #debug
-        print(matches)                  #debug
-        print("---------------------")  #debug
+        # print("matches")                #debug
+        # print(matches)                  #debug
+        # print("---------------------")  #debug
 
         # 2nd: identify all surveyids which have an match
         surveys = find_matching_surveys(matches)
-        print("surveys which have matches matches") #debug
-        print(surveys)                              #debug
-        print("---------------------")              #debug
+        # print("surveys which have matches matches") #debug
+        # print(surveys)                              #debug
+        # print("---------------------")              #debug
 
         # 3rd) generate answers by surveyid
         #for survey in surveys:
