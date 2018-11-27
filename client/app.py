@@ -184,7 +184,7 @@ def tests():
 
         elif 'submit_report' in request.form:
             print("Send report button pressed") #debug
-            r = requests.get('http://127.0.0.1:5001/sendreport/')
+            r = requests.get('http://127.0.0.1:5001/sendreports/')
 
         elif 'submit_match' in request.form:
             print("Match inquiries button pressed") #debug

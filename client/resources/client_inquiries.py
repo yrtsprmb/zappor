@@ -62,10 +62,12 @@ class ClientInquiries(Resource):
         return {'message': "client inquiry '{}' not found".format(name)}, 404 #not found
 
 
+#############################################################
+# list all client inquiries
+#############################################################
 class ListClientInquiries(Resource):
     def get(self):
         return {'inquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
-
 
 
 #############################################################
@@ -73,7 +75,6 @@ class ListClientInquiries(Resource):
 # through the REST api
 #############################################################
 class TestClientInquiries(Resource):
-    #parser = reqparse.RequestParser()
 
     def post(self,name):
         if ClientInquiriesModel.find_by_name(name):
