@@ -56,6 +56,9 @@ class ServerInquiriesModel(db.Model):
     def find_all_by_surveyid(cls, surveyid):
         return cls.query.filter_by(surveyid=surveyid).all()
 
+    @classmethod ## TODO: implement function from the send reports file
+    def delete_all_by_surveyid(cls, surveyid):
+        pass
     #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
 
     def save_to_db(self):
