@@ -6,20 +6,24 @@ class ServerInquiriesModel(db.Model):
 
     __tablename__ = "server_inquiries"
     id = db.Column(db.Integer, primary_key=True)
-    qid = db.Column(db.Integer)
-    surveyid = db.Column(db.String(100))
-    serviceprovider = db.Column(db.String(50))
-    name = db.Column(db.String(30))
-    type = db.Column(db.String(15))
-    options = db.Column(db.String)
+    qid = db.Column(db.Integer)                     # order of questions inside of a surveyid
+    surveyid = db.Column(db.String(100))            # name of the surveyid
+    serviceprovider = db.Column(db.String(50))      # name of the service provider
+    name = db.Column(db.String(30))                 # name of a question
+    type = db.Column(db.String(15))                 # type of a question
+    options = db.Column(db.String)                  # possible answer options
+    locked = db.Column(db.Integer)                  # if inquiry should be deleted after editing
+    quizmode = db.Column(db.Integer)                    # if questions should be answered later by the client user
 
-    def __init__(self, qid, surveyid, serviceprovider, name, type, options):
+    def __init__(self, qid, surveyid, serviceprovider, name, type, options, locked, quizmode):
         self.qid = qid
         self.surveyid = surveyid
         self.serviceprovider = serviceprovider
         self.name = name
         self.type = type
         self.options = options
+        self.locked = locked
+        self.quizmode = quizmode
 
     #representation of the object for the GUI
     def __repr__(self):
@@ -32,7 +36,9 @@ class ServerInquiriesModel(db.Model):
             'serviceprovider': self.serviceprovider,
             'name': self.name,
             'type': self.type,
-            'options': json.loads(self.options)}
+            'options': json.loads(self.options),
+            'locked': self.locked,
+            'quizmode': self.quizmode}
 
     def compare_json(self):
         return {

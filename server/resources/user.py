@@ -1,23 +1,13 @@
 import sqlite3
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 from models.user import UserModel
 
+import resources.parsers
 
 class UserRegister(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument('username',
-        type=str,
-        required=True,
-        help="probleme mit dem usernamen"
-    )
-    parser.add_argument('password',
-        type=str,
-        required=True,
-        help="probleme mit dem passwort"
-    )
 
     def post(self):
-        data = UserRegister.parser.parse_args()
+        data = resources.parsers.ParseUser.parser.parse_args()
 
         if UserModel.find_by_username(data['username']):
             return {"message": "User already exists"}, 400

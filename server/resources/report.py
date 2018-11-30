@@ -1,52 +1,16 @@
 import json
-from flask_restful import Resource, reqparse, request
+from flask_restful import Resource, request
 
 from models.report import ReportModel
 from models.survey import SurveyModel
 
+import resources.parsers
+
 ############################################
-######## Ressources for reports
+## Ressources for reports
 ############################################
 
 class Report(Resource):
-    parser = reqparse.RequestParser()
-    #parser.add_argument('surveyid',
-    #    type=str,
-    #    required=True,
-    #    help="surveyid is missing"
-    #)
-    parser.add_argument('prr',
-        type=bool,
-        required=True,
-        help="prr is missing"
-    )
-    parser.add_argument('irr',
-        type=bool,
-        required=True,
-        help="irr is missing"
-    )
-    parser.add_argument('f',
-        type=float,
-        required=True,
-        help="f value is missing"
-    )
-    parser.add_argument('p',
-        type=float,
-        required=True,
-        help="p value is missing"
-    )
-    parser.add_argument('q',
-        type=float,
-        required=True,
-        help="q value is missing"
-    )
-    parser.add_argument('answers',
-        type=dict,
-        action='append',
-        required=True,
-        help="answers are missing"
-    )
-
     # returns a list with all reports to a specific survey in the database
     def get(self,surveyid):
         reports = [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]
@@ -60,9 +24,8 @@ class Report(Resource):
         print("request: ", request.args)
         if SurveyModel.find_active_survey_by_id(surveyid):
             #data = request.get_json()
-            data = Report.parser.parse_args()
+            data = resources.parsers.ParseReportsPost.parser.parse_args()
             print(data)
-            #print(data['answers'])
             report = ReportModel(surveyid,
                 data['prr'],
                 data['irr'],

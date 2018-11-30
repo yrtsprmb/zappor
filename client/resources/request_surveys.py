@@ -47,7 +47,7 @@ class RequestSurvey(Resource):
                     print("qtype: " + qtype)                        #debug
                     print("qoptions: " + json.dumps(options))       #debug
                     print("____________________________")           #debug
-                    frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options))
+                    frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),False,False) #TODO: quizmode und locked derzeit nur voreingestellt
                     frage.save_to_db()
                     #return frage.tojson(), 201 #created
                     return {'message': "new survey with surveyid '{}' available and fetched from the server.".format(surveyid)}, 201 #created

@@ -7,7 +7,7 @@ from security import authenticate, identity
 
 # import of resources
 from resources.user import UserRegister
-from resources.survey import Survey, ListSurveys, AvailableSurveys, SurveyStatus
+from resources.survey import Survey, ListSurveys, AvailableSurveys
 from resources.report import Report, ListReports
 
 
@@ -31,7 +31,7 @@ from handlers import error_pages
 app.register_blueprint(error_pages)
 
 ##################################################################
-######## Client Ressources (external ressources)
+## Client Ressources (external ressources)
 ##################################################################
 
 
@@ -40,15 +40,14 @@ api.add_resource(UserRegister, '/register')
 
 #Server resources for the client
 api.add_resource(Report, '/reports/<string:surveyid>') # client -> server, sends an Report
+api.add_resource(ListReports, '/listreports') # lists all reports in the db
+
 api.add_resource(AvailableSurveys, '/availablesurveys') # server -> client, server answers with available Surveys
 
 ####### Internal apis - resourcen from server to the serviceprovider
 api.add_resource(Survey, '/surveys/<string:surveyname>') #  create & delete surveys
 api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
-api.add_resource(SurveyStatus, '/surveystatus/<string:surveyname>') # changes status of a survey
 
-####### Resources for API tests
-api.add_resource(ListReports, '/listreports') # lists all reports in the db
 
 
 ### views ########################################################

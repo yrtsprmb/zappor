@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, flash, request
+from flask import Flask, render_template, url_for, redirect, flash, request, abort
 from flask_restful import Api
 from db import db
 from flask_sqlalchemy import SQLAlchemy
@@ -125,6 +125,61 @@ api.add_resource(TestServerInquiries, '/si_test/<string:name>')
 @app.route('/index')
 def index():
     return render_template('home.html', title='Home')
+
+
+@app.route('/inquiries/')
+def inquiries_list():
+    from models.client_inquiries import ClientInquiriesModel
+    from forms import InquiryForm
+
+    inqs = (db.session.query(ClientInquiriesModel).order_by(ClientInquiriesModel.id.desc()).all())
+    return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
+
+@app.route('/inquiries/create/')
+def inquiries_create():
+    from models.client_inquiries import ClientInquiriesModel
+    from forms import InquiryForm
+
+    #inqs = (db.session.query(ClientInquiriesMo
+    #del).order_by(ClientInquiriesModel.id.desc()).all())
+    return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
+    #
+    #
+    # from forms import NewSurveyForm
+    # from models.survey import SurveyModel
+
+    # form = NewSurveyForm()
+    # if form.validate_on_submit():
+    #     newsurvey = SurveyModel(surveyid = form.surveyid.data,
+    #                             serviceprovider = form.serviceprovider.data,
+    #                             surveyname = form.surveyname.data,
+    #                             status = form.status.data,
+    #                             comment = form.comment.data,
+    #                             questions = form.questions.data)
+    #     newsurvey.save_to_db()
+    #     flash("New survey created")
+    #     return redirect('/index')
+    # return render_template('create_survey.html', form=form, title='Create a new survey')
+
+
+
+
+@app.route('/inquiries/<int:id>/')
+def inquiries_detail(id):
+    from models.client_inquiries import ClientInquiriesModel
+
+    inq = db.session.query(ClientInquiriesModel).get(id)
+    if inq is None:
+        abort(404)
+    return render_template('inquiries/detail.html', inq=inq, title='helschen')
+
+    # from models.client_inquiries import ClientInquiriesModel
+    # inqs = (db.session.query(ClientInquiriesModel).order_by(ClientInquiriesModel.id.desc()).all())
+    # return render_template('inquiries.html', inqs=inqs, title='list of inquiries')
+
+
+
+
 
 
 @app.route('/show')

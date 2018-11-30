@@ -12,24 +12,6 @@ class ServerInquiries(Resource):
             return question.tojson()
         return {'message': "Server inquiry '{}' not found".format(name)}, 404 #not found
 
-    # def post(self,name):
-    #     data = ServerInquiries.parser.parse_args()
-    #     #write question only in db if it is unique to a surveyid
-    #     if ServerInquiriesModel.find_by_name(name) and ServerInquiriesModel.find_by_surveyid(data['surveyid']):
-    #          return {'message': "a question '{}' already exist under the surveyid '{}'.".format(name,data['surveyid'])}, 400 #bad request
-    #
-    #     question = ServerInquiriesModel(data['qid'],
-    #                             data['surveyid'],
-    #                             data['serviceprovider'],
-    #                             name,
-    #                             data['type'],
-    #                             json.dumps(data['options']))
-    #     try:
-    #         question.save_to_db()
-    #     except:
-    #         return {'message': "error while inserting question '{}'. ".format(name)}, 500
-    #     return question.tojson(), 201 # created
-
     def delete(self,name):
         question = ServerInquiriesModel.find_by_name(name)
         if question:
@@ -45,7 +27,6 @@ class ListServerInquiries(Resource):
 
 class TestServerInquiries(Resource):
     def post(self,name):
-        #data = ServerInquiries.parser.parse_args()
         data = resources.parsers.ParseTestServerInquiries.parser.parse_args()
         #write question only in db if it is unique to a surveyid
         if ServerInquiriesModel.find_by_name(name) and ServerInquiriesModel.find_by_surveyid(data['surveyid']):
@@ -56,7 +37,9 @@ class TestServerInquiries(Resource):
                                 data['serviceprovider'],
                                 name,
                                 data['type'],
-                                json.dumps(data['options']))
+                                json.dumps(data['options']),
+                                data['locked'],
+                                data['quizmode'])
         try:
             question.save_to_db()
         except:

@@ -16,7 +16,6 @@ class SurveyModel(db.Model):
 
     reports = db.relationship('ReportModel', lazy='dynamic') # a list of report models
 
-    #TODO: surveyid shoud be generated out of systemtime and servicprovidername
     def __init__(self, surveyid, serviceprovider, surveyname, status, comment, questions):
         self.surveyid = serviceprovider + "_" + datetime.now().strftime('%Y-%m-%d_%H%M%S')
         self.serviceprovider = serviceprovider
@@ -24,7 +23,6 @@ class SurveyModel(db.Model):
         self.status = status
         self.comment = comment
         self.questions = questions
-
 
     #representation of the object for the GUI
     def __repr__(self):

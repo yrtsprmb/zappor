@@ -43,7 +43,8 @@ class SendReport(Resource):
             report_to_delete = ReportModel.find_by_surveyid(surveyid)
             if report_to_delete:
                 try:
-                    report_to_delete.delete_from_db()
+                    #report_to_delete.delete_from_db()
+                    print('report deleted from db.') #debug
                 except:
                    return {'message': "error while deleting report"}, 500 #internal server error
 
@@ -53,8 +54,8 @@ class SendReport(Resource):
                 return {'message': "no survey inquiries for surveyid '{}' to delete.".format(surveyid)}, 400 #bad request
 
             try:
-                db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
-                db.session.commit()
+                #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
+                #db.session.commit()
                 print('server inquiries deleted') #debug
 
             except:

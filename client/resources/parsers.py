@@ -171,6 +171,16 @@ class ParseTestServerInquiries:
         required=True,
         help="options are missing"
     )
+    parser.add_argument('locked',
+        type=bool,
+        required=True,
+        help="locked missing"
+    )
+    parser.add_argument('quizmode',
+        type=bool,
+        required=True,
+        help="quizmode missing"
+    )  
 
 
 class ParseTestReports:
