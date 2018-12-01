@@ -99,7 +99,7 @@ class TestClientInquiries(Resource):
         return inquiry.tojson(), 201 #created
 
     def put(self,name):
-        data = ClientInquiries.parser.parse_args()
+        data = resources.parsers.ParseTestClientInquiries.parser.parse_args()
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry is None:
             return {'message': "No changes - inquiry '{}' does not exist".format(name)}, 400 #bad request

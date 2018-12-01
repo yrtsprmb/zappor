@@ -39,6 +39,7 @@ class RequestSurvey(Resource):
                 #save question to the db, only if it is not already known by surveyid
                 if ServerInquiriesModel.already_in_db(surveyid,name):
                     print("survey and matching inquiries already in DB")
+                    continue
                 else:
                     print("surveyid: " + surveyid)                  #debug
                     print("serviceprovider: " + serviceprovider)    #debug
@@ -50,6 +51,7 @@ class RequestSurvey(Resource):
                     frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),False,False) #TODO: quizmode und locked derzeit nur voreingestellt
                     frage.save_to_db()
                     #return frage.tojson(), 201 #created
-                    return {'message': "new survey with surveyid '{}' available and fetched from the server.".format(surveyid)}, 201 #created
+                    print("new survey with surveyid '{}' available and fetched from the server.".format(surveyid))
+                    #return {'message': }, 201 #created
 
-        return {'message': "no new surveys available."}, 200 #ok
+        return {'message': "done."}, 200 #ok

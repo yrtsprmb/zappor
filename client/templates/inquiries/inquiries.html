@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+  <h1>Welcome to the RAPPOR Client</h1>
+  <p>Please select your personal data and privacy settings</p>
+</div>
+
+
+<div class="container">
+
+      {# Go through each inquiry entry #}
+      {% for inq in inqs %}
+      <div class="card">
+              <div class="card-body">
+                  <h2><a class="card-title" href="  {{ url_for('inquiries_detail', id=inq.id) }}">{{ inq.name }}</a></h2>
+                  <a href="{{ url_for('inquiries_detail', id=inq.id) }}">Options: {{ inq.options }}</a>
+              </div>
+
+      </div>
+      {% endfor %}
+
+
+
+
+{% endblock %}

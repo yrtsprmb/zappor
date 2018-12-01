@@ -28,7 +28,7 @@ class ReportModel(db.Model):
 
     # returns a json representation of the report model
     def tojson(self):
-        return {'surveyid': self.surveyid, 'prr': self.prr, 'irr': self.irr, 'f': self.f, 'p': self.p,'q': self.q, 'answers': json.loads(self.answers)}
+        return {'surveyid': self.surveyid, 'prr': bool(self.prr), 'irr': bool(self.irr), 'f': self.f, 'p': self.p,'q': self.q, 'answers': json.loads(self.answers)}
 
     #find all reports belonging to one survey
     @classmethod

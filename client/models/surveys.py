@@ -18,7 +18,7 @@ class SurveyModel(db.Model):
 
     #json representaion of a survey object
     def tojson(self):
-        return {'surveyid': self.surveyid, 'longterm': self.longterm, 'processed': self.processed}
+        return {'surveyid': self.surveyid, 'longterm': bool(self.longterm), 'processed': bool(self.processed)}
 
     @classmethod
     def find_by_surveyid(cls, surveyid):

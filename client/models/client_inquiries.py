@@ -33,7 +33,7 @@ class ClientInquiriesModel(db.Model):
 
     #representation of the object for the GUI
     def __repr__(self):
-        return f" name: {self.name}, type: {self.type}, options: {self.options}, answer: {self.answer}, prr_answer: {self.prr_answer}, irr_answer: {self.irr_answer}, responded: {self.responded}, locked: {self.locked}, f: {self.f}, p: {self.p}, q: {self.q}"
+        return f" name: {self.name}, type: {self.type}, options: {self.options}, answer: {self.answer}, prr_answer: {self.prr_answer}, irr_answer: {self.irr_answer}, responded: {bool(self.responded)}, locked: {bool(self.locked)}, f: {self.f}, p: {self.p}, q: {self.q}"
 
     #json representation of a client privacy data set
     def tojson(self):
@@ -43,8 +43,8 @@ class ClientInquiriesModel(db.Model):
             'answer': json.loads(self.answer),
             'prr_answer': json.loads(self.prr_answer),
             'irr_answer': json.loads(self.irr_answer),
-            'responded': self.responded,
-            'locked': self.locked,
+            'responded': bool(self.responded),
+            'locked': bool(self.locked),
             'f': self.f,
             'p': self.p,
             'q': self.q,

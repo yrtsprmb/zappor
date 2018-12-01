@@ -26,7 +26,7 @@ class SendReport(Resource):
             print("Name of the surveyid: " + report.surveyid)   #debug
 
             surveyid = report.surveyid
-            report_serviceprovider = {'prr': 1, 'irr': 1, 'f': report.f, 'p': report.p, 'q': report.q, 'answers': report.answers }
+            report_serviceprovider = {'prr': 1, 'irr': 1, 'f': report.f, 'p': report.p, 'q': report.q, 'answers': json.loads(report.answers) }
             print(report_serviceprovider)      #debug
 
             # contact the server of the serviceprovider. send report if suceed
@@ -54,8 +54,8 @@ class SendReport(Resource):
                 return {'message': "no survey inquiries for surveyid '{}' to delete.".format(surveyid)}, 400 #bad request
 
             try:
-                #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
-                #db.session.commit()
+                db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
+                db.session.commit()
                 print('server inquiries deleted') #debug
 
             except:

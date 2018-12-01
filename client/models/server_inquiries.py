@@ -27,7 +27,7 @@ class ServerInquiriesModel(db.Model):
 
     #representation of the object for the GUI
     def __repr__(self):
-        return f" qid: {self.qid}, surveyid: {self.surveyid}, serviceprovider: {self.serviceprovider}, name: {self.name}, type: {self.type}, options: {self.options}"
+        return f" surveyid: {self.surveyid},  serviceprovider: {self.serviceprovider}, qid: {self.qid}, name: {self.name}, type: {self.type}, options: {self.options}, locked: {bool(self.locked)}, quizmode: {bool(self.quizmode)}"
 
     #json represtation of a service provider question
     def tojson(self):
@@ -37,14 +37,14 @@ class ServerInquiriesModel(db.Model):
             'name': self.name,
             'type': self.type,
             'options': json.loads(self.options),
-            'locked': self.locked,
-            'quizmode': self.quizmode}
+            'locked': bool(self.locked),
+            'quizmode': bool(self.quizmode)}
 
-    def compare_json(self):
-        return {
-            'name': self.name,
-            'tpye': self.type,
-            'options': json.loads(self.options)}
+    # def compare_json(self):
+    #     return {
+    #         'name': self.name,
+    #         'tpye': self.type,
+    #         'options': json.loads(self.options)}
 
     @classmethod
     def find_by_name(cls, name):
@@ -65,6 +65,8 @@ class ServerInquiriesModel(db.Model):
     @classmethod ## TODO: implement function from the send reports file
     def delete_all_by_surveyid(cls, surveyid):
         pass
+        # vorschlag von oli, ausprobieren
+        # cls.query.filter_by(surveyid==surveyid).delete()
     #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
 
     def save_to_db(self):

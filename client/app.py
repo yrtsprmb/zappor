@@ -130,10 +130,40 @@ def index():
 @app.route('/inquiries/')
 def inquiries_list():
     from models.client_inquiries import ClientInquiriesModel
-    from forms import InquiryForm
+    from forms import ClientInquiryForm
 
     inqs = (db.session.query(ClientInquiriesModel).order_by(ClientInquiriesModel.id.desc()).all())
     return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
+
+
+@app.route('/inquiries/<int:id>/', methods=['GET','POST'])
+def inquiries_detail(id):
+    from models.client_inquiries import ClientInquiriesModel
+    from forms import ClientInquiryForm
+
+    inq = db.session.query(ClientInquiriesModel).get(id)
+    if inq is None:
+        abort(404)
+
+    form = ClientInquiryForm()
+
+    if form.validate_on_submit():
+        answer = form.answer.data
+        locked = form.locked.data
+        f = form.f.data
+        p = form.p.data
+        q = form.q.data
+
+        inq.answer = answer
+
+        inq.responded = True # if a answer was given, the anwer will set responded by the user
+        inq.locked = locked
+        inq.f = f
+        inq.p = p
+        inq.q = q
+        db.session.commit()
+
+    return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
 
 @app.route('/inquiries/create/')
 def inquiries_create():
@@ -162,22 +192,15 @@ def inquiries_create():
     # return render_template('create_survey.html', form=form, title='Create a new survey')
 
 
-
-
-@app.route('/inquiries/<int:id>/')
-def inquiries_detail(id):
+@app.route("/inquiries/<int:id>/delete", methods=['POST'])
+def inquiries_delete(id):
     from models.client_inquiries import ClientInquiriesModel
+    from forms import InquiryForm
 
-    inq = db.session.query(ClientInquiriesModel).get(id)
-    if inq is None:
-        abort(404)
-    return render_template('inquiries/detail.html', inq=inq, title='helschen')
-
-    # from models.client_inquiries import ClientInquiriesModel
-    # inqs = (db.session.query(ClientInquiriesModel).order_by(ClientInquiriesModel.id.desc()).all())
-    # return render_template('inquiries.html', inqs=inqs, title='list of inquiries')
-
-
+    inq = ClientInquiriesModel.query.get_or_404(id)
+    inq.delete_from_db()
+    flash('inquiry has been deleted.')
+    return redirect(url_for('inquiries_list'))
 
 
 

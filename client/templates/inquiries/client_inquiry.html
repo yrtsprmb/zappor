@@ -1,0 +1,55 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="jumbotron">
+  <h1>name: {{ inq.name }}</h1>
+  <h2> options: {{ inq.options }} </h2>
+  <h3>answer: {{ inq.answer }} PRR: {{ inq.prr_answer }} IRR:{{ inq.irr_answer }} </p>
+  <p>responded: {{ inq.responded }} locked: {{ inq.locked }} </p>
+  <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
+  <form method="POST">
+      {# This hidden_tag is a CSRF security feature. #}
+      {{ form.hidden_tag() }}
+      <p> {{ form.answer.label }} {{ form.answer() }} </p>
+      <p> {{ form.locked.label }} {{ form.locked() }} </p>
+      <p> {{ form.f.label }} {{ form.f() }} </p>
+      <p> {{ form.p.label }} {{ form.p() }} </p>
+      <p> {{ form.q.label }} {{ form.q() }} </p>
+      <p> {{ form.submit() }} </p>
+  </form>
+
+     <div>
+       <!-- <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Save Changes</a> -->
+       <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Save Changes</a>
+       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del_modal">Delete Inquiry</button>
+     </div>
+</div>
+
+  <!-- Modal for Pop Up-->
+  {# https://getbootstrap.com/docs/4.1/components/modal/ #}
+  {# Notice how the link with the id to the button above! #}
+  <div class="modal" tabindex="-1" role="dialog" id="del_modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Inquiry?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Delete this question. Are you sure?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+          <form action="{{ url_for('inquiries_delete', id=inq.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

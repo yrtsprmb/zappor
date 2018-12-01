@@ -1,0 +1,58 @@
+{% macro edit_field(field, catch_kwargs=true) %}
+<div class="control-group {% if field.errors %} error {% endif %}" >
+    {{ field.label(class="control-label") }}
+        <div class="controls">
+            {{ field (**kwargs) }}
+              {% for error in field.errors %}
+              <span class="help-inline">{{ error }}</span>
+              {% endfor %}
+        </div>
+</div>
+{% endmacro %}
+
+
+{% macro detail(inq, link_name=true, show_edit=true, show_options=true) %}
+<div class="inquiry-detail">
+  {% if link_name %}
+  <<h3>
+        <a href="{{ url_for('inquiry_detail', inquiry_id=inq.id) }}">
+        {{ inq.name }}
+        </a>
+  </h3>
+  {% else %}
+    <h3>
+      {{ inq.name }}
+    </h3>
+  {% endif %}
+
+
+  {% if inq.options %}
+    <p> {{ inq.options }} </p>
+  {% endif %}
+
+
+  {% if inq.answer %}
+    <p> {{ inq.answer }} </p>
+  {% else %}
+  bla
+  {% endif %}
+
+  {% if show_edit %}
+      <div class="edit-controls">
+      <i class='icon-pencil'></i>
+      <a href="{{ url_for('inquiry_edit', inquiry_id=inq_id) }}">Edit</a>
+        <span class="inline-pad"></span>
+
+        <i class='icon-trash'></i>
+        <a class="inquiry_delete_link" href="#" data-delete-url="{{ url_for('inquiry_delete', inquiry_id=inq_id) }}"></a>
+      </div>
+      {% endif %}
+
+      {% if show_name and inq.name %}
+      <div class="row">
+        <p class="span5"> {{ inq.name }} </p>
+      </div>
+      {% endif %}
+
+</div>
+{% endmacro %}

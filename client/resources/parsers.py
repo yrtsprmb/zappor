@@ -180,7 +180,7 @@ class ParseTestServerInquiries:
         type=bool,
         required=True,
         help="quizmode missing"
-    )  
+    )
 
 
 class ParseTestReports:
@@ -211,7 +211,7 @@ class ParseTestReports:
         help="q value is missing"
     )
     parser.add_argument('answers',
-        type=str,
+        type=dict,
         action='append',
         required=True,
         help="answer value is missing"
