@@ -17,15 +17,15 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
 
-    <div class="navbar-nav">
-      <a class="nav-item nav-link" href="{{ url_for('index') }}">Server</a>
-      <a class="nav-item nav-link" href="{{ url_for('list_surveys') }}">List Surveys</a>
-      <a class="nav-item nav-link" href="{{ url_for('create_survey') }}">Create Survey</a>
-      <a class="nav-item nav-link" href="{{ url_for('evaluate_survey') }}">Evaluate Surveys</a>
+          <div class="navbar-nav">
+              <a class="nav-item nav-link" href="{{ url_for('index') }}">Server</a>
+              <a class="nav-item nav-link" href="{{ url_for('surveys_list') }}">List Surveys</a>
+              <a class="nav-item nav-link" href="{{ url_for('survey_create') }}">Create Survey</a>
+              <a class="nav-item nav-link" href="{{ url_for('evaluate_survey') }}">Evaluate Survey</a>
+              <a class="nav-item nav-link" href="{{ url_for('create_survey') }}">Create Old</a>
+          </div>
 
-    </div>
-
-</nav>
+    </nav>
 
       <div class="container">
 

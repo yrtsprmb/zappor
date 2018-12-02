@@ -2,49 +2,43 @@
 {% block content %}
 <div class="jumbotron">
   <h1>Create a new survey:</h1>
-  <p>todo: this will create a new survey</p>
   <form action="" method="post" novalidate>
 
         {{ form.hidden_tag() }}
         <div class="form-group">
-            {{ form.surveyid.label }}<br>
-            {{ form.surveyid(size=32) }}
-            {% for error in form.surveyid.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
 
-        <p>
-            {{ form.surveyname.label }}<br>
-            {{ form.surveyname(size=32) }}
-            {% for error in form.serviceprovider.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
+          <p>
+              {{ form.surveyname.label }}<br>
+              {{ form.surveyname(size=32) }}
+              {% for error in form.surveyname.errors %}
+              <span style="color: red;">[{{ error }}]</span>
+              {% endfor %}
+          </p>
 
-        <p>
+          <p>
             {{ form.status.label }}<br>
             {{ form.status(size=3) }}
             {% for error in form.status.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-        </p>
-        <p>
-        <p>
+          </p>
+
+          <p>
             {{ form.comment.label }}<br>
             {{ form.comment(size=32) }}
-        </p>
-        <p>
+          </p>
+          
+          <p>
             {{ form.questions.label }}<br>
             {{ form.questions(size=32) }}
             {% for error in form.questions.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-        </p>
+          </p>
 
-        <p>
           {{ form.submit() }}
-    </form>
+        </div>
+  </form>
 
 </div>
 {% endblock %}
