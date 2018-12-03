@@ -9,11 +9,11 @@ from flask_restful import reqparse
 # parser for POST client inquiries
 class ParseClientInquiriesPost:
     parser = reqparse.RequestParser()
-    parser.add_argument('name',
-        type=str,
-        required=False,
-        help="name error through parsing"
-    )
+    # parser.add_argument('name',
+    #     type=str,
+    #     required=False,
+    #     help="name error through parsing"
+    # )
     parser.add_argument('type',
         type=str,
         required=True,
@@ -28,27 +28,27 @@ class ParseClientInquiriesPost:
     parser.add_argument('answer',
         type=int,
         action='append',
-        required=True,
+        required=False,
         help="answer is missing"
     )
     parser.add_argument('locked',
         type=bool,
-        required=True,
+        required=False,
         help="locked is missing"
     )
     parser.add_argument('f',
         type=float,
-        required=True,
+        required=False,
         help="f value is missing"
     )
     parser.add_argument('p',
         type=float,
-        required=True,
+        required=False,
         help="p value is missing"
     )
     parser.add_argument('q',
         type=float,
-        required=True,
+        required=False,
         help="q value is missing"
     )
 

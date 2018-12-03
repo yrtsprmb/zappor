@@ -1,7 +1,9 @@
 import json
-from flask_restful import Resource#, reqparse
+from flask_restful import Resource
 
 from models.client_inquiries import ClientInquiriesModel
+from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
+from internal.config import global_f, global_p, global_q, global_locked
 import resources.parsers
 
 #REST API to Access the client questions with their answers
@@ -18,17 +20,23 @@ class ClientInquiries(Resource):
             return {'message': "Inquiry with name '{}' already exists.".format(name)}, 400 #bad request
             #schreibe zeugs in db
         data = resources.parsers.ParseClientInquiriesPost.parser.parse_args()
+
+        # a new inquiry is created, answer, prr_answer and irr_answer will set to 0
+        answer = [0]* len(data['options'])
+        prr = [0]* len(data['options'])
+        irr = [0]* len(data['options'])
+
         inquiry = ClientInquiriesModel(name,
                                 data['type'],
                                 json.dumps(data['options']),
-                                json.dumps(data['answer']),
-                                json.dumps(data['answer']), #todo Take answer make a prr rappor and save prr_answer here
-                                json.dumps(data['answer']), #todo Take prr_answer make a irr rappor and save irr_answer here
-                                True,
-                                data['locked'],
-                                data['f'],
-                                data['p'],
-                                data['q'])
+                                json.dumps(answer), #json.dumps(data['answer']),
+                                json.dumps(prr),
+                                json.dumps(irr),
+                                False, #responded is False, because inquiry is created not answered
+                                global_locked, #data['locked'],
+                                global_f, #data['f'],
+                                global_p, #data['p'],
+                                global_q) #data['q'])
         try:
             inquiry.save_to_db()
         except:
@@ -43,6 +51,14 @@ class ClientInquiries(Resource):
             return {'message': "Can not change status, inquiry '{}' does not exist".format(name)}, 400 #bad request
 
         inquiry.answer = json.dumps(data['answer'])
+        # a PRR will be made after a answer is was changed
+        prr = permanent_RandomizedResponse(float(data['f']),data['answer'])
+        inquiry.prr_answer = json.dumps(prr)
+        # a PRR will be made after a answer is was changed
+        irr = instantaneous_RandomizedResponse(float(data['p']),float(data['q']),prr)
+        inquiry.irr_answer = json.dumps(irr)
+        # if a answer was given by the user, responded will be set to TRUE
+        inquiry.responded = True
         inquiry.locked = data['locked']
         inquiry.f = data['f']
         inquiry.p = data['p']
@@ -51,8 +67,8 @@ class ClientInquiries(Resource):
             inquiry.save_to_db()
         except:
             return {'message': "error while saving inquiry with name: '{}'.".format(name)}, 500 #internal server error
-        return inquiry.tojson(), 200 #ok
-        #return {'message': " inquiry '{}' changed.".format(name)}, 200 #ok
+        return inquiry.tojson(), 202 #accepted
+        #return {'message': " inquiry '{}' changed.".format(name)}, 202 #accepted
 
     def delete(self,name):
         inquiry = ClientInquiriesModel.find_by_name(name)
@@ -71,7 +87,8 @@ class ListClientInquiries(Resource):
 
 
 #############################################################
-# this ressource allows full access to all values
+# this ressource allows full access to all
+# ClientInquiries values
 # through the REST api
 #############################################################
 class TestClientInquiries(Resource):
@@ -81,12 +98,17 @@ class TestClientInquiries(Resource):
             return {'message': "Inquiry with name '{}' already exists.".format(name)}, 400 #bad request
 
         data = resources.parsers.ParseTestClientInquiries.parser.parse_args()
+
+        # a PRR will be made after a answer is was changed
+        prr = permanent_RandomizedResponse(float(data['f']),data['answer'])
+        # a IRR will be made after every request for an inquiry
+        irr = instantaneous_RandomizedResponse(float(data['p']),float(data['q']),prr)
         inquiry = ClientInquiriesModel(name,
                                 data['type'],
                                 json.dumps(data['options']),
                                 json.dumps(data['answer']),
-                                json.dumps(data['prr_answer']),
-                                json.dumps(data['irr_answer']),
+                                json.dumps(prr), #json.dumps(data['prr_answer']),
+                                json.dumps(irr),#json.dumps(data['irr_answer']),
                                 data['responded'],
                                 data['locked'],
                                 data['f'],

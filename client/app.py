@@ -24,7 +24,8 @@ from forms import RequestSurveyTestForm
 ##################################################################
 
 # import of configurations:
-from intern.config import repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
+#from intern.config import repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
+from internal.config import repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
 
 # for requests
 from resources.request_surveys import RequestSurvey
@@ -140,13 +141,17 @@ def inquiries_list():
 def inquiries_detail(id):
     from models.client_inquiries import ClientInquiriesModel
     from forms import ClientInquiryForm
+    import json
+    from intern.basicrappor import permanent_RandomizedResponse
+
 
     inq = db.session.query(ClientInquiriesModel).get(id)
     if inq is None:
         abort(404)
 
+    # if the user changes a client inquiry, responded will be set to TRUE
+    # and a PRR will be made with the answer value
     form = ClientInquiryForm()
-
     if form.validate_on_submit():
         answer = form.answer.data
         locked = form.locked.data
@@ -154,9 +159,14 @@ def inquiries_detail(id):
         p = form.p.data
         q = form.q.data
 
-        inq.answer = answer
+        # a PRR will be made after a answer is was changed
+        if(inq.answer != answer):
+            prr = permanent_RandomizedResponse(float(f),json.loads(answer))
+            inq.prr_answer = json.dumps(prr)
 
-        inq.responded = True # if a answer was given, the anwer will set responded by the user
+        inq.answer = answer
+        # if a answer was given by the user, responed will be set to TRUE
+        inq.responded = True
         inq.locked = locked
         inq.f = f
         inq.p = p
@@ -204,7 +214,7 @@ def inquiries_delete(id):
 
 
 
-
+#testing
 @app.route('/show')
 def show_inquiries():
     from models.server_inquiries import ServerInquiriesModel
