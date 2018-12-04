@@ -2,6 +2,7 @@
 
 ## configurations ##
 
+secretkey_config = 'zappor'
 
 #serviceprovider data
 server = 'http://127.0.0.1'

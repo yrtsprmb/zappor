@@ -4,7 +4,7 @@ from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
 from models.reports import ReportModel
 
-from intern.matchings import generate_answers_by_surveyid, find_matching_surveys, find_matches
+from internal.matchings import generate_answers_by_surveyid, find_matching_surveys, find_matches
 from intern.config import global_f, global_p, global_q, global_irr, global_prr
 
 
@@ -12,8 +12,9 @@ from intern.config import global_f, global_p, global_q, global_irr, global_prr
 # positive matches are saved in the reports table
 class MatchInquiries(Resource):
     def get(self):
-
-        client = ClientInquiriesModel.query.filter_by(locked='0').all() # only inquiries which are not locked by the user
+        # only inquiries which are not locked and answered by the user
+        client = ClientInquiriesModel.query.filter_by(locked='0').filter_by(responded='1').all()
+        #client = ClientInquiriesModel.query.filter_by(locked='0').all() # only inquiries which are not locked by the user
         server = ServerInquiriesModel.query.all() # all server inquiries
         print('client inquiries')       #debug
         print(client)                   #debug
@@ -61,4 +62,4 @@ class MatchInquiries(Resource):
                 except:
                     return {'message': "error while inserting report for surveyid'{}'. ".format(surveyid)}, 500 #internal server error
 
-        return {'message': "no new matches, all available matches already in reports"}, 200 #ok
+        return {'message': "no new matches."}, 200 #ok

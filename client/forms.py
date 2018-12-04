@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, DecimalField, FloatField, StringField, IntegerField, SubmitField, SelectField, TextField, validators
+from wtforms import TextAreaField, BooleanField, DecimalField, FloatField, StringField, IntegerField, SubmitField, SelectField, TextField, validators
 from wtforms.validators import DataRequired, Length
 
 
@@ -11,11 +11,11 @@ class RequestSurveyTestForm(FlaskForm):
     submit_match_inquiries = SubmitField('Match Inquiries')
 
 
-class RapporForm(FlaskForm):
-    f = IntegerField('Insert f value:', validators=[DataRequired()])
-    p = IntegerField('Insert p value:')
-    q = IntegerField('Insert q wert:')
-    submit = SubmitField('Add Rappor')
+class CreateClientInquiryForm(FlaskForm):
+    inq_name = StringField('Name:', validators=[DataRequired()])
+    inq_type = SelectField('Type:', choices=[('boolean','boolean'),('ordinal','ordinal')], validators=[DataRequired()])
+    inq_options = TextAreaField('Options:', validators=[DataRequired()])
+    submit = SubmitField('Credit inquiry')
 
 
 #class InquiryForm(Form):
@@ -31,3 +31,10 @@ class ClientInquiryForm(FlaskForm):
     p = DecimalField('p')
     q = DecimalField('q')
     submit = SubmitField('Edit inquiry')
+
+
+class RapporForm(FlaskForm):
+    f = IntegerField('Insert f value:', validators=[DataRequired()])
+    p = IntegerField('Insert p value:')
+    q = IntegerField('Insert q wert:')
+    submit = SubmitField('Add Rappor')

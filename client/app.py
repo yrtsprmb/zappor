@@ -25,7 +25,7 @@ from forms import RequestSurveyTestForm
 
 # import of configurations:
 #from intern.config import repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
-from internal.config import repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
+from internal.config import secretkey_config, repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
 
 # for requests
 from resources.request_surveys import RequestSurvey
@@ -42,7 +42,7 @@ from resources.reports import Report, ListReports
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///clientdata.db' # tells sqlachemy where the database is
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = 'zappor'
+app.secret_key = secretkey_config
 api = Api(app)
 
 #creates tables on startup when first request ist made
@@ -142,7 +142,7 @@ def inquiries_detail(id):
     from models.client_inquiries import ClientInquiriesModel
     from forms import ClientInquiryForm
     import json
-    from intern.basicrappor import permanent_RandomizedResponse
+    from internal.basicrappor import permanent_RandomizedResponse
 
 
     inq = db.session.query(ClientInquiriesModel).get(id)
@@ -175,14 +175,37 @@ def inquiries_detail(id):
 
     return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
 
-@app.route('/inquiries/create/')
+@app.route('/inquiries/create', methods=['GET','POST'])
 def inquiries_create():
     from models.client_inquiries import ClientInquiriesModel
-    from forms import InquiryForm
+    from forms import CreateClientInquiryForm
 
-    #inqs = (db.session.query(ClientInquiriesMo
-    #del).order_by(ClientInquiriesModel.id.desc()).all())
-    return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
+    form = CreateClientInquiryForm()
+    if form.validate_on_submit():
+        inq = ClientInquiriesModel(name = form.inq_name.data,
+                                    type = form.inq_type.data,
+                                    options = form.inq_options.data)
+
+        inq.save_to_db()
+        flash("Survey created")
+        return redirect('/index')
+    return render_template('inquiries/create.html', form=form, title='create a new inquiry')
+
+    #                                 #                             comment = form.comment.data,
+    #                             data['type'],
+    #                             json.dumps(data['options']),
+    #                             json.dumps(answer), #json.dumps(data['answer']),
+    #                             json.dumps(prr),
+    #                             json.dumps(irr),
+    #                             False, #responded is False, because inquiry is created not answered
+    #                             global_locked, #data['locked'],
+    #                             global_f, #data['f'],
+    #                             global_p, #data['p'],
+    #                             global_q) #data['q'])
+    #
+    # #inqs = (db.session.query(ClientInquiriesMo
+    # #del).order_by(ClientInquiriesModel.id.desc()).all())
+    # return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
     #
     #
     # from forms import NewSurveyForm

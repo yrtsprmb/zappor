@@ -1,3 +1,4 @@
+#resources/report.py
 import json
 from flask_restful import Resource, request
 
@@ -5,6 +6,7 @@ from models.report import ReportModel
 from models.survey import SurveyModel
 
 import resources.parsers
+from resources.parsers import check_fpq
 
 ############################################
 ## Ressources for reports
@@ -25,6 +27,10 @@ class Report(Resource):
         if SurveyModel.find_active_survey_by_id(surveyid):
             #data = request.get_json()
             data = resources.parsers.ParseReportsPost.parser.parse_args()
+
+            if not check_fpq(data['f'],data['p'],data['q']):
+                return {'message': "report discarded: f,p,q must have values between 0.0 and 1.0"}, 400 #bad request
+
             print(data)
             report = ReportModel(surveyid,
                 data['prr'],

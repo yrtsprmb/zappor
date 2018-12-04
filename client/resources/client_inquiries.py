@@ -5,6 +5,7 @@ from models.client_inquiries import ClientInquiriesModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from internal.config import global_f, global_p, global_q, global_locked
 import resources.parsers
+from resources.parsers import check_fpq
 
 #REST API to Access the client questions with their answers
 class ClientInquiries(Resource):
@@ -26,6 +27,9 @@ class ClientInquiries(Resource):
         prr = [0]* len(data['options'])
         irr = [0]* len(data['options'])
 
+        if not check_fpq(global_f, global_p, global_p):
+            return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
+
         inquiry = ClientInquiriesModel(name,
                                 data['type'],
                                 json.dumps(data['options']),
@@ -44,21 +48,37 @@ class ClientInquiries(Resource):
         return inquiry.tojson(), 201 #created
         #return {'message': "inquiry with name '{}' sucessfully inserted.".format(name)}, 201 #created
 
+    # change a client inquiry
+    #
+    #
+    #
     def put(self,name):
         data = resources.parsers.ParseClientInquiriesPut.parser.parse_args()
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry is None:
             return {'message': "Can not change status, inquiry '{}' does not exist".format(name)}, 400 #bad request
 
-        inquiry.answer = json.dumps(data['answer'])
-        # a PRR will be made after a answer is was changed
-        prr = permanent_RandomizedResponse(float(data['f']),data['answer'])
-        inquiry.prr_answer = json.dumps(prr)
-        # a PRR will be made after a answer is was changed
-        irr = instantaneous_RandomizedResponse(float(data['p']),float(data['q']),prr)
-        inquiry.irr_answer = json.dumps(irr)
-        # if a answer was given by the user, responded will be set to TRUE
-        inquiry.responded = True
+        #check if the format of answers is correct
+        # user answer must have as many values as inquiry options
+        if (len(json.loads(inquiry.options)) is not len(data['answer'])):
+            return {'message': "Your answer must have as many values as options are available"}, 400 #bad request
+
+        if not check_fpq(data['f'],data['p'],data['q']):
+            return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
+
+        # PRR and IRR will be only made if answer changes
+        if (inquiry.answer != json.dumps(data['answer'])):
+            print("horsthorst")
+            inquiry.answer = json.dumps(data['answer'])
+            # a PRR will be made after a answer is was changed
+            prr = permanent_RandomizedResponse(float(data['f']),data['answer'])
+            inquiry.prr_answer = json.dumps(prr)
+            # a PRR will be made after a answer is was changed
+            irr = instantaneous_RandomizedResponse(float(data['p']),float(data['q']),prr)
+            inquiry.irr_answer = json.dumps(irr)
+            # if a answer was given by the user, responded will be set to TRUE
+            inquiry.responded = True
+
         inquiry.locked = data['locked']
         inquiry.f = data['f']
         inquiry.p = data['p']
@@ -99,6 +119,9 @@ class TestClientInquiries(Resource):
 
         data = resources.parsers.ParseTestClientInquiries.parser.parse_args()
 
+        if not check_fpq(data['f'],data['p'],data['q']):
+            return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
+
         # a PRR will be made after a answer is was changed
         prr = permanent_RandomizedResponse(float(data['f']),data['answer'])
         # a IRR will be made after every request for an inquiry
@@ -125,6 +148,9 @@ class TestClientInquiries(Resource):
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry is None:
             return {'message': "No changes - inquiry '{}' does not exist".format(name)}, 400 #bad request
+
+        if not check_fpq(data['f'],data['p'],data['q']):
+            return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
 
         inquiry.type = data['type']
         inquiry.options = json.dumps(data['options'])

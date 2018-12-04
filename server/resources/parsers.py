@@ -92,3 +92,7 @@ class ParseReportsPost:
         required=True,
         help="answers are missing"
     )
+
+# checks if f,p,q are float between 0 and 1
+def check_fpq(f,p,q):
+    return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
