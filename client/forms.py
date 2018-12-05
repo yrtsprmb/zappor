@@ -15,10 +15,9 @@ class CreateClientInquiryForm(FlaskForm):
     inq_name = StringField('Name:', validators=[DataRequired()])
     inq_type = SelectField('Type:', choices=[('boolean','boolean'),('ordinal','ordinal')], validators=[DataRequired()])
     inq_options = TextAreaField('Options:', validators=[DataRequired()])
-    submit = SubmitField('Credit inquiry')
+    submit = SubmitField('Create inquiry')
 
 
-#class InquiryForm(Form):
 class ClientInquiryForm(FlaskForm):
     name = TextField('name')
     options = TextField('name')
@@ -31,10 +30,3 @@ class ClientInquiryForm(FlaskForm):
     p = DecimalField('p')
     q = DecimalField('q')
     submit = SubmitField('Edit inquiry')
-
-
-class RapporForm(FlaskForm):
-    f = IntegerField('Insert f value:', validators=[DataRequired()])
-    p = IntegerField('Insert p value:')
-    q = IntegerField('Insert q wert:')
-    submit = SubmitField('Add Rappor')

@@ -6,7 +6,7 @@ from models.report import ReportModel
 from models.survey import SurveyModel
 
 import resources.parsers
-from resources.parsers import check_fpq
+from resources.parsers import check_fpq, check_if_bits
 
 ############################################
 ## Ressources for reports
@@ -25,7 +25,6 @@ class Report(Resource):
     def post(self, surveyid):
         print("request: ", request.args)
         if SurveyModel.find_active_survey_by_id(surveyid):
-            #data = request.get_json()
             data = resources.parsers.ParseReportsPost.parser.parse_args()
 
             if not check_fpq(data['f'],data['p'],data['q']):

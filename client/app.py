@@ -24,8 +24,8 @@ from forms import RequestSurveyTestForm
 ##################################################################
 
 # import of configurations:
-#from intern.config import repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
 from internal.config import secretkey_config, repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
+from internal.config import global_f, global_p,global_q
 
 # for requests
 from resources.request_surveys import RequestSurvey
@@ -175,66 +175,51 @@ def inquiries_detail(id):
 
     return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
 
+
 @app.route('/inquiries/create', methods=['GET','POST'])
 def inquiries_create():
     from models.client_inquiries import ClientInquiriesModel
     from forms import CreateClientInquiryForm
+    import json
 
     form = CreateClientInquiryForm()
+    if ClientInquiriesModel.find_by_name(form.inq_name.data):
+        print("name already in db")
+        flash("name already in db")
+        return render_template('inquiries/create.html', form=form, title='create a new inquiry')
+
+
     if form.validate_on_submit():
+
+        length_options_list = len(json.loads(form.inq_options.data))
+        print('mega')
+        print(length_options_list)
         inq = ClientInquiriesModel(name = form.inq_name.data,
                                     type = form.inq_type.data,
-                                    options = form.inq_options.data)
-
+                                    options = form.inq_options.data,
+                                    answer = json.dumps([0]* length_options_list),
+                                    prr_answer = json.dumps([0]* length_options_list),
+                                    irr_answer = json.dumps([0]* length_options_list),
+                                    responded = True,
+                                    locked = True,
+                                    f = global_f,
+                                    p = global_p,
+                                    q = global_q)
         inq.save_to_db()
+
         flash("Survey created")
-        return redirect('/index')
+        return redirect('inquiries/')
     return render_template('inquiries/create.html', form=form, title='create a new inquiry')
-
-    #                                 #                             comment = form.comment.data,
-    #                             data['type'],
-    #                             json.dumps(data['options']),
-    #                             json.dumps(answer), #json.dumps(data['answer']),
-    #                             json.dumps(prr),
-    #                             json.dumps(irr),
-    #                             False, #responded is False, because inquiry is created not answered
-    #                             global_locked, #data['locked'],
-    #                             global_f, #data['f'],
-    #                             global_p, #data['p'],
-    #                             global_q) #data['q'])
-    #
-    # #inqs = (db.session.query(ClientInquiriesMo
-    # #del).order_by(ClientInquiriesModel.id.desc()).all())
-    # return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
-    #
-    #
-    # from forms import NewSurveyForm
-    # from models.survey import SurveyModel
-
-    # form = NewSurveyForm()
-    # if form.validate_on_submit():
-    #     newsurvey = SurveyModel(surveyid = form.surveyid.data,
-    #                             serviceprovider = form.serviceprovider.data,
-    #                             surveyname = form.surveyname.data,
-    #                             status = form.status.data,
-    #                             comment = form.comment.data,
-    #                             questions = form.questions.data)
-    #     newsurvey.save_to_db()
-    #     flash("New survey created")
-    #     return redirect('/index')
-    # return render_template('create_survey.html', form=form, title='Create a new survey')
 
 
 @app.route("/inquiries/<int:id>/delete", methods=['POST'])
 def inquiries_delete(id):
     from models.client_inquiries import ClientInquiriesModel
-    from forms import InquiryForm
 
     inq = ClientInquiriesModel.query.get_or_404(id)
     inq.delete_from_db()
     flash('inquiry has been deleted.')
     return redirect(url_for('inquiries_list'))
-
 
 
 #testing
@@ -248,32 +233,6 @@ def show_inquiries():
     questions = ServerInquiriesModel.query.all()
     reports = ReportModel.query.all()
     return render_template('show_inquiries.html', answers=answers, questions=questions, reports=reports, title='list of inquiries')
-
-
-@app.route('/privacy',methods=['GET','POST'])
-def add_privacy():
-    from models.rappor import RapporModel
-    from forms import RapporForm
-
-    form = RapporForm()
-
-    if form.validate_on_submit():
-        f = form.f.data
-        p = form.p.data
-        q = form.q.data
-
-        # Add new Puppy to database
-        new_rap = RapporModel(f,p,q)
-        db.session.add(new_rap)
-        db.session.commit()
-
-        return redirect(url_for('list_all'))
-    return render_template('privacysettings_a.html',form=form, title='privacy settings a')
-
-
-@app.route('/privacy_b', methods=['GET','POST'])
-def add_privacy_b():
-    return render_template('privacysettings_b.html', title='privacy settings b')
 
 
 @app.route('/config')
@@ -301,30 +260,13 @@ def tests():
             print("Match inquiries button pressed") #debug
             r = requests.get('http://127.0.0.1:5001/match/')
 
-
     return render_template('tests.html', form=form, title='client tests')
-
 
 
 ### oldstuff ###########################################
 ## not needed in future
 ########################################################
 
-
-@app.route('/test')
-def test():
-    user = {'username': 'Miguel'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template('test.html', title='Home of the Zepp', user=user, posts=posts)
 
 ####### Server only starts when it will be executed over the file app.py
 if __name__ == '__main__':

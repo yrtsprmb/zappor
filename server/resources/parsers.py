@@ -1,9 +1,9 @@
 # resources/parsers.py
-
 from flask_restful import reqparse
 
 ##################################################################
-## in this file are all parsers for the REST API
+# in this file are all parsers for the REST API
+# and also validation checks for values
 ##################################################################
 
 
@@ -96,3 +96,14 @@ class ParseReportsPost:
 # checks if f,p,q are float between 0 and 1
 def check_fpq(f,p,q):
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
+
+def check_if_bits(list):
+    for value in list:
+        if(value !=0 and value !=1):
+            return False
+    return True
+
+def check_status(status):
+    if(status != 'created' and status != 'active' and status != 'done'):
+        return False
+    return True

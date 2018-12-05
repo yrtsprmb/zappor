@@ -65,22 +65,22 @@ class ParseClientInquiriesPut:
     parser.add_argument('locked',
         type=bool,
         required=True,
-        help="status is missing or not correct"
+        help="locked is missing or not correct"
     )
     parser.add_argument('f',
         type=float,
         required=True,
-        help="status is missing or not correct"
+        help="f is missing or not correct"
     )
     parser.add_argument('p',
         type=float,
         required=True,
-        help="status is missing or not correct"
+        help="p is missing or not correct"
     )
     parser.add_argument('q',
         type=float,
         required=True,
-        help="status is missing or not correct!"
+        help="q is missing or not correct!"
     )
 
 
@@ -89,56 +89,56 @@ class ParseTestClientInquiries:
     parser = reqparse.RequestParser()
     parser.add_argument('type',
         type=str,
-        required=True,
-        help="liste is missing"
+        required=False,
+        help="type is missing"
     )
     parser.add_argument('options',
         type=str,
         action='append',
-        required=True,
+        required=False,
         help="options are missing"
     )
     parser.add_argument('answer',
         type=int,
         action='append',
-        required=True,
+        required=False,
         help="answer is missing"
     )
     parser.add_argument('prr_answer',
         type=int,
         action='append',
-        required=True,
+        required=False,
         help="prr is missing"
     )
     parser.add_argument('irr_answer',
         type=int,
         action='append',
-        required=True,
+        required=False,
         help="irr is missing"
     )
     parser.add_argument('responded',
         type=bool,
-        required=True,
+        required=False,
         help="responded is missing"
     )
     parser.add_argument('locked',
         type=bool,
-        required=True,
+        required=False,
         help="locked is missing"
     )
     parser.add_argument('f',
         type=float,
-        required=True,
+        required=False,
         help="f value is missing"
     )
     parser.add_argument('p',
         type=float,
-        required=True,
+        required=False,
         help="p value is missing"
     )
     parser.add_argument('q',
         type=float,
-        required=True,
+        required=False,
         help="q value is missing"
     )
 
@@ -254,3 +254,9 @@ class CheckRestInputValues:
 # checks if f,p,q are float between 0 and 1
 def check_fpq(f,p,q):
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
+
+def check_if_bits(list):
+    for value in list:
+        if(value !=0 and value !=1):
+            return False
+    return True

@@ -139,25 +139,6 @@ def evaluate_survey():
         return redirect(url_for('index'))
     return render_template('evaluate_survey.html', form=form, title='Survey Evaluation')
 
-## old -> to delete
-@app.route('/create', methods=['GET','POST'])
-def create_survey():
-    from forms import NewSurveyForm
-    from models.survey import SurveyModel
-
-    form = NewSurveyForm()
-    if form.validate_on_submit():
-        newsurvey = SurveyModel(surveyid = form.surveyid.data,
-                                serviceprovider = form.serviceprovider.data,
-                                surveyname = form.surveyname.data,
-                                status = form.status.data,
-                                comment = form.comment.data,
-                                questions = form.questions.data)
-        newsurvey.save_to_db()
-        flash("New survey created")
-        return redirect('/index')
-    return render_template('create_survey.html', form=form, title='Create a new survey')
-
 
 
 ####### Server only starts when it will be executed over the file app.py

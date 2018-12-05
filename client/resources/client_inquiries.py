@@ -5,9 +5,11 @@ from models.client_inquiries import ClientInquiriesModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from internal.config import global_f, global_p, global_q, global_locked
 import resources.parsers
-from resources.parsers import check_fpq
+from resources.parsers import check_fpq, check_if_bits
 
-#REST API to Access the client questions with their answers
+#############################################################
+# REST API for client inquiries
+#############################################################
 class ClientInquiries(Resource):
 
     def get(self,name):
@@ -26,6 +28,9 @@ class ClientInquiries(Resource):
         answer = [0]* len(data['options'])
         prr = [0]* len(data['options'])
         irr = [0]* len(data['options'])
+
+        if not check_if_bits(answer):
+            return {'message': "only 0s and 1s allowed in answers"}, 400 #bad request
 
         if not check_fpq(global_f, global_p, global_p):
             return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
@@ -49,9 +54,6 @@ class ClientInquiries(Resource):
         #return {'message': "inquiry with name '{}' sucessfully inserted.".format(name)}, 201 #created
 
     # change a client inquiry
-    #
-    #
-    #
     def put(self,name):
         data = resources.parsers.ParseClientInquiriesPut.parser.parse_args()
         inquiry = ClientInquiriesModel.find_by_name(name)
@@ -59,6 +61,11 @@ class ClientInquiries(Resource):
             return {'message': "Can not change status, inquiry '{}' does not exist".format(name)}, 400 #bad request
 
         #check if the format of answers is correct
+
+        #answer must be a list of 0s and 1s
+        if not check_if_bits(data['answer']):
+            return {'message': "only 0s and 1s allowed in answers"}, 400 #bad request
+
         # user answer must have as many values as inquiry options
         if (len(json.loads(inquiry.options)) is not len(data['answer'])):
             return {'message': "Your answer must have as many values as options are available"}, 400 #bad request
@@ -68,7 +75,7 @@ class ClientInquiries(Resource):
 
         # PRR and IRR will be only made if answer changes
         if (inquiry.answer != json.dumps(data['answer'])):
-            print("horsthorst")
+
             inquiry.answer = json.dumps(data['answer'])
             # a PRR will be made after a answer is was changed
             prr = permanent_RandomizedResponse(float(data['f']),data['answer'])
@@ -107,7 +114,7 @@ class ListClientInquiries(Resource):
 
 
 #############################################################
-# this ressource allows full access to all
+# this ressources allows full access to all
 # ClientInquiries values
 # through the REST api
 #############################################################
@@ -118,6 +125,12 @@ class TestClientInquiries(Resource):
             return {'message': "Inquiry with name '{}' already exists.".format(name)}, 400 #bad request
 
         data = resources.parsers.ParseTestClientInquiries.parser.parse_args()
+
+        if not (len(data['answer']) == len(data['prr_answer']) == len(data['irr_answer'])):
+            return {'message': "'answer', 'prr_answer' and 'irr_answer' must have the same length"}, 400 #bad request
+
+        if not (check_if_bits(data['answer']) and check_if_bits(data['prr_answer']) and check_if_bits(data['irr_answer'])):
+            return {'message': "only 0s and 1s allowed in answer, prr_answer and irr_answer"}, 400 #bad request
 
         if not check_fpq(data['f'],data['p'],data['q']):
             return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
@@ -151,6 +164,9 @@ class TestClientInquiries(Resource):
 
         if not check_fpq(data['f'],data['p'],data['q']):
             return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
+
+        if not (check_if_bits(data['answer']) and check_if_bits(data['prr_answer']) and check_if_bits(data['irr_answer'])):
+            return {'message': "only 0s and 1s allowed in answer, prr_answer and irr_answer"}, 400 #bad request
 
         inquiry.type = data['type']
         inquiry.options = json.dumps(data['options'])
