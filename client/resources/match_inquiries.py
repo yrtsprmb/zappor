@@ -5,7 +5,7 @@ from models.client_inquiries import ClientInquiriesModel
 from models.reports import ReportModel
 
 from internal.matchings import generate_answers_by_surveyid, find_matching_surveys, find_matches
-from intern.config import global_f, global_p, global_q, global_irr, global_prr
+from internal.config import global_f, global_p, global_q, global_irr, global_prr
 
 
 # tooks all available inquiries from client and server and match them together

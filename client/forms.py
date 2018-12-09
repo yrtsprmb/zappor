@@ -13,8 +13,9 @@ class RequestSurveyTestForm(FlaskForm):
 
 class CreateClientInquiryForm(FlaskForm):
     inq_name = StringField('Name:', validators=[DataRequired()])
-    inq_type = SelectField('Type:', choices=[('boolean','boolean'),('ordinal','ordinal')], validators=[DataRequired()])
+    inq_type = SelectField('Type:', choices=[('ordinal','ordinal'),('boolean','boolean')], validators=[DataRequired()])
     inq_options = TextAreaField('Options:', validators=[DataRequired()])
+    inq_qdescription = StringField('Description of the inquiry:')
     submit = SubmitField('Create inquiry')
 
 
@@ -23,6 +24,7 @@ class EditClientInquiryForm(FlaskForm):
     options = TextField('name')
     answer = TextField('your answer', validators=[DataRequired()])
     locked = BooleanField("lock question?")
+    qdescription = TextField('Descpription')
     #locked = TextField("p", [validators.Length(min=0,max=5)])
     #f = TextField('f', validators=[DataRequired(message="value must be between 0 and 1")])
     #p = TextField("p", [validators.Length(min=0,max=5)])

@@ -88,8 +88,6 @@ app.register_blueprint(error_pages)
 api.add_resource(ClientInquiries, '/ci/<string:name>')
 api.add_resource(ListClientInquiries, '/lci')
 
-
-api.add_resource(ServerInquiries, '/si/<string:name>')
 api.add_resource(ListServerInquiries, '/lsi')
 
 api.add_resource(Survey, '/survey/<string:surveyid>')
@@ -99,7 +97,9 @@ api.add_resource(ListReports, '/listreports/')
 
 api.add_resource(ClientConf, '/configuration/<string:clientname>')
 
-#test for requesting
+# TEST API' for server inquiries
+
+# API's for client/server communication
 api.add_resource(RequestSurvey, '/requestsurveys/')
 api.add_resource(SendReport, '/sendreports/')
 api.add_resource(MatchInquiries, '/match/')
@@ -117,6 +117,8 @@ api.add_resource(TestClientInquiries, '/ci_test/<string:name>')
 
 from resources.server_inquiries import TestServerInquiries
 api.add_resource(TestServerInquiries, '/si_test/<string:name>')
+
+api.add_resource(ServerInquiries, '/si/<string:name>')
 
 ### views ########################################################
 ## routes for the web GUI
@@ -229,6 +231,7 @@ def inquiries_create():
                                     answer = json.dumps([0]* length_options_list),
                                     prr_answer = json.dumps([0]* length_options_list),
                                     irr_answer = json.dumps([0]* length_options_list),
+                                    qdescription = form.inq_qdescription.data,
                                     responded = True,
                                     locked = True,
                                     f = global_f,
@@ -236,7 +239,7 @@ def inquiries_create():
                                     q = global_q)
         inq.save_to_db()
 
-        flash("Survey created")
+        flash("Inquiry created")
         return redirect('inquiries/')
     return render_template('inquiries/create.html', form=form, title='create a new inquiry')
 

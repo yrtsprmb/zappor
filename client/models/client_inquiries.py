@@ -12,19 +12,21 @@ class ClientInquiriesModel(db.Model):
     answer = db.Column(db.String)           # answer in bits 1 true, 0 false
     prr_answer = db.Column(db.String)       # answer after prr
     irr_answer = db.Column(db.String)       # answer after irr
+    qdescription = db.Column(db.String(300))# description of a question
     responded = db.Column(db.Integer)       # if answer was edited by the user
     locked = db.Column(db.Integer)          # if answer is locked by the user
     f = db.Column(db.Float(precision=5))    # privacy value f
     p = db.Column(db.Float(precision=5))    # privacy value p
     q = db.Column(db.Float(precision=5))    # privacy value q
 
-    def __init__(self, name, type, options, answer, prr_answer, irr_answer, responded, locked, f, p, q):
+    def __init__(self, name, type, options, answer, prr_answer, irr_answer, qdescription, responded, locked, f, p, q):
         self.name = name
         self.type = type
         self.options = options
         self.answer = answer
         self.prr_answer = prr_answer
         self.irr_answer = irr_answer
+        self.qdescription = qdescription
         self.responded = responded
         self.locked = locked
         self.f = f
@@ -33,7 +35,7 @@ class ClientInquiriesModel(db.Model):
 
     #representation of the object for the GUI
     def __repr__(self):
-        return f" name: {self.name}, type: {self.type}, options: {self.options}, answer: {self.answer}, prr_answer: {self.prr_answer}, irr_answer: {self.irr_answer}, responded: {bool(self.responded)}, locked: {bool(self.locked)}, f: {self.f}, p: {self.p}, q: {self.q}"
+        return f" name: {self.name}, type: {self.type}, options: {self.options}, answer: {self.answer}, prr_answer: {self.prr_answer}, irr_answer: {self.irr_answer}, description: {self.qdescription}, responded: {bool(self.responded)}, locked: {bool(self.locked)}, f: {self.f}, p: {self.p}, q: {self.q}"
 
     #json representation of a client privacy data set
     def tojson(self):
@@ -43,6 +45,7 @@ class ClientInquiriesModel(db.Model):
             'answer': json.loads(self.answer),
             'prr_answer': json.loads(self.prr_answer),
             'irr_answer': json.loads(self.irr_answer),
+            'qdescription': self.qdescription,
             'responded': bool(self.responded),
             'locked': bool(self.locked),
             'f': self.f,

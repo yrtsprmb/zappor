@@ -24,6 +24,12 @@ class ClientInquiries(Resource):
             #schreibe zeugs in db
         data = resources.parsers.ParseClientInquiriesPost.parser.parse_args()
 
+        #check if description is empty
+        description = ""
+        if (data['qdescription'] is not None):
+            description = data['qdescription']
+
+
         # a new inquiry is created, answer, prr_answer and irr_answer will set to 0
         answer = [0]* len(data['options'])
         prr = [0]* len(data['options'])
@@ -41,11 +47,12 @@ class ClientInquiries(Resource):
                                 json.dumps(answer), #json.dumps(data['answer']),
                                 json.dumps(prr),
                                 json.dumps(irr),
+                                description,
                                 False, #responded is False, because inquiry is created not answered
                                 global_locked, #data['locked'],
-                                global_f, #data['f'],
-                                global_p, #data['p'],
-                                global_q) #data['q'])
+                                global_f, #until first edit by the user global values are used instead of data['f'],
+                                global_p, #until first edit by the user global values are used instead of data['p'],
+                                global_q) #until first edit by the user global values are used instead of data['q'])
         try:
             inquiry.save_to_db()
         except:
@@ -59,6 +66,11 @@ class ClientInquiries(Resource):
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry is None:
             return {'message': "Can not change status, inquiry '{}' does not exist".format(name)}, 400 #bad request
+
+        #check if description is empty
+        description = data['qdescription']
+        if (data['qdescription'] is  None):
+            description = inquiry.qdescription
 
         #check if the format of answers is correct
 
@@ -86,6 +98,7 @@ class ClientInquiries(Resource):
             # if a answer was given by the user, responded will be set to TRUE
             inquiry.responded = True
 
+        inquiry.qdescription = description #data['qdescription']
         inquiry.locked = data['locked']
         inquiry.f = data['f']
         inquiry.p = data['p']
@@ -115,8 +128,7 @@ class ListClientInquiries(Resource):
 
 #############################################################
 # this ressources allows full access to all
-# ClientInquiries values
-# through the REST api
+# ClientInquiries values through the REST api
 #############################################################
 class TestClientInquiries(Resource):
 
@@ -145,6 +157,7 @@ class TestClientInquiries(Resource):
                                 json.dumps(data['answer']),
                                 json.dumps(prr), #json.dumps(data['prr_answer']),
                                 json.dumps(irr),#json.dumps(data['irr_answer']),
+                                data['qdescription'],
                                 data['responded'],
                                 data['locked'],
                                 data['f'],
@@ -162,6 +175,11 @@ class TestClientInquiries(Resource):
         if inquiry is None:
             return {'message': "No changes - inquiry '{}' does not exist".format(name)}, 400 #bad request
 
+        #check if description is empty
+        description = data['qdescription']
+        if (data['qdescription'] is  None):
+            description = inquiry.qdescription
+
         if not check_fpq(data['f'],data['p'],data['q']):
             return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
 
@@ -173,6 +191,7 @@ class TestClientInquiries(Resource):
         inquiry.answer = json.dumps(data['answer'])
         inquiry.prr_answer = json.dumps(data['prr_answer'])
         inquiry.irr_answer = json.dumps(data['irr_answer'])
+        inquiry.qdescription = description #data['qdescription']
         inquiry.responded = data['responded']
         inquiry.locked = data['locked']
         inquiry.f = data['f']

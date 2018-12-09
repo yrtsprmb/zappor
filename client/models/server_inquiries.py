@@ -12,22 +12,24 @@ class ServerInquiriesModel(db.Model):
     name = db.Column(db.String(30))                 # name of a question
     type = db.Column(db.String(15))                 # type of a question
     options = db.Column(db.String)                  # possible answer options
+    qdescription = db.Column(db.String(300))        # description of a question
     locked = db.Column(db.Integer)                  # if inquiry should be deleted after editing
-    quizmode = db.Column(db.Integer)                    # if questions should be answered later by the client user
+    quizmode = db.Column(db.Integer)                # if questions should be answered later by the client user
 
-    def __init__(self, qid, surveyid, serviceprovider, name, type, options, locked, quizmode):
+    def __init__(self, qid, surveyid, serviceprovider, name, type, options, qdescription, locked, quizmode):
         self.qid = qid
         self.surveyid = surveyid
         self.serviceprovider = serviceprovider
         self.name = name
         self.type = type
         self.options = options
+        self.qdescription = qdescription
         self.locked = locked
         self.quizmode = quizmode
 
     #representation of the object for the GUI
     def __repr__(self):
-        return f" surveyid: {self.surveyid},  serviceprovider: {self.serviceprovider}, qid: {self.qid}, name: {self.name}, type: {self.type}, options: {self.options}, locked: {bool(self.locked)}, quizmode: {bool(self.quizmode)}"
+        return f" surveyid: {self.surveyid},  serviceprovider: {self.serviceprovider}, qid: {self.qid}, name: {self.name}, type: {self.type}, options: {self.options}, description: {self.qdescription}, locked: {bool(self.locked)}, quizmode: {bool(self.quizmode)}"
 
     #json represtation of a service provider question
     def tojson(self):
@@ -37,14 +39,10 @@ class ServerInquiriesModel(db.Model):
             'name': self.name,
             'type': self.type,
             'options': json.loads(self.options),
+            'qdescription': self.qdescription,
             'locked': bool(self.locked),
             'quizmode': bool(self.quizmode)}
 
-    # def compare_json(self):
-    #     return {
-    #         'name': self.name,
-    #         'tpye': self.type,
-    #         'options': json.loads(self.options)}
 
     @classmethod
     def find_by_name(cls, name):

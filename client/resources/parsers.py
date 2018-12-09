@@ -12,7 +12,7 @@ class ParseClientInquiriesPost:
     parser.add_argument('type',
         type=str,
         required=True,
-        help="liste is missing"
+        help="type is missing"
     )
     parser.add_argument('options',
         type=str,
@@ -25,6 +25,11 @@ class ParseClientInquiriesPost:
         action='append',
         required=False,
         help="answer is missing"
+    )
+    parser.add_argument('qdescription',
+        type=str,
+        required=False,
+        help="qdescription is missing"
     )
     parser.add_argument('locked',
         type=bool,
@@ -56,6 +61,11 @@ class ParseClientInquiriesPut:
     action='append',
     required=False,
     help="answer is missing"
+    )
+    parser.add_argument('qdescription',
+        type=str,
+        required=False,
+        help="qdescription is missing"
     )
     parser.add_argument('locked',
         type=bool,
@@ -98,6 +108,11 @@ class ParseTestClientInquiries:
         action='append',
         required=False,
         help="answer is missing"
+    )
+    parser.add_argument('qdescription',
+        type=str,
+        required=False,
+        help="qdescription is missing"
     )
     parser.add_argument('prr_answer',
         type=int,
@@ -166,6 +181,11 @@ class ParseTestServerInquiries:
         required=True,
         help="options are missing"
     )
+    parser.add_argument('qdescription',
+        type=str,
+        required=False,
+        help="qdescription is missing"
+    )    
     parser.add_argument('locked',
         type=bool,
         required=True,

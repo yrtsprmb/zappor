@@ -1,5 +1,5 @@
 from db import db
-from intern.config import server, port, global_prr, global_irr, global_f, global_p, global_q, global_slider
+from internal.config import server, port, global_prr, global_irr, global_f, global_p, global_q, global_slider
 
 # Table settings in client
 class ClientConfModel(db.Model):

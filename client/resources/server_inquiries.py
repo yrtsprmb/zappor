@@ -4,6 +4,10 @@ from flask_restful import Resource
 from models.server_inquiries import ServerInquiriesModel
 import resources.parsers
 
+
+#############################################################
+# REST requests for server inquiries
+#############################################################
 class ServerInquiries(Resource):
 
     def get(self,name):
@@ -20,11 +24,17 @@ class ServerInquiries(Resource):
         return {'message': "Server inquiry '{}' not found.".format(name)}, 404 #not found
 
 
+#############################################################
+# List all client inquiries
+#############################################################
 class ListServerInquiries(Resource):
     def get(self):
         return {'inquiries': [ x.tojson() for x in ServerInquiriesModel.query.all()]}
 
 
+#############################################################
+# These are REST requests for testing
+#############################################################
 class TestServerInquiries(Resource):
     def post(self,name):
         data = resources.parsers.ParseTestServerInquiries.parser.parse_args()
@@ -32,12 +42,18 @@ class TestServerInquiries(Resource):
         if ServerInquiriesModel.find_by_name(name) and ServerInquiriesModel.find_by_surveyid(data['surveyid']):
              return {'message': "a server inquiry with name '{}' already exists belonging to surveyid '{}'.".format(name,data['surveyid'])}, 400 #bad request
 
+        #check if description is empty
+        description = ""
+        if (data['qdescription'] is not None):
+            description = data['qdescription']
+
         question = ServerInquiriesModel(data['qid'],
                                 data['surveyid'],
                                 data['serviceprovider'],
                                 name,
                                 data['type'],
                                 json.dumps(data['options']),
+                                description, #data['qdescription'],
                                 data['locked'],
                                 data['quizmode'])
         try:
