@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+
+<div class="container">
+
 <div class="jumbotron">
   <h1>Create a new survey:</h1>
   <form action="" method="post" novalidate>
@@ -7,38 +10,46 @@
         {{ form.hidden_tag() }}
         <div class="form-group">
 
-          <p>
-              {{ form.surveyname.label }}<br>
-              {{ form.surveyname(size=32) }}
-              {% for error in form.surveyname.errors %}
-              <span style="color: red;">[{{ error }}]</span>
-              {% endfor %}
-          </p>
 
-          <p>
-            {{ form.status.label }}<br>
-            {{ form.status(size=3) }}
+          <div class="form-group">
+            {{ form.surveyname.label(class="form-control-label") }}
+            {{ form.surveyname(class="form-control form-control-lg ") }}
+            {% for error in form.surveyname.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+          </div>
+
+          <div class="form-group">
+            {{ form.status.label(class="form-control-label") }}
+            {{ form.status(class="form-control form-control-lg ") }}
             {% for error in form.status.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-          </p>
+          </div>
 
-          <p>
-            {{ form.comment.label }}<br>
-            {{ form.comment(size=32) }}
-          </p>
-          
-          <p>
-            {{ form.questions.label }}<br>
-            {{ form.questions(size=32) }}
+          <div class="form-group">
+            {{ form.comment.label(class="form-control-label") }}
+            {{ form.comment(class="form-control form-control-lg ") }}
+            {% for error in form.comment.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+          </div>
+
+          <div class="form-group">
+            {{ form.questions.label(class="form-control-label") }}
+            {{ form.questions(class="form-control form-control-lg ") }}
             {% for error in form.questions.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-          </p>
-
-          {{ form.submit() }}
+          </div>
+          <div class="form-group">
+         {{ form.submit(class="btn btn-outline-info") }}
+     </div>
+          
         </div>
   </form>
+
+</div>
 
 </div>
 {% endblock %}

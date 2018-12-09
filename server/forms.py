@@ -4,15 +4,19 @@ from wtforms.validators import DataRequired, Length
 from models.survey import SurveyModel
 
 
+# survey.html
 class SurveyForm(FlaskForm):
-    submit = SubmitField('Submit Survey')
+
+    status = SelectField('Status:', choices=[('created','created'),('active','active'),('done','done')], validators=[DataRequired()])
+    mychoices = [('created','created'),('active','active'),('done','done')]
+    submit = SubmitField('Edit Survey')
 
 
 
 class CreateSurveyForm(FlaskForm):
     surveyname = StringField('Surveyname:', validators=[DataRequired()])
     status = SelectField('Status:', choices=[('created','created'),('active','active')], validators=[DataRequired()])
-    comment = StringField('Description:')
+    comment = StringField('Description of the survey:')
     questions = TextAreaField('Questions:', validators=[DataRequired()])
     submit = SubmitField('Create Survey')
 

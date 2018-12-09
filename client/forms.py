@@ -18,6 +18,19 @@ class CreateClientInquiryForm(FlaskForm):
     submit = SubmitField('Create inquiry')
 
 
+class EditClientInquiryForm(FlaskForm):
+    name = TextField('name')
+    options = TextField('name')
+    answer = TextField('your answer', validators=[DataRequired()])
+    locked = BooleanField("lock question?")
+    #locked = TextField("p", [validators.Length(min=0,max=5)])
+    #f = TextField('f', validators=[DataRequired(message="value must be between 0 and 1")])
+    #p = TextField("p", [validators.Length(min=0,max=5)])
+    f = DecimalField('f')
+    p = DecimalField('p')
+    q = DecimalField('q')
+    submit = SubmitField('Edit inquiry')
+
 class ClientInquiryForm(FlaskForm):
     name = TextField('name')
     options = TextField('name')

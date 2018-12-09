@@ -21,8 +21,9 @@ repeat_send_reports = 15
 global_prr = 1
 global_irr = 1
 
-global_f = 0.75
-global_p = 0.5
+#global fpq settings are taken from the RAPPOR paper
+global_f = 0.5
+global_p = 0.75
 global_q = 0.5
 
 global_slider = 0

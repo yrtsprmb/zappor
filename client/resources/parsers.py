@@ -9,11 +9,6 @@ from flask_restful import reqparse
 # parser for POST client inquiries
 class ParseClientInquiriesPost:
     parser = reqparse.RequestParser()
-    # parser.add_argument('name',
-    #     type=str,
-    #     required=False,
-    #     help="name error through parsing"
-    # )
     parser.add_argument('type',
         type=str,
         required=True,

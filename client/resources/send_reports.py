@@ -3,7 +3,7 @@ import requests
 from pprint import pprint
 from flask_restful import Resource
 
-from intern.config import serviceprovider_reports
+from internal.config import serviceprovider_reports
 from models.reports import ReportModel
 from models.server_inquiries import ServerInquiriesModel
 
@@ -43,7 +43,7 @@ class SendReport(Resource):
             report_to_delete = ReportModel.find_by_surveyid(surveyid)
             if report_to_delete:
                 try:
-                    #report_to_delete.delete_from_db()
+                    report_to_delete.delete_from_db()
                     print('report deleted from db.') #debug
                 except:
                    return {'message': "error while deleting report"}, 500 #internal server error
@@ -55,6 +55,7 @@ class SendReport(Resource):
 
             try:
                 db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
+                #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
                 db.session.commit()
                 print('server inquiries deleted') #debug
 

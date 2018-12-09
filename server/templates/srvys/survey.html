@@ -10,6 +10,8 @@
   <form method="POST">
       {# This hidden_tag is a CSRF security feature. #}
       {{ form.hidden_tag() }}
+      {{ form.status.label }}<br>
+      {{ form.status(size=3) }}
 
       <p> {{ form.submit() }} </p>
   </form>

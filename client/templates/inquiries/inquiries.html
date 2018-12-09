@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
-  <h1>Welcome to the RAPPOR Client</h1>
-  <p>Please select your personal data and privacy settings</p>
+  <h1>RAPPOR Client</h1>
+  <p>available inquiries:</p>
 </div>
 
 
@@ -13,7 +13,9 @@
       <div class="card">
               <div class="card-body">
                   <h2><a class="card-title" href="  {{ url_for('inquiries_detail', id=inq.id) }}">{{ inq.name }}</a></h2>
-                  <a href="{{ url_for('inquiries_detail', id=inq.id) }}">Options: {{ inq.options }}</a>
+                  <p>Options: {{ inq.options }} - locked: {{ inq.locked}}  responded: {{ inq.responded }} </p>
+                  <p> </p>
+                  <a href="{{ url_for('inquiries_detail', id=inq.id) }}" class="btn btn-primary">Edit Inquiry</a>
               </div>
 
       </div>

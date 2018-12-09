@@ -16,7 +16,7 @@ from resources.clientconf import ClientConf
 import threading
 import time
 import requests
-from forms import RequestSurveyTestForm
+
 
 
 ### TEST #########################################################
@@ -33,6 +33,7 @@ from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
 from resources.reports import Report, ListReports
 
+from forms import RequestSurveyTestForm
 
 
 ### app #########################################################
@@ -140,10 +141,10 @@ def inquiries_list():
 @app.route('/inquiries/<int:id>/', methods=['GET','POST'])
 def inquiries_detail(id):
     from models.client_inquiries import ClientInquiriesModel
-    from forms import ClientInquiryForm
+    from forms import EditClientInquiryForm
     import json
-    from internal.basicrappor import permanent_RandomizedResponse
-
+    from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
+    from resources.parsers import check_fpq, check_if_bits
 
     inq = db.session.query(ClientInquiriesModel).get(id)
     if inq is None:
@@ -151,7 +152,7 @@ def inquiries_detail(id):
 
     # if the user changes a client inquiry, responded will be set to TRUE
     # and a PRR will be made with the answer value
-    form = ClientInquiryForm()
+    form = EditClientInquiryForm()
     if form.validate_on_submit():
         answer = form.answer.data
         locked = form.locked.data
@@ -159,10 +160,38 @@ def inquiries_detail(id):
         p = form.p.data
         q = form.q.data
 
-        # a PRR will be made after a answer is was changed
+        # print("answer")
+        # #print(json.loads(answer))
+        # print(len(json.loads(answer)))
+        # print(len(json.loads(inq.answer)))
+
+        #validation checks:
+        print(len(json.loads(answer)))
+        # if fpq is between 0 and 1
+        if not check_fpq(f,p,q):
+            print("Only values between 0 and 1 allowed for f,p,q!") #debug
+            flash("Only values between 0 and 1 allowed for f,p,q!")
+            return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
+
+
+        # check length of answer
+        if not (len(json.loads(answer)) == len(json.loads(inq.answer))):
+            print("answer must have the same ordinal values!") #debug
+            flash("answer must have the same ordinal values!")
+            return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
+
+        # if bits are zero and one
+        if not check_if_bits(json.loads(answer)):
+            print("only 0s and 1s allowed in the answer list") #debug
+            flash("only 0s and 1s allowed in the answer list")
+            return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
+
+        # a PRR and IRR will be set after a answer is was changed
         if(inq.answer != answer):
             prr = permanent_RandomizedResponse(float(f),json.loads(answer))
             inq.prr_answer = json.dumps(prr)
+            irr = instantaneous_RandomizedResponse(float(p),float(q),prr)
+            inq.irr_answer = json.dumps(irr)
 
         inq.answer = answer
         # if a answer was given by the user, responed will be set to TRUE
