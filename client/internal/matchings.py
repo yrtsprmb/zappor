@@ -1,6 +1,5 @@
 #internal/matchings.py
 import json
-from pprint import pprint
 
 #tests
 #from test_matching import servertest, clienttest
@@ -79,13 +78,13 @@ def generate_answers_by_surveyid(surveyid,results):
 # testing
 # # #1) match client and server inquiries
 # matches = find_matches(clienttest,servertest)
-# pprint(matches)
+# print(matches)
 # print("++++++++++++++++++++++++")
 #
 # # # 2) identify all surveyids which have an match
 # surveys = allmatchingsurveys(matches)
 # print("surveys with matches")
-# pprint(surveys)
+# print(surveys)
 #
 # # 3) generate answers by surveyid
 # print("++++++++++++++++++++++++")

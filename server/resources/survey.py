@@ -13,12 +13,8 @@ class Survey(Resource):
     def get(self, surveyname):
         survey = SurveyModel.find_survey_by_name(surveyname)
         if survey:
-            #return survey.json()
             return survey.tojsonwithreports(), 200 #ok
         return {'message': "Survey with name '{}' not found".format(surveyname)}, 404 #not found
-
-    #generates a new survey
-    #TODO: check if the parsed elements are correct, z.B. status feld
 
     #post a new survey by its unique name
     def post(self, surveyname):

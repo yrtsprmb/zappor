@@ -294,10 +294,12 @@ def tests():
 
     return render_template('tests.html', form=form, title='client tests')
 
-
-### oldstuff ###########################################
-## not needed in future
-########################################################
+@app.route('/info')
+def info():
+    '''
+    infomation page.
+    '''
+    return render_template('info.html')
 
 
 ####### Server only starts when it will be executed over the file app.py

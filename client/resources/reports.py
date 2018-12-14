@@ -11,9 +11,9 @@ from resources.parsers import check_fpq, check_if_bits
 class Report(Resource):
 
     def get(self,surveyid):
-        report = ReportModel.find_by_surveyid(surveyid)
-        if report:
-            return report.tojson()
+        reports = ReportModel.find_by_surveyid(surveyid)
+        if reports:
+            return {'reports': [ x.tojson() for x in ReportModel.find_by_surveyid(surveyid).query.all()]}
         return {'message': "report not found"}, 404 #not found
 
     def post(self,surveyid):

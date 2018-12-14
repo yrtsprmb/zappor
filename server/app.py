@@ -9,7 +9,10 @@ from security import authenticate, identity
 from resources.user import UserRegister
 from resources.survey import Survey, ListSurveys, AvailableSurveys
 from resources.report import Report, ListReports
+from resources.summaries import Summary
 from internal.config import secretkey_config, serviceprovider_config
+#test
+from resources.evaluate import EvaluateReport
 
 
 app = Flask(__name__)
@@ -34,7 +37,6 @@ app.register_blueprint(error_pages)
 ## Client Ressources (external ressources)
 ##################################################################
 
-
 #Ressources login/registration
 api.add_resource(UserRegister, '/register')
 
@@ -42,13 +44,16 @@ api.add_resource(UserRegister, '/register')
 api.add_resource(Report, '/reports/<string:surveyid>') # client -> server, sends an Report
 api.add_resource(ListReports, '/listreports') # lists all reports in the db
 
-api.add_resource(AvailableSurveys, '/availablesurveys') # server -> client, server answers with available Surveys
+# server -> client, server answers with available Surveys
+api.add_resource(AvailableSurveys, '/availablesurveys')
 
 ####### Internal apis - resourcen from server to the serviceprovider
-api.add_resource(Survey, '/surveys/<string:surveyname>') #  create & delete surveys
+api.add_resource(Survey, '/surveys/<string:surveyname>') # create & delete surveys
 api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 
+api.add_resource(EvaluateReport, '/summary/<string:surveyid>')
 
+api.add_resource(Summary, '/rest/smrys/<string:surveyid>') # get summary for a surveyid
 
 ### views ########################################################
 ## routes for the web GUI
@@ -79,21 +84,14 @@ def survey_detail(id):
 
     form = SurveyForm()
 
-    #if form.validate_on_submit():
-        # answer = form.answer.data
-        # locked = form.locked.data
-        # f = form.f.data
-        # p = form.p.data
-        # q = form.q.data
-        #
-        # inq.answer = answer
-        #
-        # inq.responded = True # if a answer was given, the anwer will set responded by the user
-        # inq.locked = locked
-        # inq.f = f
-        # inq.p = p
-        # inq.q = q
-        # db.session.commit()
+    if form.validate_on_submit():
+            if (srvy.status == 'created' or srvy.status == 'active') and (form.status.data == 'active' or form.status.data == 'done'):
+                old_status = srvy.status
+                srvy.status = form.status.data
+                srvy.save_to_db()
+                flash("Status changed")
+                return redirect(url_for('surveys_list'))
+
     return render_template('srvys/survey.html', srvy=srvy, form=form, title='survey details')
 
 
@@ -131,7 +129,6 @@ def survey_create():
 @app.route('/evaluate', methods=['GET','POST'])
 def evaluate_survey():
     from forms import LoginForm
-
     form = LoginForm()
     if form.validate_on_submit():
         flash('Login requested for user {}, remember_me={}'.format(
@@ -140,6 +137,27 @@ def evaluate_survey():
     return render_template('evaluate_survey.html', form=form, title='Survey Evaluation')
 
 
+@app.route('/tests', methods=['GET','POST'])
+def tests():
+    import requests
+    from forms import TestForm
+
+    form = TestForm()
+    flash("horst")
+    if form.validate_on_submit():
+        if 'generate_report' in request.form:
+            print("generate report button pressed") #debug
+            r = requests.get('http://127.0.0.1:5000/summary/')
+
+    return render_template('tests.html', form=form, title='server tests')
+
+
+@app.route('/info')
+def info():
+    '''
+    infomation page.
+    '''
+    return render_template('info.html')
 
 ####### Server only starts when it will be executed over the file app.py
 ####### Startet SQLAlchemy fuer den Server

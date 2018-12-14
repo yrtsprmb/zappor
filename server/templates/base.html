@@ -9,7 +9,7 @@
     {% if title %}
     <title>{{ title }} - RAPPOR Server</title>
     {% else %}
-    <title>RAPPOR Server</title>
+    <title>Server - RAPPOR</title>
     {% endif %}
 
   </head>
@@ -22,6 +22,8 @@
               <a class="nav-item nav-link" href="{{ url_for('surveys_list') }}">Manage Surveys</a>
               <a class="nav-item nav-link" href="{{ url_for('survey_create') }}">Create Survey</a>
               <a class="nav-item nav-link" href="{{ url_for('evaluate_survey') }}">Settings</a>
+              <a class="nav-item nav-link" href="{{ url_for('evaluate_survey') }}">Tests</a>
+              <a class="nav-item nav-link" href="{{ url_for('info') }}">Info</a>
           </div>
 
     </nav>

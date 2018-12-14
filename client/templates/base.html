@@ -10,7 +10,7 @@
     {% if title %}
     <title>{{ title }} - RAPPOR Client</title>
     {% else %}
-    <title>Client with RAPPOR options</title>
+    <title>Client - RAPPOR</title>
     {% endif %}
 
 
@@ -28,6 +28,7 @@
       <a class="nav-item nav-link" href="{{ url_for('client_config') }}">Settings</a>
       <a class="nav-item nav-link" href="{{ url_for('show_inquiries') }}">Internal Data</a>
       <a class="nav-item nav-link" href="{{ url_for('tests') }}">Tests</a>
+      <a class="nav-item nav-link" href="{{ url_for('info') }}">Info</a>
     </div>
 
 </nav>

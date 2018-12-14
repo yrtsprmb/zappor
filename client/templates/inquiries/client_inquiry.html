@@ -11,6 +11,7 @@
   <p>responded: {{ inq.responded }} locked: {{ inq.locked }} </p>
   <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
   <p>Description: {{ inq.qdescription }}</p>
+  
   <form method="POST">
       {# This hidden_tag is a CSRF security feature. #}
       {{ form.hidden_tag() }}
@@ -23,8 +24,6 @@
       <p> {{ form.p.label }} {{ form.p(size=4) }} </p>
       <p> {{ form.q.label }} {{ form.q(size=4) }} </p>
       <p> {{ form.submit() }} </p>
-
-
   </form>
 
      <div>
