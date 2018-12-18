@@ -21,11 +21,14 @@ class SurveyForm(FlaskForm):
 class CreateSurveyForm(FlaskForm):
     surveyname = StringField('Surveyname:', validators=[DataRequired()])
     status = SelectField('Status:', choices=[('created','created'),('active','active')], validators=[DataRequired()])
-    comment = StringField('Description of the survey:')
+    sdescription = StringField('Description of the survey:')
     questions = TextAreaField('Questions:', validators=[DataRequired()])
     submit = SubmitField('Create Survey')
 
     def validate_surveyname(self,surveyname):
+        '''
+        TODO
+        '''
         srvy = SurveyModel.query.filter_by(surveyname=surveyname.data).first()
         if srvy is not None:
             raise ValidationError('Please use a different surveyname')

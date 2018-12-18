@@ -1,3 +1,4 @@
+#models/survey.py
 import json
 from datetime import datetime
 from db import db
@@ -11,31 +12,33 @@ class SurveyModel(db.Model):
     serviceprovider = db.Column(db.String(50))
     surveyname = db.Column(db.String(50))
     status = db.Column(db.String(15))
-    comment = db.Column(db.String(300))
+    created_on = db.Column(db.String(50))
+    sdescription = db.Column(db.String(300))
     questions = db.Column(db.String)
 
     reports = db.relationship('ReportModel', lazy='dynamic') # a list of report models
 
-    def __init__(self, surveyid, serviceprovider, surveyname, status, comment, questions):
+    def __init__(self, surveyid, serviceprovider, surveyname, status, sdescription, questions):
         self.surveyid = serviceprovider + "_" + datetime.now().strftime('%Y-%m-%d_%H%M%S') #surveyid consists of name of serviceprovider and a timestamp
         self.serviceprovider = serviceprovider
         self.surveyname = surveyname
         self.status = status
-        self.comment = comment
+        self.created_on = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+        self.sdescription = sdescription
         self.questions = questions
 
     def __repr__(self):
         '''
         Representation of a survey object.
         '''
-        return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, comment: {self.comment}"
+        return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, created on: {self.created_on}, sdescription: {self.sdescription}"
 
 
     def tojson(self):
         '''
         Returns a json representation for a survey object.
         '''
-        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions)}
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'created on': self.created_on, 'sdescription': self.sdescription, 'questions': json.loads(self.questions)}
 
 
     def tojsonforclient(self):
@@ -49,7 +52,7 @@ class SurveyModel(db.Model):
         '''
         Returns a json representation of a survey with all reports belonging to this survey.
         '''
-        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions), 'reports': [report.tojson() for report in self.reports.all()]}
+        return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'created on': self.created_on, 'sdescription': self.sdescription, 'questions': json.loads(self.questions), 'reports': [report.tojson() for report in self.reports.all()]}
 
 
     @classmethod

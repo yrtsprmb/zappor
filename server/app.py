@@ -25,7 +25,7 @@ api = Api(app)
 @app.before_first_request
 def create_tables():
     '''
-    creates all sqlite tables (if not existing) after the first request is madeself
+    Creates all needed sqlite tables (if not existing) after the first request is madeself.
     '''
     db.create_all()
 
@@ -56,7 +56,7 @@ api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 
 api.add_resource(EvaluateReport, '/summary/<string:surveyid>')
 
-api.add_resource(Summary, '/rest/smrys/<string:surveyid>') # get summary for a surveyid
+api.add_resource(Summary, '/rest/smmrys/<string:surveyid>') # get summary for a surveyid
 
 ### views ########################################################
 ## routes for the web GUI
@@ -67,7 +67,7 @@ api.add_resource(Summary, '/rest/smrys/<string:surveyid>') # get summary for a s
 @app.route('/index')
 def index():
     '''
-    homepage
+    Homepage (web GUI).
     '''
     return render_template('home.html', title='Home')
 
@@ -75,7 +75,7 @@ def index():
 @app.route('/srvys/')
 def surveys_list():
     '''
-    lists all surveys.
+    Lists all surveys (web GUI).
     '''
     from models.survey import SurveyModel
     surveys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
@@ -85,7 +85,7 @@ def surveys_list():
 @app.route('/srvys/<int:id>/', methods=['GET','POST'])
 def survey_detail(id):
     '''
-    show the details of a survey specified by its id.
+    Shows the details of a survey specified by its id (web GUI).
     '''
     from models.survey import SurveyModel
     from forms import SurveyForm
@@ -110,7 +110,7 @@ def survey_detail(id):
 @app.route('/srvys/<int:id>/delete', methods=['POST'])
 def survey_delete(id):
     '''
-    deletes a survey over the gui.
+    Deletes a survey (web GUI).
     '''
     from models.survey import SurveyModel
     from forms import SurveyForm
@@ -124,7 +124,7 @@ def survey_delete(id):
 @app.route('/srvys/create', methods=['GET','POST'])
 def survey_create():
     '''
-    creates a survey over the gui.
+    Creates a survey (web GUI).
     '''
     from models.survey import SurveyModel
     from forms import CreateSurveyForm
@@ -135,19 +135,18 @@ def survey_create():
                                 serviceprovider = serviceprovider_config,
                                 surveyname = form.surveyname.data,
                                 status = form.status.data,
-                                comment = form.comment.data,
+                                sdescription = form.sdescription.data,
                                 questions = form.questions.data)
         srvy.save_to_db()
         flash("Survey created")
-        return redirect('/index')
+        return redirect(url_for('surveys_list'))
     return render_template('srvys/create.html', form=form, title='create a new survey')
-
 
 
 @app.route('/settings', methods=['GET','POST'])
 def settings():
     '''
-    server setting over the gui.
+    TODO: Server setting (web GUI).
     '''
     from forms import LoginForm
     form = LoginForm()
@@ -161,7 +160,7 @@ def settings():
 @app.route('/tests', methods=['GET','POST'])
 def tests():
     '''
-    enables testing over the browser
+    Testing options over the web GUI.
     '''
     import requests
     from forms import TestForm
@@ -179,11 +178,12 @@ def tests():
 @app.route('/info')
 def info():
     '''
-    infomation page.
+    Infomation page (web GUI).
     '''
     return render_template('info.html')
 
-# Server only starts when it will be executed over the file app.py
+
+# Server starts only if it will be executed over the file app.py
 # Starts for SQLAlchemy for the server
 if __name__ == '__main__':
     from db import db

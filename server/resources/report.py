@@ -16,18 +16,19 @@ class Report(Resource):
 
     def get(self,surveyid):
         '''
-        a list with all reports to a specific survey in the database
+        Server REST resource.
+        Returns list with all reports to a specific survey in the database.
         '''
         reports = [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]
         if reports == []:
-            return {'message': "no reports found for surveyid '{}' ".format(surveyid)}, 400
-        return {'reports': [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]}
+            return {'message': "no reports found for surveyid '{}' ".format(surveyid)}, 400 #bad request
+        return {'reports': [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]}, 200 #ok
 
 
     def post(self, surveyid):
         '''
-        saves a report by it's surveyid to the database, only if f,p and q are valid
-        and the survey is active.
+        Client/public REST resource.
+        Saves a report sent by a client, only if f,p and q are valid and the survey is active.
         '''
         # print("request: ", request.args) # debug: only for testing
         if SurveyModel.find_active_survey_by_id(surveyid):
@@ -48,15 +49,23 @@ class Report(Resource):
             try:
                 report.save_to_db()
             except:
-                return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500
-            return report.tojson(), 201 # status created
+                return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500 #internal server error
+            return report.tojson(), 201 #created
         else:
-            return {'message': "no report inserted, surveyid '{}' unknown or not active".format(surveyid)}, 400
+            return {'message': "no report inserted, surveyid '{}' unknown or not active".format(surveyid)}, 400 #bad request
+
+    def delete(self,surveyid):
+        '''
+        Server REST resource for testing:
+        Deletes all reports for one surveyid TODO.
+        '''
+        return {'message': " not impemented."}, 200 #ok
 
 
 class ListReports(Resource):
     def get(self):
         '''
-        for testing: returns a list with all reports in the database.
+        Server REST resource for testing:
+        Returns a list with all reports in the database.
         '''
-        return {'reports': [ x.tojson() for x in ReportModel.query.all()]}
+        return {'reports': [ x.tojson() for x in ReportModel.query.all()]}, 200 #ok

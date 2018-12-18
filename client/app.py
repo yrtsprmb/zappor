@@ -246,6 +246,9 @@ def inquiries_create():
 
 @app.route("/inquiries/<int:id>/delete", methods=['POST'])
 def inquiries_delete(id):
+    '''
+    deleting of inquiries over the webgui
+    '''
     from models.client_inquiries import ClientInquiriesModel
 
     inq = ClientInquiriesModel.query.get_or_404(id)
@@ -257,6 +260,9 @@ def inquiries_delete(id):
 #testing
 @app.route('/show')
 def show_inquiries():
+    '''
+    this is for testing and shows all client-, serverinquiries and reports which are stored in the sqlitedb
+    '''
     from models.server_inquiries import ServerInquiriesModel
     from models.client_inquiries import ClientInquiriesModel
     from models.reports import ReportModel
@@ -269,11 +275,17 @@ def show_inquiries():
 
 @app.route('/config')
 def client_config():
+    '''
+    configuration page
+    '''
     return render_template('client_config.html', title='Configuration')
 
 
 @app.route('/tests', methods=['GET','POST'])
 def tests():
+    '''
+    options for testing the client over the webgui
+    '''
     import requests
     from forms import RequestSurveyTestForm
 

@@ -34,7 +34,7 @@ class ParseSurveysPost:
         required=True,
         help="status value is missing"
     )
-    parser.add_argument('comment',
+    parser.add_argument('sdescription',
         type=str,
         required=True,
         help="no comment"
@@ -93,17 +93,58 @@ class ParseReportsPost:
         help="answers are missing"
     )
 
-# checks if f,p,q are float between 0 and 1
+
+class ParseSummariesPost:
+    parser = reqparse.RequestParser()
+
+    parser.add_argument('qid',
+        type=int,
+        required=True,
+        help="qid is missing"
+    )
+    parser.add_argument('name',
+        type=str,
+        required=True,
+        help="name is missing"
+    )
+    parser.add_argument('type',
+        type=str,
+        required=True,
+        help="type is missing"
+    )
+    parser.add_argument('options',
+        type=str,
+        action='append',
+        required=True,
+        help="options are missing"
+    )
+    parser.add_argument('answers',
+        type=int,
+        action='append',
+        required=False,
+        help="answers are missing"
+    )
+
+
 def check_fpq(f,p,q):
+    '''
+    Checks if f,p and q values are correct (between 0.0 and 1.0).
+    '''
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
 
 def check_if_bits(list):
+    '''
+    Checks if the values of a an answerlist are either 1 or 0.
+    '''
     for value in list:
         if(value !=0 and value !=1):
             return False
     return True
 
 def check_status(status):
+    '''
+    Checks if the values of the status string is valid.
+    '''
     if(status != 'created' and status != 'active' and status != 'done'):
         return False
     return True
