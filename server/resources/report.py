@@ -13,17 +13,23 @@ from resources.parsers import check_fpq, check_if_bits
 ############################################
 
 class Report(Resource):
-    # returns a list with all reports to a specific survey in the database
+
     def get(self,surveyid):
+        '''
+        a list with all reports to a specific survey in the database
+        '''
         reports = [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]
         if reports == []:
             return {'message': "no reports found for surveyid '{}' ".format(surveyid)}, 400
         return {'reports': [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]}
 
-    # writes an report from the client to the db, only if the surveyid is known to the server
-    #TODO: check if the input data is correct
+
     def post(self, surveyid):
-        print("request: ", request.args)
+        '''
+        saves a report by it's surveyid to the database, only if f,p and q are valid
+        and the survey is active.
+        '''
+        # print("request: ", request.args) # debug: only for testing
         if SurveyModel.find_active_survey_by_id(surveyid):
             data = resources.parsers.ParseReportsPost.parser.parse_args()
 
@@ -48,7 +54,9 @@ class Report(Resource):
             return {'message': "no report inserted, surveyid '{}' unknown or not active".format(surveyid)}, 400
 
 
-# Testing Resource: returns a list with all reports in the database
 class ListReports(Resource):
     def get(self):
+        '''
+        for testing: returns a list with all reports in the database.
+        '''
         return {'reports': [ x.tojson() for x in ReportModel.query.all()]}

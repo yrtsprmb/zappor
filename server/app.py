@@ -24,6 +24,9 @@ api = Api(app)
 #creates tables on startup when first request ist made
 @app.before_first_request
 def create_tables():
+    '''
+    creates all sqlite tables (if not existing) after the first request is madeself
+    '''
     db.create_all()
 
 #authentication (prepared but not fully implemented)
@@ -63,11 +66,17 @@ api.add_resource(Summary, '/rest/smrys/<string:surveyid>') # get summary for a s
 @app.route('/')
 @app.route('/index')
 def index():
+    '''
+    homepage
+    '''
     return render_template('home.html', title='Home')
 
 
 @app.route('/srvys/')
 def surveys_list():
+    '''
+    lists all surveys.
+    '''
     from models.survey import SurveyModel
     surveys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
     return render_template('srvys/surveys.html', surveys=surveys, title='list of surveys')
@@ -75,6 +84,9 @@ def surveys_list():
 
 @app.route('/srvys/<int:id>/', methods=['GET','POST'])
 def survey_detail(id):
+    '''
+    show the details of a survey specified by its id.
+    '''
     from models.survey import SurveyModel
     from forms import SurveyForm
 
@@ -97,6 +109,9 @@ def survey_detail(id):
 
 @app.route('/srvys/<int:id>/delete', methods=['POST'])
 def survey_delete(id):
+    '''
+    deletes a survey over the gui.
+    '''
     from models.survey import SurveyModel
     from forms import SurveyForm
 
@@ -108,6 +123,9 @@ def survey_delete(id):
 
 @app.route('/srvys/create', methods=['GET','POST'])
 def survey_create():
+    '''
+    creates a survey over the gui.
+    '''
     from models.survey import SurveyModel
     from forms import CreateSurveyForm
 
@@ -126,19 +144,25 @@ def survey_create():
 
 
 
-@app.route('/evaluate', methods=['GET','POST'])
-def evaluate_survey():
+@app.route('/settings', methods=['GET','POST'])
+def settings():
+    '''
+    server setting over the gui.
+    '''
     from forms import LoginForm
     form = LoginForm()
     if form.validate_on_submit():
         flash('Login requested for user {}, remember_me={}'.format(
             form.username.data, form.remember_me.data))
         return redirect(url_for('index'))
-    return render_template('evaluate_survey.html', form=form, title='Survey Evaluation')
+    return render_template('settings.html', form=form, title='settings')
 
 
 @app.route('/tests', methods=['GET','POST'])
 def tests():
+    '''
+    enables testing over the browser
+    '''
     import requests
     from forms import TestForm
 
@@ -159,8 +183,8 @@ def info():
     '''
     return render_template('info.html')
 
-####### Server only starts when it will be executed over the file app.py
-####### Startet SQLAlchemy fuer den Server
+# Server only starts when it will be executed over the file app.py
+# Starts for SQLAlchemy for the server
 if __name__ == '__main__':
     from db import db
     db.init_app(app)

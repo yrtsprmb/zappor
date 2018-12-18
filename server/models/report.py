@@ -26,21 +26,33 @@ class ReportModel(db.Model):
         self.q = q
         self.answers = answers
 
-    # returns a json representation of the report model
+
     def tojson(self):
+        '''
+        returns a json representation of the report model
+        '''
         return {'surveyid': self.surveyid, 'prr': bool(self.prr), 'irr': bool(self.irr), 'f': self.f, 'p': self.p,'q': self.q, 'answers': json.loads(self.answers)}
 
-    #find all reports belonging to one survey
+
     @classmethod
     def find_report_by_surveyid(cls, surveyid):
+        '''
+        returns all reports belonging to a specific survey id
+        '''
         return ReportModel.query.filter_by(surveyid=surveyid).all()
 
-    #saves a report to the db
-    def save_to_db(self):
-            db.session.add(self)
-            db.session.commit()
 
-    #deletes a report from the db
+    def save_to_db(self):
+        '''
+        saves a report to the db
+        '''
+        db.session.add(self)
+        db.session.commit()
+
+
     def delete_from_db(self):
-            db.session.delete(self)
-            db.session.commit()
+        '''
+        deletes a report from the db
+        '''
+        db.session.delete(self)
+        db.session.commit()

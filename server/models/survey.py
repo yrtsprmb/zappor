@@ -17,47 +17,74 @@ class SurveyModel(db.Model):
     reports = db.relationship('ReportModel', lazy='dynamic') # a list of report models
 
     def __init__(self, surveyid, serviceprovider, surveyname, status, comment, questions):
-        self.surveyid = serviceprovider + "_" + datetime.now().strftime('%Y-%m-%d_%H%M%S')
+        self.surveyid = serviceprovider + "_" + datetime.now().strftime('%Y-%m-%d_%H%M%S') #surveyid consists of name of serviceprovider and a timestamp
         self.serviceprovider = serviceprovider
         self.surveyname = surveyname
         self.status = status
         self.comment = comment
         self.questions = questions
 
-    #representation of the object for the GUI
     def __repr__(self):
+        '''
+        Representation of a survey object.
+        '''
         return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, comment: {self.comment}"
 
-    # returns a json representation of the survey model for the serviceprovider
+
     def tojson(self):
+        '''
+        Returns a json representation for a survey object.
+        '''
         return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions)}
 
-    #creates a json representation for clients which are asking for new surveys
+
     def tojsonforclient(self):
+        '''
+        Returns a json representation for clients asking for surveys.
+        '''
         return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'questions': json.loads(self.questions)}
 
+
     def tojsonwithreports(self):
+        '''
+        Returns a json representation of a survey with all reports belonging to this survey.
+        '''
         return {'surveyid': self.surveyid, 'serviceprovider': self.serviceprovider, 'surveyname': self.surveyname, 'status': self.status, 'comment': self.comment, 'questions': json.loads(self.questions), 'reports': [report.tojson() for report in self.reports.all()]}
 
-    #find a survey by its name, returns an object of Survey Model
+
     @classmethod
     def find_survey_by_id(cls, surveyid):
+        '''
+        Finds a survey by its surveyid, returns a SurveyModel object.
+        '''
         return SurveyModel.query.filter_by(surveyid=surveyid).first()
 
-    #find an active survey by its name, returns an object of Survey Model
+
     @classmethod
     def find_active_survey_by_id(cls, surveyid):
+        '''
+        Finds an 'active' survey by its surveyid, returns a SurveyModel object.
+        '''
         return SurveyModel.query.filter_by(surveyid=surveyid).filter_by(status='active').first()
 
-    #find a survey by its name, returns an object of Survey Model
+
     @classmethod
     def find_survey_by_name(cls, surveyname):
+        '''
+        Finds a survey by its name, returns an object of Survey Model.
+        '''
         return SurveyModel.query.filter_by(surveyname=surveyname).first()
 
     def save_to_db(self):
+        '''
+        Saves a survey to the database.
+        '''
         db.session.add(self) # session is a collection of objects we going to write into the db
         db.session.commit()
 
     def delete_from_db(self):
+        '''
+        Deletes a survey from the database.
+        '''
         db.session.delete(self)
         db.session.commit()

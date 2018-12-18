@@ -11,8 +11,11 @@ fur jede qid addiere die antworten in der liste auf.
 """
 
 
-# returns a list of dictionairis with the qid and the length of options
+#
 def list_qids_dict(list_of_report_objects):
+    '''
+    returns a list of dictionairis with the qid and the length of options
+    '''
     qids = []
     qdict = []
 
@@ -26,8 +29,11 @@ def list_qids_dict(list_of_report_objects):
                 qdict.append({'qid': qid, 'options': options})
     return(qdict)
 
-#d returns a list of all given answers for reports
+
 def list_answers(list_of_report_objects):
+    '''
+    returns a list of all given answers for report objects
+    '''
     answerlist = []
     for report in list_of_report_objects:
         answers = (json.loads(report.answers)) #make string to a list of dictionairis
@@ -35,9 +41,10 @@ def list_answers(list_of_report_objects):
     return answerlist
 
 
-
-# returns a list of answers belonging to a specific qid
 def answers_per_qid(qid,answerlist):
+    '''
+    TODO: diese funktion kann gelöscht werden. returns a list of answers belonging to a specific qid
+    '''
     for answer in answerlist:
         if qid == answer['qid']:
             print("zepp")
@@ -45,6 +52,9 @@ def answers_per_qid(qid,answerlist):
 
 
 def counting_histvalues_per_qid(qid,options,answerlist):
+    '''
+    TODO
+    '''
     histogram_list = [0] * options #length of list
 
     for answer in answerlist:
@@ -54,6 +64,9 @@ def counting_histvalues_per_qid(qid,options,answerlist):
 
 
 def counting_histogram_values(qid,list_of_report_objects):
+    '''
+    TODO
+    '''
     finalsums = [0,0,0,0]
     for report in list_of_report_objects:
         answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
@@ -68,7 +81,7 @@ def counting_histogram_values(qid,list_of_report_objects):
     return(finalsums)
 
 
-
+# testzeugs
 horst = [1,0,1,0,1,0,1]
 helga = [1,0,1,0,1,0,1]
 [1,0,1,0,1,0,1]

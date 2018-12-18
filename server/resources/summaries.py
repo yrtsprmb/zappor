@@ -1,4 +1,4 @@
-#resources/report.py
+#resources/summaries.py
 import json
 from flask_restful import Resource, request
 
@@ -20,6 +20,3 @@ class Summary(Resource):
             return {'message': "no summary found for surveyid '{}' ".format(surveyid)}, 400
         return {'summary': smry }
         # {'reports': [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]}
-
-    # writes an report from the client to the db, only if the surveyid is known to the server
-    #TODO: check if the input data is correct

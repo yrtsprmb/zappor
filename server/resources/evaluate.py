@@ -8,6 +8,9 @@ from internal.evaluation import list_qids_dict, list_answers, counting_histvalue
 class EvaluateReport(Resource):
 
     def get(self,surveyid):
+        '''
+        TODO: should return an evaluation of reports by surveyid
+        '''
 
         #sum_values = [sum(pair) for pair in zip(horst, helga)]
 

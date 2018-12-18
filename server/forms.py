@@ -1,10 +1,11 @@
+# forms.py
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, TextAreaField, SubmitField, SelectField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length
 from models.survey import SurveyModel
 
 
-# survey.html
+
 
 class TestForm(FlaskForm):
     submit_evaluation = SubmitField('Generate Summary')
@@ -38,6 +39,9 @@ class EditSurveyForm(FlaskForm):
     submit = SubmitField('Create Survey')
 
     def validate_surveyname(self,surveyname):
+        '''
+        TODO
+        '''
         srvy = SurveyModel.query.filter_by(surveyname=surveyname.data).first()
         if srvy is not None:
             raise ValidationError('Please use a different surveyname')
