@@ -14,6 +14,11 @@ from resources.parsers import check_if_bits
 ############################################
 
 class Summary(Resource):
+    '''
+    Internal REST resource:
+    Returns all summaries belonging to a specific survey id.
+    Returns a list with a summary of evaluated reports to an surveyid
+    '''
 
     def get(self,surveyid):
         '''
@@ -46,3 +51,12 @@ class Summary(Resource):
             return {'message': "Error while saving summary."}, 500 #internal server error
         return smmry.tojson(), 201 #created
         #return {'message': "A new summary was created and stored into the database"}, 201 #created
+
+
+class ListSummaries(Resource):
+    def get(self):
+        '''
+        Server REST resource for testing:
+        Returns a list with all summaries in the database.
+        '''
+        return {'summaries': [ x.tojson() for x in SummaryModel.query.all()]}, 200 #ok

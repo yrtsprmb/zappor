@@ -1,4 +1,5 @@
 # resources/parsers.py
+
 from flask_restful import reqparse
 
 ##################################################################
@@ -6,23 +7,27 @@ from flask_restful import reqparse
 # and also validation checks for values
 ##################################################################
 
-
 class ParseUser:
+    '''
+    Parser for user.
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('username',
         type=str,
         required=True,
-        help="probleme mit dem usernamen"
+        help="problems with username"
     )
     parser.add_argument('password',
         type=str,
         required=True,
-        help="probleme mit dem passwort"
+        help="problems with the passowrd"
     )
 
 
-# parser for POST surveys
 class ParseSurveysPost:
+    '''
+    Parser for surveys (post requests).
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('serviceprovider',
         type=str,
@@ -37,7 +42,7 @@ class ParseSurveysPost:
     parser.add_argument('sdescription',
         type=str,
         required=True,
-        help="no comment"
+        help="sdescription is misssing"
     )
     parser.add_argument('questions',
          type=dict,
@@ -47,8 +52,10 @@ class ParseSurveysPost:
     )
 
 
-# parser for Put surveys
 class ParseSurveysPut:
+    '''
+    Parser for surveys (put requests).
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('status',
         type=str,
@@ -57,8 +64,10 @@ class ParseSurveysPut:
     )
 
 
-# parser for POST reports
 class ParseReportsPost:
+    '''
+    Parser for reports (post requests).
+    '''
     parser = reqparse.RequestParser()
 
     parser.add_argument('prr',
@@ -95,6 +104,9 @@ class ParseReportsPost:
 
 
 class ParseSummariesPost:
+    '''
+    Parser for summaries (post requests).
+    '''
     parser = reqparse.RequestParser()
 
     parser.add_argument('qid',
@@ -132,6 +144,7 @@ def check_fpq(f,p,q):
     '''
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
 
+
 def check_if_bits(list):
     '''
     Checks if the values of a an answerlist are either 1 or 0.
@@ -140,6 +153,7 @@ def check_if_bits(list):
         if(value !=0 and value !=1):
             return False
     return True
+
 
 def check_status(status):
     '''

@@ -9,10 +9,10 @@ from security import authenticate, identity
 from resources.user import UserRegister
 from resources.survey import Survey, ListSurveys, AvailableSurveys
 from resources.report import Report, ListReports
-from resources.summaries import Summary
+from resources.summaries import Summary, ListSummaries
 from internal.config import secretkey_config, serviceprovider_config
-#test
-from resources.evaluate import EvaluateReport
+#tests
+from resources.evaluate import EvaluateSurvey
 
 
 app = Flask(__name__)
@@ -54,9 +54,11 @@ api.add_resource(AvailableSurveys, '/availablesurveys')
 api.add_resource(Survey, '/surveys/<string:surveyname>') # create & delete surveys
 api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 
-api.add_resource(EvaluateReport, '/summary/<string:surveyid>')
+#Tests
+api.add_resource(EvaluateSurvey, '/evaluate/<string:surveyid>')
 
-api.add_resource(Summary, '/rest/smmrys/<string:surveyid>') # get summary for a surveyid
+api.add_resource(Summary, '/rest/smmrys/<string:surveyid>') # get and post summaries for a surveyid
+api.add_resource(ListSummaries, '/listsummaries') # get and post summaries for a surveyid
 
 ### views ########################################################
 ## routes for the web GUI
@@ -107,20 +109,6 @@ def survey_detail(id):
     return render_template('srvys/survey.html', srvy=srvy, form=form, title='survey details')
 
 
-@app.route('/srvys/<int:id>/delete', methods=['POST'])
-def survey_delete(id):
-    '''
-    Deletes a survey (web GUI).
-    '''
-    from models.survey import SurveyModel
-    from forms import SurveyForm
-
-    srvy = SurveyModel.query.get_or_404(id)
-    srvy.delete_from_db()
-    flash('survey has been deleted.')
-    return redirect(url_for('surveys_list'))
-
-
 @app.route('/srvys/create', methods=['GET','POST'])
 def survey_create():
     '''
@@ -141,6 +129,20 @@ def survey_create():
         flash("Survey created")
         return redirect(url_for('surveys_list'))
     return render_template('srvys/create.html', form=form, title='create a new survey')
+
+
+@app.route('/srvys/<int:id>/delete', methods=['POST'])
+def survey_delete(id):
+    '''
+    Deletes a survey (web GUI).
+    '''
+    from models.survey import SurveyModel
+    from forms import SurveyForm
+
+    srvy = SurveyModel.query.get_or_404(id)
+    srvy.delete_from_db()
+    flash('survey has been deleted.')
+    return redirect(url_for('surveys_list'))
 
 
 @app.route('/settings', methods=['GET','POST'])
@@ -168,9 +170,8 @@ def tests():
     form = TestForm()
     flash("horst")
     if form.validate_on_submit():
-        if 'generate_report' in request.form:
-            print("generate report button pressed") #debug
-            r = requests.get('http://127.0.0.1:5000/summary/')
+            print("generate summary button pressed") #debug
+            #r = requests.get('http://127.0.0.1:5000/evaluate/')
 
     return render_template('tests.html', form=form, title='server tests')
 

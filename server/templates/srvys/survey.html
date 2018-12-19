@@ -1,4 +1,4 @@
-{# class SurveyForm #}
+{# class SurveyForm(FlaskForm) #}
 {% extends "base.html" %}
 {% block content %}
 
@@ -8,8 +8,9 @@
   <h1>name: {{ srvy.surveyname }}</h1>
   <h2> surveyid: {{ srvy.surveyid }} </h2>
   <h3> serviceprovider: {{ srvy.serviceprovider }} </p>
-  <p>info: {{ srvy.status }} </p>
-  <p>info: {{ srvy.comment }} </p>
+  <p>Status: {{ srvy.status }} </p>
+  <p>Description: {{ srvy.sdescription }} </p>
+  <p>Created on: {{ srvy.created_on }} </p>
 
   <form method="POST">
       {# This hidden_tag is a CSRF security feature. #}
@@ -22,7 +23,9 @@
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %}
       </div>
-      <p> {{ form.submit() }} </p>
+      <div class="form-group">
+        {{ form.submit(class="btn btn-outline-info") }}
+      </div>
   </form>
 
      <div>

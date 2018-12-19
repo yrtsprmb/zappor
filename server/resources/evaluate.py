@@ -3,43 +3,75 @@
 import json
 from flask_restful import Resource
 from models.report import ReportModel
-from internal.evaluation import list_qids_dict, list_answers, counting_histvalues_per_qid, counting_histogram_values
+from internal.evaluation import list_answers, extract_qids, bins_per_qid, list_qids_dict, counting_histvalues_per_qid, counting_histogram_values
 
-class EvaluateReport(Resource):
+class EvaluateSurvey(Resource):
+    '''
+    TODO: Should return an evaluation of a survey.
+    Tooks all reports belonging to a survey id and extracts all qid
+    For every qid a summary will be genereated by counting the answer lists.
+    '''
 
     def get(self,surveyid):
         '''
-        TODO: should return an evaluation of reports by surveyid
+        TODO: should return an evaluation of allreports belonging to a surveyidself.
+        This
         '''
 
         #sum_values = [sum(pair) for pair in zip(horst, helga)]
 
 
-        #generate list of report objects to specific survey id
+        #generates a list of report objects to a specific survey id
         reports = ReportModel.query.filter_by(surveyid=surveyid).all()
-        # print(reports) #debug
+        #print("Report Models")
+        #print(reports) #debug
 
-        #generate a list of all answers
-        answerlist = list_answers(reports)
-        #print(answerlist) #debug
-        #print(type(answerlist))
+        #generate a list of list answers, which contains dictionaries
+        listofanswers = list_answers(reports) #works
+        # print("listofanswers")
+        # print(listofanswers) #debug
+        # print(type(listofanswers))
+
+        qids = extract_qids(listofanswers) #works
+        print("qids")
+        print(qids)
+
+
+        histogram_qid34 = counting_histogram_values(34,reports)
+        print("histogram_qid34")
+        print(histogram_qid34)
+
+        return {'message': " '{}' ".format(histogram_qid34)}, 200 #ok
+
+        # TODO:
+        # für alle qid pro survey die histogramme ermitteln und dann in die datenbank speichern
+        # dabei noch erfassen wie oft diese qids gezählt wurden.
+
+        # horst = bins_per_qid(34,reports)
+        # print("horst")
+        # print(horst)
+
+        #list of all availalbe qids:
+        #qidlist = list_qids(reports)
+        #print(qidlist)
 
         #generate list of all qids in all reports per surveyid
         #dictionaires with qids and length of their questions
-        qid_dict = list_qids_dict(reports)
+        #qid_dict = list_qids_dict(reports)
         #print(qid_dict) #debug
 
-        horst = counting_histogram_values(34,reports)
-        print(horst)
+        # horst = counting_histogram_values(34,reports)
+        # print(horst)
 
-        for entry in qid_dict:
-            qid = entry['qid']
-            options = entry['options']
-            print(qid)
-            print(options)
-            print(counting_histvalues_per_qid(qid,options,reports))
-        #
-        #
+        # for entry in qid_dict:
+        #     qid = entry['qid']
+        #     options = entry['options']
+        #     print(qid)
+        #     print(options)
+        #     print(counting_histvalues_per_qid(qid,options,reports))
+
+
+
         # #test = counting_histvalues_per_qid(qid_dict,answerlist)
         # #print(test)
         #
@@ -92,6 +124,3 @@ class EvaluateReport(Resource):
 
         #print("list qids") #debug
         #print(qids) #debug
-
-
-        return {'message': " '{}' ".format(qid_dict)}, 200 #ok

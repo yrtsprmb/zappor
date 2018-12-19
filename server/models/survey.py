@@ -1,4 +1,5 @@
 #models/survey.py
+
 import json
 from datetime import datetime
 from db import db
