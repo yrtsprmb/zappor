@@ -3,7 +3,10 @@
 import json
 from flask_restful import Resource
 from models.report import ReportModel
-from internal.evaluation import list_answers, extract_qids, bins_per_qid, list_qids_dict, counting_histvalues_per_qid, counting_histogram_values
+from models.summaries import SummaryModel
+from internal.evaluation import list_answers, extract_qids, bins_per_qid, extract_qid_info
+
+from internal.evaluation import list_qids_dict, counting_histogram_values
 
 class EvaluateSurvey(Resource):
     '''
@@ -32,16 +35,49 @@ class EvaluateSurvey(Resource):
         # print(listofanswers) #debug
         # print(type(listofanswers))
 
-        qids = extract_qids(listofanswers) #works
+        qids = extract_qids(listofanswers) #all qids to a survey
         print("qids")
         print(qids)
+
+        print(extract_qid_info(listofanswers))
 
 
         histogram_qid34 = counting_histogram_values(34,reports)
         print("histogram_qid34")
         print(histogram_qid34)
 
+
+
+
+
+        # loop through list and generate summaries:
+        #for qid in qids:
+        #    print(counting_histogram_values(qid,reports))
+
+
+        # save a summary for a qid to the database
+        #qid = qid
+        surveyid = surveyid
+
+        #smmry = SummaryModel(qid,surveyid,name,type,options,answers)
+        #
+        # smmry = SummaryModel(data['qid'],
+        #                         surveyid,
+        #                         data['name'],
+        #                         data['type'],
+        #                         json.dumps(data['options']),
+        #                         json.dumps(data['answers']))
+        # try:
+        #     smmry.save_to_db()
+        # except:
+        #     return {'message': "Error while saving summary."}, 500 #internal server error
+
+
+
+
+
         return {'message': " '{}' ".format(histogram_qid34)}, 200 #ok
+        #return {'message': " evaluation done."}, 200 #ok
 
         # TODO:
         # für alle qid pro survey die histogramme ermitteln und dann in die datenbank speichern

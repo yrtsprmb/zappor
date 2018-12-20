@@ -26,6 +26,12 @@ class ReportModel(db.Model):
         self.q = q
         self.answers = answers
 
+    def __repr__(self):
+        '''
+        Representation of a report object.
+        '''
+        return f" surveyid: {self.surveyid}, prr: {self.prr}, irr: {self.irr}, f: {self.f}, p: {self.p}, q: {self.q}, answers: {self.answers}"
+
 
     def tojson(self):
         '''

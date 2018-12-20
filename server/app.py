@@ -13,6 +13,7 @@ from resources.summaries import Summary, ListSummaries
 from internal.config import secretkey_config, serviceprovider_config
 #tests
 from resources.evaluate import EvaluateSurvey
+from resources.generate_summaries import GenerateSummaries
 
 
 app = Flask(__name__)
@@ -56,6 +57,7 @@ api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 
 #Tests
 api.add_resource(EvaluateSurvey, '/evaluate/<string:surveyid>')
+api.add_resource(GenerateSummaries, '/helga/<string:surveyid>')
 
 api.add_resource(Summary, '/rest/smmrys/<string:surveyid>') # get and post summaries for a surveyid
 api.add_resource(ListSummaries, '/listsummaries') # get and post summaries for a surveyid

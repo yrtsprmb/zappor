@@ -16,6 +16,7 @@ class SummaryModel(db.Model):
     options = db.Column(db.String)          # possible answer options
     answers = db.Column(db.String)          # summaries of all answers from reports
     created = db.Column(db.String(50))      # creation data of a summary
+    counter = db.Column(db.Integer)         # id of a question
 
     def __init__(self, qid, surveyid, name, type, options, answers):
         self.qid = qid
@@ -25,12 +26,13 @@ class SummaryModel(db.Model):
         self.options = options
         self.answers = answers
         self.created = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+        self.counter = 0
 
     def tojson(self):
         '''
         JSON representation of a summary object.
         '''
-        return {'surveyid': self.surveyid, 'name': self.name, 'type': self.type, 'options': json.loads(self.options), 'answers': json.loads(self.answers), 'created': self.created}
+        return {'surveyid': self.surveyid, 'name': self.name, 'type': self.type, 'options': json.loads(self.options), 'answers': json.loads(self.answers), 'created': self.created, 'counter': self.counter}
 
     def save_to_db(self):
         '''

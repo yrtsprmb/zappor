@@ -3,8 +3,8 @@
 from flask_restful import reqparse
 
 ##################################################################
-# in this file are all parsers for the REST API
-# and also validation checks for values
+## This file contains all parsers for the REST API
+## and validation checks.
 ##################################################################
 
 class ParseUser:
@@ -26,7 +26,7 @@ class ParseUser:
 
 class ParseSurveysPost:
     '''
-    Parser for surveys (post requests).
+    Parser for surveys (POST requests).
     '''
     parser = reqparse.RequestParser()
     parser.add_argument('serviceprovider',
@@ -66,7 +66,7 @@ class ParseSurveysPut:
 
 class ParseReportsPost:
     '''
-    Parser for reports (post requests).
+    Parser for reports (POST requests).
     '''
     parser = reqparse.RequestParser()
 
@@ -105,7 +105,7 @@ class ParseReportsPost:
 
 class ParseSummariesPost:
     '''
-    Parser for summaries (post requests).
+    Parser for summaries (POST requests).
     '''
     parser = reqparse.RequestParser()
 
