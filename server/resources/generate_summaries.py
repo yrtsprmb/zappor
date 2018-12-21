@@ -3,14 +3,14 @@
 import json
 from flask_restful import Resource
 from models.report import ReportModel
+from models.survey import SurveyModel
 from models.summaries import SummaryModel
-from internal.evaluation import list_answers, extract_qids, extract_qid_info, extract_qid_info2
+from internal.evaluation import counting_histogram_values, extract_from_surveys, extract_from_reports
 
-from internal.evaluation import counting_histogram_values_new
 
 class GenerateSummaries(Resource):
     '''
-    TODO: Should return an evaluation of a qid belonging to a specific survey.
+    TODO: Should return a summary of a qid belonging to a specific survey.
     Tooks all reports belonging to a surveyid / qid combination and generates a new summary.
     If there exists already a summary, the old one will be overwritten.
     '''
@@ -18,68 +18,53 @@ class GenerateSummaries(Resource):
     def get(self,surveyid):
         '''
         TODO: should return an evaluation of allreports belonging to a surveyidself.
+        Deal with qid and type of qid!!!
         This
         '''
 
+        qid = 62
 
-        #2er Schritt: Hole alle reports zu einer surveyid
+        #first: check if survey exists.
+        survey = SurveyModel.find_survey_by_id(surveyid)
+        #print(survey)
+        if survey == None:
+            return {'message': " Cannot generate summery. Surveyid '{}' does not exist".format(surveyid)}, 400 #bad request
 
-        #generates a list of report objects to a specific survey id
+        #second: generate a list of report objects to a specific survey id
         reports = ReportModel.query.filter_by(surveyid=surveyid).all()
-        print("Report Models")
-        print(reports) #debug
-        print("------------------------------------------")
 
-        #generate a list of list answers, which contains dictionaries
-        listofanswers = list_answers(reports) #works
-
-        #answerlist = (json.loads(report.answers))
-
-        qid = 34
-
-        summed_answer = counting_histogram_values_new(qid,reports)
-        print(summed_answer)
-        print(type(summed_answer))
-
-        # Vorletzer Schritt:
-        # Liegt einee summary zu einer surveyid qid Kombination bereits vor, lösche diese.
+        #third: count histogram and determine counts
+        evaluation = counting_histogram_values(qid,reports)
+        summed_answers = (evaluation['histogram'])
+        count_answers = (evaluation['counts'])
 
 
+        #fourth: determine other values for generating a summary:
+        infos_from_reports = extract_from_reports(qid,reports)
+        report_name = infos_from_reports['name']
+        report_options = infos_from_reports['options']
+
+        infos_from_survey = extract_from_surveys(qid,survey)
+        survey_name = infos_from_survey['name']
+        survey_type = infos_from_survey['type']
+        survey_options = infos_from_survey['options']
 
 
+        #fifth: if a prior summary already exists delete it, before writing the new one.
+        old_smmry = SummaryModel.find_unique_summary(surveyid,qid)
 
-        # Letzter Schritt: schreibe eine summary zu einer qid in die datenbank in die datenbank:
-        # funktioniert so wie hier beschrieben
+        if old_smmry:
+            #print("old_smmry deleted")
+            #print(old_smmry)
+            old_smmry.delete_from_db()
 
-        #qid: wird uebergeben
-        #surveyid: wird uebergeben
-        #name -> muss extrahiert werden
-        #typ -> brauche ich den?
-        #options -> muss extrahiert werden
-        #answers -> nehme ich aus summed_answer
+        #6th: write the new summary:
 
-        print(surveyid)
+        smmry = SummaryModel(qid,surveyid,report_name,survey_type,json.dumps(survey_options),json.dumps(summed_answers))
 
-        #smmry = SummaryModel(qid,surveyid,name,type,json.dumps(options),json.dumps(summed_answers))
+        try:
+            smmry.save_to_db()
+        except:
+            return {'message': "Error while saving summary."}, 500 #internal server error
 
-
-
-
-        qid = 88
-        surveyid = "surveyid"
-        name = "horsthorst"
-        typ = "ordinal"
-        options = ["malte","kelly"]
-        answers = [0,1]
-        counter = 125
-
-        smmry = SummaryModel(qid,surveyid,name,typ,json.dumps(options),json.dumps(answers))
-
-        #try:
-        smmry.save_to_db()
-        #except:
-        #    return {'message': "Error while saving summary."}, 500 #internal server error
-
-
-        return {'message': " '{}' ".format(surveyid)}, 200 #ok
-        #return {'message': " evaluation done."}, 200 #ok
+        return {'message': " summary for qid 62 and report '{}' is sucessfully created.".format(surveyid)}, 200 #ok

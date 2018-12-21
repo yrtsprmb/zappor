@@ -11,10 +11,84 @@ gehe jeweils durch die antworten:
 fur jede qid addiere die antworten in der liste auf.
 """
 
+
+def bins_per_qid(qid,list_of_report_objects):
+    '''
+    Determines quantity of bins per qid.
+    TODO: exception einbauen.
+    '''
+    for report in list_of_report_objects:
+        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
+
+        for answer in answerlist: #loop throw dictionairis
+            #bins = 0
+            if qid == answer['qid']:
+                bins = len(answer['options'])
+    return bins
+
+
+
+
+
+def counting_histogram_values(qid,list_of_report_objects):
+    '''
+    Counts values for histogram bins. Takes a qid and a list of report objects.
+    Returns a histogram (list) with all summarized bins.
+    '''
+    bins = bins_per_qid(qid,list_of_report_objects)
+    histogram_list = [0] * bins
+    print("bins")
+    print(bins)
+    counter = 0
+
+    for report in list_of_report_objects:
+        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
+
+        for answer in answerlist: #loop throw dictionairis
+            if qid == answer['qid']:
+                    histogram_list = [sum(pair) for pair in zip(histogram_list, answer['options'])]
+                    counter += 1
+    return {'histogram': histogram_list, 'counts': counter }
+
+
+
+
+def extract_from_reports(qid,list_of_report_objects):
+    '''
+    Returns the name and options to a qid for a specific report.
+    '''
+    for report in list_of_report_objects:
+        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
+
+        for answer in answerlist: #loop throw dictionairis
+            if qid == answer['qid']:
+                return {'name': answer['question'], 'options': answer['options']}
+                # if f,p,q should implemented later, this could be done here.
+                #return {'name': answer['question'], 'options': answer['options'],'f': answer['f'], 'p': answer['p'], 'q': answer['q']}
+            else:
+                pass #todo: catch error
+
+
+def extract_from_surveys(qid,survey):
+    '''
+    Returns the name, type and options to a qid for a specific survey.
+    '''
+    questions = json.loads(survey.questions)
+    for question in questions:
+        if qid == question['qid']:
+            print(question['type'])
+            return { 'name': question['name'], 'type': question['type'], 'options': question['options']}
+        else:
+            pass #todo: catch error
+
+################################################################################
+
+
 def list_answers(list_of_report_objects):
     '''
     Returns a list of all given answers for a list of report objects.
     The answerlist is a list of list which contains dictionairis. [[{ }]]
+    Not used.
     '''
     answerlist = []
     for report in list_of_report_objects:
@@ -27,6 +101,7 @@ def extract_qids(listofanswers):
     '''
     Takes a list of a list of dictionaires (all answers belonging to reports for a specific survey).
     Returns a list of all qids which are in this input list.
+    Not used.
     '''
     qids = []
     for answers in listofanswers:
@@ -36,6 +111,28 @@ def extract_qids(listofanswers):
                 qids.append(qid)
     return qids
 
+
+def counting_histogram_values_old(qid,list_of_report_objects):
+    '''
+    Counts values for histogram bins. Takes a qid and a list of report objects.
+    Returns a histogram (list) with all summarized bins.
+    '''
+    bins = bins_per_qid(qid,list_of_report_objects)
+    histogram_list = [0] * bins
+    print("bins")
+    print(bins)
+    counter = 0
+
+    for report in list_of_report_objects:
+        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
+
+        for answer in answerlist: #loop throw dictionairis
+
+            if qid == answer['qid']:
+                    histogram_list = [sum(pair) for pair in zip(histogram_list, answer['options'])]
+                    counter = counter + 1
+                    print(counter)
+    return histogram_list
 
 def extract_qid_info2(qid, list_of_report_objects):
 
@@ -80,58 +177,29 @@ def extract_qid_info(listofanswers):
     return questions
 
 
-def bins_per_qid(qid,list_of_report_objects):
-    '''
-    Determines quantity of bins per qid.
-    TODO: exception einbauen.
-    '''
-    for report in list_of_report_objects:
-        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
-        for answer in answerlist: #loop throw dictionairis
-            if qid == answer['qid']:
-                bins = len(answer['options'])
-    return bins
 
 
-def counting_histogram_values(qid,list_of_report_objects):
-    '''
-    Counts values for histogram bins. Takes a qid and a list of report objects.
-    Returns a histogram (list) with all summarized bins.
-    '''
-    bins = bins_per_qid(qid,list_of_report_objects)
-    histogram_list = [0] * bins
-    print("bins")
-    print(bins)
-
-    for report in list_of_report_objects:
-        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
-        counter = 0
-        for answer in answerlist: #loop throw dictionairis
-            if qid == answer['qid']:
-                    histogram_list = [sum(pair) for pair in zip(histogram_list, answer['options'])]
-                    counter += 1
-    return histogram_list
+# def counting_histogram_values(qid,list_of_report_objects):
+#     '''
+#     Counts values for histogram bins. Takes a qid and a list of report objects.
+#     Returns a histogram (list) with all summarized bins.
+#     '''
+#     bins = bins_per_qid(qid,list_of_report_objects)
+#     histogram_list = [0] * bins
+#     print("bins")
+#     print(bins)
+#
+#     for report in list_of_report_objects:
+#         answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
+#         counter = 0
+#         for answer in answerlist: #loop throw dictionairis
+#             if qid == answer['qid']:
+#                     histogram_list = [sum(pair) for pair in zip(histogram_list, answer['options'])]
+#                     counter += 1
+#     return histogram_list
 
 
 
-def counting_histogram_values_new(qid,list_of_report_objects):
-    '''
-    Counts values for histogram bins. Takes a qid and a list of report objects.
-    Returns a histogram (list) with all summarized bins.
-    '''
-    bins = bins_per_qid(qid,list_of_report_objects)
-    histogram_list = [0] * bins
-    print("bins")
-    print(bins)
-
-    for report in list_of_report_objects:
-        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
-        counter = 0
-        for answer in answerlist: #loop throw dictionairis
-            if qid == answer['qid']:
-                    histogram_list = [sum(pair) for pair in zip(histogram_list, answer['options'])]
-                    counter += 1
-    return histogram_list
 
 
 def list_qids_dict(list_of_report_objects):

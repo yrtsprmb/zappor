@@ -41,12 +41,26 @@ class SummaryModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def delete_from_db(self):
+        '''
+        deletes a summary from the db
+        '''
+        db.session.delete(self)
+        db.session.commit()
+
     @classmethod
     def find_by_surveyid(cls, surveyid):
         '''
         Returns all summaries belonging to a surveyid.
         '''
         return cls.query.filter_by(surveyid).all()
+
+    @classmethod
+    def find_unique_summary(cls, surveyid,qid):
+        '''
+        Returns a summary with the unique combination survey id and qid.
+        '''
+        return cls.query.filter_by(surveyid=surveyid).filter_by(qid=qid).first()
 
     @classmethod
     def find_by_id(cls, _id):

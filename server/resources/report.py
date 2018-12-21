@@ -6,7 +6,7 @@ from models.report import ReportModel
 from models.survey import SurveyModel
 
 import resources.parsers
-from resources.parsers import check_fpq, check_if_bits
+from resources.parsers import check_fpq, check_if_bits, check_incoming_report
 
 ############################################
 ## Ressources for reports
@@ -37,7 +37,10 @@ class Report(Resource):
             if not check_fpq(data['f'],data['p'],data['q']):
                 return {'message': "report discarded: f,p,q must have values between 0.0 and 1.0"}, 400 #bad request
 
-            print(data)
+            helga = check_incoming_report(data['answers'])
+            #print (helga)
+
+            #print(data)
             report = ReportModel(surveyid,
                 data['prr'],
                 data['irr'],

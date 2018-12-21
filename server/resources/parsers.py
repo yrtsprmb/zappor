@@ -162,3 +162,10 @@ def check_status(status):
     if(status != 'created' and status != 'active' and status != 'done'):
         return False
     return True
+
+
+def check_incoming_report(input):
+    print("---------testing----------")
+    print(input)
+    print("---------type----------")
+    print(type(input))
