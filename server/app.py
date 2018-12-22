@@ -12,8 +12,8 @@ from resources.report import Report, ListReports
 from resources.summaries import Summary, ListSummaries
 from internal.config import secretkey_config, serviceprovider_config
 #tests
-from resources.evaluate import EvaluateSurvey
-from resources.generate_summaries import GenerateSummaries
+#from resources.evaluate import EvaluateSurvey
+from resources.create_summaries import CreateSummaries
 
 
 app = Flask(__name__)
@@ -56,11 +56,16 @@ api.add_resource(Survey, '/surveys/<string:surveyname>') # create & delete surve
 api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 
 #Tests
-api.add_resource(EvaluateSurvey, '/evaluate/<string:surveyid>')
-api.add_resource(GenerateSummaries, '/helga/<string:surveyid>')
+#api.add_resource(EvaluateSurvey, '/evaluate/<string:surveyid>')
 
-api.add_resource(Summary, '/rest/smmrys/<string:surveyid>') # get and post summaries for a surveyid
-api.add_resource(ListSummaries, '/listsummaries') # get and post summaries for a surveyid
+from resources.test_create_summaries import Test
+api.add_resource(Test, '/rest/test/<string:surveyid>')
+
+
+
+api.add_resource(Summary, '/rest/smmrs/<string:surveyid>') # GET, POST & DELETE for summaries.
+api.add_resource(ListSummaries, '/rest/listsummaries') # GET for listing all available summaries
+api.add_resource(CreateSummaries, '/rest/createsummaries/<string:surveyid>') # GET
 
 ### views ########################################################
 ## routes for the web GUI

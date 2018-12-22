@@ -133,8 +133,13 @@ class ParseSummariesPost:
     parser.add_argument('answers',
         type=int,
         action='append',
-        required=False,
+        required=True,
         help="answers are missing"
+    )
+    parser.add_argument('counter',
+        type=int,
+        required=True,
+        help="counter is missing"
     )
 
 

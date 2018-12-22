@@ -18,7 +18,7 @@ class SummaryModel(db.Model):
     created = db.Column(db.String(50))      # creation data of a summary
     counter = db.Column(db.Integer)         # id of a question
 
-    def __init__(self, qid, surveyid, name, type, options, answers):
+    def __init__(self, qid, surveyid, name, type, options, answers,counter):
         self.qid = qid
         self.surveyid = surveyid
         self.name = name
@@ -26,7 +26,7 @@ class SummaryModel(db.Model):
         self.options = options
         self.answers = answers
         self.created = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
-        self.counter = 0
+        self.counter = counter
 
     def tojson(self):
         '''
@@ -53,7 +53,7 @@ class SummaryModel(db.Model):
         '''
         Returns all summaries belonging to a surveyid.
         '''
-        return cls.query.filter_by(surveyid).all()
+        return cls.query.filter_by(surveyid=surveyid).all()
 
     @classmethod
     def find_unique_summary(cls, surveyid,qid):

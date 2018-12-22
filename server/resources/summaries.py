@@ -36,7 +36,7 @@ class Summary(Resource):
         '''
         Server REST testing resource:
         Creates a summary for a specific survyid.
-        This API is for testing the server functionality.
+        This API is only for testing the server functionality.
         '''
         data = resources.parsers.ParseSummariesPost.parser.parse_args()
 
@@ -45,7 +45,8 @@ class Summary(Resource):
                                 data['name'],
                                 data['type'],
                                 json.dumps(data['options']),
-                                json.dumps(data['answers']))
+                                json.dumps(data['answers']),
+                                data['counter'])
         try:
             smmry.save_to_db()
         except:
@@ -56,19 +57,17 @@ class Summary(Resource):
     def delete(self,surveyid):
         '''
         Server REST testing resource:
-        Deletes all summaries belonging to a surveyid.
-        TODO: needs to be implemented
+        Deletes all summaries belonging to a specific surveyid.
         '''
-        # smmrys = SummaryModel.find_by_surveyid(surveyid)
-        # print(smmrys)
-        # if smmrys:
-        #     try:
-        #         smmrys.delete_from_db()
-        #     except:
-        #         return {'message': "Error while trying to delete the summaries."}, 500 #internal server error
-        #
-        #     return {'message': "Summaries belongig to surveyid '{}' deleted.".format(surveyid)}, 202 #accepted
-        return {'message': " TEST API (no productive use)."}, 400 #bad request
+        smmrys = SummaryModel.find_by_surveyid(surveyid)
+        for smmry in smmrys:
+            try:
+                smmry.delete_from_db()
+            except:
+                return {'message': "Error while trying to delete summary."}, 500 #internal server error
+
+        return {'message': "Summaries belongig to surveyid '{}' deleted.".format(surveyid)}, 202 #accepted
+
 
 
 class ListSummaries(Resource):

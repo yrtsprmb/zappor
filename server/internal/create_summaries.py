@@ -1,14 +1,11 @@
-#internal/evaluation.py
+#internal/create_summaries.py
 
 import json
-#from flask_restful import Resource, request
-#from models.report import ReportModel
-"""
-Helping functions for the evaluation of surveys.
 
-fur alle reports in der liste
-gehe jeweils durch die antworten:
-fur jede qid addiere die antworten in der liste auf.
+"""
+Functions for the evaluation of surveys.
+Supports the creating of summaries per surveyid.
+
 """
 
 
@@ -21,13 +18,9 @@ def bins_per_qid(qid,list_of_report_objects):
         answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
 
         for answer in answerlist: #loop throw dictionairis
-            #bins = 0
             if qid == answer['qid']:
                 bins = len(answer['options'])
     return bins
-
-
-
 
 
 def counting_histogram_values(qid,list_of_report_objects):
@@ -49,8 +42,6 @@ def counting_histogram_values(qid,list_of_report_objects):
                     histogram_list = [sum(pair) for pair in zip(histogram_list, answer['options'])]
                     counter += 1
     return {'histogram': histogram_list, 'counts': counter }
-
-
 
 
 def extract_from_reports(qid,list_of_report_objects):
@@ -97,19 +88,25 @@ def list_answers(list_of_report_objects):
     return answerlist
 
 
-def extract_qids(listofanswers):
+
+
+def qids(list_of_report_objects):
     '''
     Takes a list of a list of dictionaires (all answers belonging to reports for a specific survey).
     Returns a list of all qids which are in this input list.
     Not used.
     '''
     qids = []
-    for answers in listofanswers:
-        for answer in answers:
+    for report in list_of_report_objects:
+        answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
+
+        for answer in answerlist: #loop throw dictionairis
             qid = (answer['qid'])
             if qid not in qids:
                 qids.append(qid)
     return qids
+
+
 
 
 def counting_histogram_values_old(qid,list_of_report_objects):
