@@ -1,3 +1,4 @@
+#app.py
 from flask import Flask, render_template, url_for, redirect, flash, abort
 from flask_restful import Api
 from flask_jwt import JWT
@@ -12,7 +13,7 @@ from resources.report import Report, ListReports
 from resources.summaries import Summary, ListSummaries
 from internal.config import secretkey_config, serviceprovider_config
 #tests
-#from resources.evaluate import EvaluateSurvey
+
 from resources.create_summaries import CreateSummaries
 
 
@@ -26,14 +27,17 @@ api = Api(app)
 @app.before_first_request
 def create_tables():
     '''
-    Creates all needed sqlite tables (if not existing) after the first request is madeself.
+    Creates all needed tables (if not already existing) after the first request was made.
     '''
     db.create_all()
 
 #authentication (prepared but not fully implemented)
 jwt = JWT(app, authenticate, identity) # responsible for the /auth path
 
-#Register error pages
+### error pages ##################################################
+## Register error pages
+##################################################################
+
 from handlers import error_pages
 app.register_blueprint(error_pages)
 
@@ -157,6 +161,7 @@ def settings():
     '''
     TODO: Server setting (web GUI).
     '''
+    from models.config import ConfigurationModel
     from forms import LoginForm
     form = LoginForm()
     if form.validate_on_submit():
@@ -164,6 +169,23 @@ def settings():
             form.username.data, form.remember_me.data))
         return redirect(url_for('index'))
     return render_template('settings.html', form=form, title='settings')
+
+
+@app.route('/internaldata')
+def internaldata():
+    '''
+    This is for testing.
+    It shows all client-, and server inquiries and reports which are stored in the client database.
+    '''
+    from models.report import ReportModel
+    from models.survey import SurveyModel
+    from models.summaries import SummaryModel
+
+    rprts = ReportModel.query.all()
+    smmrs = SummaryModel.query.all()
+    srvys = SurveyModel.query.all()
+
+    return render_template('internal_data.html', rprts=rprts, smmrs=smmrs, srvys=srvys, title='internal data')
 
 
 @app.route('/tests', methods=['GET','POST'])
@@ -178,7 +200,7 @@ def tests():
     flash("horst")
     if form.validate_on_submit():
             print("generate summary button pressed") #debug
-            #r = requests.get('http://127.0.0.1:5000/evaluate/')
+            r = requests.get('http://localhost:5000/rest/test/testsurvey')
 
     return render_template('tests.html', form=form, title='server tests')
 
@@ -191,8 +213,9 @@ def info():
     return render_template('info.html')
 
 
-# Server starts only if it will be executed over the file app.py
-# Starts for SQLAlchemy for the server
+##################################################################
+## Server only starts when it will be executed over the file app.py
+##################################################################
 if __name__ == '__main__':
     from db import db
     db.init_app(app)

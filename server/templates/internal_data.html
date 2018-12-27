@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="jumbotron">
+  <h3>Surveys:</h3>
+  <ul>
+    {% for srvy in srvys %}
+    <li>{{srvy}}</li>
+    {% endfor %}
+  </ul>
+  <br>
+  <h3>Summaries:</h3>
+  <ul>
+    {% for smmry in smmrs %}
+    <li>{{smmry}}</li>
+    {% endfor %}
+  </ul>
+  <h3>Reports:</h3>
+  <ul>
+    {% for rprt in rprts %}
+    <li>{{rprt}}</li>
+    {% endfor %}
+  </ul>
+
+</div>
+
+{% endblock %}

@@ -28,6 +28,12 @@ class SummaryModel(db.Model):
         self.created = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
         self.counter = counter
 
+    def __repr__(self):
+        '''
+        Representation of a summary object.
+        '''
+        return f" surveyid: {self.surveyid}, qid: {self.qid}, created: {self.created}, counter: {self.counter}, answers: {self.answers}"
+
     def tojson(self):
         '''
         JSON representation of a summary object.

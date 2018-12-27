@@ -1,11 +1,7 @@
-#intern/config.py
+#internal/config.py
 
-#configurations
-
+'''
+Configuration settings
+'''
 serviceprovider_config = 'radio_gaga'
 secretkey_config = 'zappor'
-
-
-
-
-#timing settings for threads
