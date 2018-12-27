@@ -3,11 +3,14 @@
 from flask_restful import reqparse
 
 ##################################################################
-## in this file are all parsers for the REST API
+## This file contains all parsers for the REST API
+## and validation checks.
 ##################################################################
 
-# parser for POST client inquiries
 class ParseClientInquiriesPost:
+    '''
+    Parser for client inquiries (POST requests).
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('type',
         type=str,
@@ -53,8 +56,10 @@ class ParseClientInquiriesPost:
     )
 
 
-# parser for PUT client inquiries
 class ParseClientInquiriesPut:
+    '''
+    Parser for client inquiries (PUT requests).
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('answer',
     type=int,
@@ -89,8 +94,10 @@ class ParseClientInquiriesPut:
     )
 
 
-# parser for testing the REST API
 class ParseTestClientInquiries:
+    '''
+    Parser for client inquiries (for testing).
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('type',
         type=str,
@@ -154,6 +161,9 @@ class ParseTestClientInquiries:
 
 
 class ParseTestServerInquiries:
+    '''
+    Parser for server inquiries (for testing).
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('qid',
         type=str,
@@ -185,7 +195,7 @@ class ParseTestServerInquiries:
         type=str,
         required=False,
         help="qdescription is missing"
-    )    
+    )
     parser.add_argument('locked',
         type=bool,
         required=True,
@@ -199,6 +209,9 @@ class ParseTestServerInquiries:
 
 
 class ParseTestReports:
+    '''
+    Parser for reports (for testing).
+    '''
     parser = reqparse.RequestParser()
     parser.add_argument('prr',
         type=bool,
@@ -234,6 +247,9 @@ class ParseTestReports:
 
 
 class ParseClientConf:
+    '''
+    TODO: Parser for client configuration.
+    '''
     parser = reqparse.RequestParser()
 
     parser.add_argument('serveraddress',
@@ -263,14 +279,16 @@ class ParseClientConf:
     )
 
 
-class CheckRestInputValues:
-    pass
-
-# checks if f,p,q are float between 0 and 1
 def check_fpq(f,p,q):
+    '''
+    Checks if f,p and q values are correct (between 0.0 and 1.0).
+    '''
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
 
 def check_if_bits(list):
+    '''
+    Checks if the values of a an answerlist are either 1 or 0.
+    '''
     for value in list:
         if(value !=0 and value !=1):
             return False

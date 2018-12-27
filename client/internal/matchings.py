@@ -19,6 +19,9 @@ def check_correctness(client,server):
 
 
 def find_matches(client,server):
+    '''
+    TODO: should return an evaluation of allreports belonging to a surveyidself.
+    '''
     # compare client inquiries with server inquieres and returns matching qids
     def compare_data(c, s, results):
         #c['name'] == s['name'] and

@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from models.clientconf import ClientConfModel
+from models.config import ConfigurationModel
 import resources.parsers
 
 

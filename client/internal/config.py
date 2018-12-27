@@ -1,6 +1,8 @@
-#intern/config.py
+#internal/config.py
 
-## configurations ##
+'''
+Configuration settings
+'''
 
 secretkey_config = 'zappor'
 
@@ -15,22 +17,27 @@ serviceprovider_surveys = server + ':' + port + '/availablesurveys'
 repeat_request_surveys = 10
 repeat_send_reports = 15
 
-
-
-#global RAPPOR client settings
-global_prr = 1
-global_irr = 1
-
 #global fpq settings are taken from the RAPPOR paper
-global_f = 0.5
-global_p = 0.75
-global_q = 0.5
+global_f = 0.5 # delete in future
+global_p = 0.75 # delete in future
+global_q = 0.5 # delete in future
 
-global_slider = 0
+
+configfile_server = 'http://127.0.0.1'
+configfile_port = '5000'
+
+configfile_repeat_send_reports = 15
+configfile_repeat_request_surveys = 10
+
+configfile_f = 0.5
+configfile_p = 0.75
+configfile_q = 0.5
 
 #global privacy settings
 global_locked = True
 
+#gdpr/dsgvo
+configfile_dsgvo = False
 
 #print(serviceprovider_reports) #debug
 #print(serviceprovider_surveys) #debug

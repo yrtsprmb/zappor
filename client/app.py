@@ -1,3 +1,4 @@
+#app.py
 from flask import Flask, render_template, url_for, redirect, flash, request, abort
 from flask_restful import Api
 from db import db
@@ -49,12 +50,21 @@ api = Api(app)
 #creates tables on startup when first request ist made
 @app.before_first_request
 def create_tables():
+    '''
+    Creates all needed tables (if not already existing) after the first request was made.
+    '''
     db.create_all()
 
-#starts background jobs
+
 #@app.before_first_request
 def activate_job():
+    '''
+    Starts threads with automatic background jobs.
+    '''
     def request_survey():
+        '''
+        Requests surveys from the server in a specified interval.
+        '''
         while True:
             print("Request Survey")
             r = requests.get(serviceprovider_surveys)
@@ -63,6 +73,9 @@ def activate_job():
     thread_survey.start()
 
     def send_report():
+        '''
+            Send reports to the server in a specified interval.
+        '''
         while True:
             print("Send Report")
             r = requests.get(serviceprovider_reports)
@@ -128,11 +141,17 @@ api.add_resource(ServerInquiries, '/si/<string:name>')
 @app.route('/')
 @app.route('/index')
 def index():
+    '''
+    Homepage (web GUI).
+    '''
     return render_template('home.html', title='Home')
 
 
 @app.route('/inquiries/')
 def inquiries_list():
+    '''
+    List all client inquiries (web GUI).
+    '''
     from models.client_inquiries import ClientInquiriesModel
     from forms import ClientInquiryForm
 
@@ -142,6 +161,9 @@ def inquiries_list():
 
 @app.route('/inquiries/<int:id>/', methods=['GET','POST'])
 def inquiries_detail(id):
+    '''
+    Detailed view of an inquiry (web GUI).
+    '''
     from models.client_inquiries import ClientInquiriesModel
     from forms import EditClientInquiryForm
     import json
@@ -168,13 +190,12 @@ def inquiries_detail(id):
         # print(len(json.loads(inq.answer)))
 
         #validation checks:
-        print(len(json.loads(answer)))
+        #print(len(json.loads(answer)))
         # if fpq is between 0 and 1
         if not check_fpq(f,p,q):
             print("Only values between 0 and 1 allowed for f,p,q!") #debug
             flash("Only values between 0 and 1 allowed for f,p,q!")
             return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
-
 
         # check length of answer
         if not (len(json.loads(answer)) == len(json.loads(inq.answer))):
@@ -196,8 +217,7 @@ def inquiries_detail(id):
             inq.irr_answer = json.dumps(irr)
 
         inq.answer = answer
-        # if a answer was given by the user, responed will be set to TRUE
-        inq.responded = True
+        inq.responded = True # if a answer was given by the user, responed will be set to TRUE
         inq.locked = locked
         inq.f = f
         inq.p = p
@@ -209,22 +229,21 @@ def inquiries_detail(id):
 
 @app.route('/inquiries/create', methods=['GET','POST'])
 def inquiries_create():
+    '''
+    Creation of a (client) inquiry (web GUI).
+    '''
     from models.client_inquiries import ClientInquiriesModel
     from forms import CreateClientInquiryForm
     import json
 
     form = CreateClientInquiryForm()
     if ClientInquiriesModel.find_by_name(form.inq_name.data):
-        print("name already in db")
+        print("name already in db") #debug
         flash("name already in db")
         return render_template('inquiries/create.html', form=form, title='create a new inquiry')
 
-
     if form.validate_on_submit():
-
         length_options_list = len(json.loads(form.inq_options.data))
-        print('mega')
-        print(length_options_list)
         inq = ClientInquiriesModel(name = form.inq_name.data,
                                     type = form.inq_type.data,
                                     options = form.inq_options.data,
@@ -247,7 +266,7 @@ def inquiries_create():
 @app.route("/inquiries/<int:id>/delete", methods=['POST'])
 def inquiries_delete(id):
     '''
-    deleting of inquiries over the webgui
+    Deleting a (client) inquiry (web GUI).
     '''
     from models.client_inquiries import ClientInquiriesModel
 
@@ -257,11 +276,11 @@ def inquiries_delete(id):
     return redirect(url_for('inquiries_list'))
 
 
-#testing
 @app.route('/show')
 def show_inquiries():
     '''
-    this is for testing and shows all client-, serverinquiries and reports which are stored in the sqlitedb
+    This is for testing (web GUI).
+    It shows all client-, and server inquiries and reports which are stored in the client database.
     '''
     from models.server_inquiries import ServerInquiriesModel
     from models.client_inquiries import ClientInquiriesModel
@@ -276,7 +295,7 @@ def show_inquiries():
 @app.route('/config')
 def client_config():
     '''
-    configuration page
+    Configuration page (web GUI).
     '''
     return render_template('client_config.html', title='Configuration')
 
@@ -284,7 +303,7 @@ def client_config():
 @app.route('/tests', methods=['GET','POST'])
 def tests():
     '''
-    options for testing the client over the webgui
+    Options for client testing (web GUI).
     '''
     import requests
     from forms import RequestSurveyTestForm
@@ -309,12 +328,13 @@ def tests():
 @app.route('/info')
 def info():
     '''
-    infomation page.
+    Infomation page (web GUI).
     '''
     return render_template('info.html')
 
-
-####### Server only starts when it will be executed over the file app.py
+##################################################################
+## Client only starts when it will be executed over the file app.py
+##################################################################
 if __name__ == '__main__':
     db.init_app(app)
     app.run(port=5001,debug=True)
