@@ -197,7 +197,7 @@ def tests():
     from forms import TestForm
 
     form = TestForm()
-    flash("horst")
+    flash("test")
     if form.validate_on_submit():
             print("generate summary button pressed") #debug
             r = requests.get('http://localhost:5000/rest/test/testsurvey')
@@ -212,6 +212,12 @@ def info():
     '''
     return render_template('info.html')
 
+@app.route('/histogram')
+def histogram():
+    '''
+    Test: Histogram (web GUI).
+    '''
+    return render_template('histogram.html')
 
 ##################################################################
 ## Server only starts when it will be executed over the file app.py

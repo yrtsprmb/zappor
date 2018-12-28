@@ -1,9 +1,13 @@
+#models/client_inquiries.py
 import json
 from db import db
 
-# represents all answers a client has to offer
 class ClientInquiriesModel(db.Model):
-
+    '''
+    Defines the model for the internal representation of client inquiries.
+    They represent all answers a client have to offer.
+    Table will be created after first request was made after starting the app.
+    '''
     __tablename__ = "client_inquiries"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))         # name of a question
@@ -33,12 +37,16 @@ class ClientInquiriesModel(db.Model):
         self.p = p
         self.q = q
 
-    #representation of the object for the GUI
     def __repr__(self):
+        '''
+        Representation of a client inquiry object.
+        '''
         return f" name: {self.name}, type: {self.type}, options: {self.options}, answer: {self.answer}, prr_answer: {self.prr_answer}, irr_answer: {self.irr_answer}, description: {self.qdescription}, responded: {bool(self.responded)}, locked: {bool(self.locked)}, f: {self.f}, p: {self.p}, q: {self.q}"
 
-    #json representation of a client privacy data set
     def tojson(self):
+        '''
+        Returns a json representation of the client inquiry model.
+        '''
         return {'name': self.name,
             'type': self.type,
             'options': json.loads(self.options),
@@ -53,19 +61,30 @@ class ClientInquiriesModel(db.Model):
             'q': self.q,
             }
 
-
     @classmethod
     def find_by_name(cls, name):
+        '''
+        Returns a client inquiry called by its name.
+        '''
         return ClientInquiriesModel.query.filter_by(name=name).first()
 
     @classmethod
     def find_by_id(cls, id):
+        '''
+        Returns a client inquiry called by its id.
+        '''
         return ClientInquiriesModel.query.filter_by(id=id).first()
 
     def save_to_db(self):
+        '''
+        Saves a client inquiry to the database.
+        '''
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self):
+        '''
+        Deletes a client inquiry from the database.
+        '''
         db.session.delete(self)
         db.session.commit()

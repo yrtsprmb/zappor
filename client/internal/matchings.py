@@ -62,7 +62,7 @@ def find_matching_surveys(items):
 #############################################################
 def generate_answers_by_surveyid(surveyid,results):
     answers = []
-    for entry in results:  #geht auch mit ergebnis
+    for entry in results:
         answerentry = {}
         if surveyid == entry['surveyid']:
 
