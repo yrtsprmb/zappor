@@ -38,14 +38,14 @@ class ReportModel(db.Model):
 
     def tojson(self):
         '''
-        returns a json representation of the report model
+        Returns a json representation of the report model.
         '''
         return {'surveyid': self.surveyid, 'prr': bool(self.prr), 'irr': bool(self.irr), 'f': self.f, 'p': self.p,'q': self.q, 'answers': json.loads(self.answers)}
 
     @classmethod
     def find_report_by_surveyid(cls, surveyid):
         '''
-        returns all reports belonging to a specific survey id
+        Returns all reports belonging to a specific survey id
         '''
         return ReportModel.query.filter_by(surveyid=surveyid).all()
 

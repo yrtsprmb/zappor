@@ -57,12 +57,17 @@
               .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
               // load the data
-              d3.json("static/data.json", function(error, data) {
+            d3.json("/rest/smmrs/testsurvey", function(error, data) {
 
-    data.forEach(function(d) {
-        d.Letter = d.Letter;
-        d.Freq = +d.Freq;
-    });
+                if(data.length != 0) {
+                  data.summaries.forEach(function(s) {
+                    console.log(s.name, s.answers);
+                  })
+                }
+                data.forEach(function(d) {
+                    d.Letter = d.Letter;
+                    d.Freq = +d.Freq;
+                });
 
   // scale the range of the data
   x.domain(data.map(function(d) { return d.Letter; }));

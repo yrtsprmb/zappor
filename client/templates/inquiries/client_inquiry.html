@@ -5,13 +5,14 @@
 <div class="jumbotron">
   <h1>name: {{ inq.name }}</h1>
   <h2> options: {{ inq.options }} </h2>
+  <p>type: {{ inq.type }} </p>
   <p>answer: {{ inq.answer }} </p>
   <p>PRR: {{ inq.prr_answer }} </p>
   <p>IRR: {{ inq.irr_answer }} </p>
   <p>responded: {{ inq.responded }} locked: {{ inq.locked }} </p>
   <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
   <p>Description: {{ inq.qdescription }}</p>
-  
+
   <form method="POST">
       {# This hidden_tag is a CSRF security feature. #}
       {{ form.hidden_tag() }}

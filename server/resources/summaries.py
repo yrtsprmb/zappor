@@ -26,10 +26,10 @@ class Summary(Resource):
         Returns all summaries belonging to a specific survey id.
         Returns a list with a summary of evaluated reports to an surveyid
         '''
-        smry = [ x.tojson() for x in SummaryModel.query.filter_by(surveyid=surveyid)]
-        if smry == []:
+        smrys = [ x.tojson() for x in SummaryModel.query.filter_by(surveyid=surveyid)]
+        if smrys == []:
             return {'message': "no summary found for surveyid '{}' ".format(surveyid)}, 400
-        return {'summary': smry }
+        return {'summaries': smrys }
 
 
     def post(self, surveyid):

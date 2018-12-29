@@ -35,8 +35,7 @@ class CreateSummaries:
             if qid == question['qid']:
                 print(question['type'])
                 return { 'name': question['name'], 'type': question['type'], 'options': question['options']}
-            else:
-                pass #todo: catch error
+
 
     def bins_per_qid(qid,list_of_report_objects):
         '''
@@ -45,8 +44,9 @@ class CreateSummaries:
         '''
         for report in list_of_report_objects:
             answerlist = (json.loads(report.answers)) #make string to a list of dictionairis
-
+            print('answerlist', answerlist)
             for answer in answerlist: #loop throw dictionairis
+                print(answer)
                 if qid == answer['qid']:
                     bins = len(answer['options'])
         return bins
