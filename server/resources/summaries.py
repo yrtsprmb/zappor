@@ -3,15 +3,14 @@
 import json
 from flask_restful import Resource, request
 
+from models.report import ReportModel
 from models.summaries import SummaryModel
 from models.survey import SurveyModel
 
 import resources.parsers
 from resources.parsers import check_if_bits
+from internal.create_summaries import Summaries
 
-############################################
-## Ressource for Summaries
-############################################
 
 class Summary(Resource):
     '''
@@ -19,7 +18,6 @@ class Summary(Resource):
     Returns all summaries belonging to a specific survey id.
     Returns a list with a summary of evaluated reports to an surveyid
     '''
-
     def get(self,surveyid):
         '''
         Internal REST resource:
@@ -30,7 +28,6 @@ class Summary(Resource):
         if smrys == []:
             return {'message': "no summary found for surveyid '{}' ".format(surveyid)}, 400
         return {'summaries': smrys }
-
 
     def post(self, surveyid):
         '''
@@ -53,7 +50,6 @@ class Summary(Resource):
             return {'message': "Error while saving summary."}, 500 #internal server error
         return {'TEST API (no productive use)': smmry.tojson()}, 201 #created
 
-
     def delete(self,surveyid):
         '''
         Server REST testing resource:
@@ -66,8 +62,7 @@ class Summary(Resource):
             except:
                 return {'message': "Error while trying to delete summary."}, 500 #internal server error
 
-        return {'message': "Summaries belongig to surveyid '{}' deleted.".format(surveyid)}, 202 #accepted
-
+        return {'TEST API (no productive use)': "Summaries belongig to surveyid '{}' deleted.".format(surveyid)}, 202 #accepted
 
 
 class ListSummaries(Resource):
@@ -77,3 +72,24 @@ class ListSummaries(Resource):
         Returns a list with all summaries in the database.
         '''
         return {'summaries': [ x.tojson() for x in SummaryModel.query.all()]}, 200 #ok
+
+
+class CreateSummaries(Resource):
+    '''
+    TODO: get with two values -> soll die neu generierten summaries zurück geben als json.
+    '''
+    def get(self,surveyid):
+        '''
+        Return a summary of all qids belonging to a specific survey.
+        Tooks all reports belonging to a surveyid/qid combination and generates a new summary per qid.
+        If there exists already a summary for that qid, the old one will be overwritten.
+        '''
+        reports = ReportModel.query.filter_by(surveyid=surveyid).all()
+
+        report_answers = Summaries.list_answers(reports)
+        qids = Summaries.extract_qids(report_answers)
+
+        for qid in qids:
+            Summaries.create_summary(surveyid,qid)
+
+        return {'message': 'fuck yeah' }, 200 #ok

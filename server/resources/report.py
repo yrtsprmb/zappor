@@ -40,6 +40,11 @@ class Report(Resource):
             helga = check_incoming_report(data['answers'])
             #print (helga)
 
+            # check if qids correct
+            # check if type is correct
+            # check if length of answer is correct
+            
+
             #print(data)
             report = ReportModel(surveyid,
                 data['prr'],

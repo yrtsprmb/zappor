@@ -10,11 +10,10 @@ from security import authenticate, identity
 from resources.user import UserRegister
 from resources.survey import Survey, ListSurveys, AvailableSurveys
 from resources.report import Report, ListReports
-from resources.summaries import Summary, ListSummaries
-from internal.config import secretkey_config, serviceprovider_config
-#tests
+from resources.summaries import Summary, ListSummaries, CreateSummaries
 
-from resources.create_summaries import CreateSummaries
+from internal.config import secretkey_config, serviceprovider_config
+
 
 
 app = Flask(__name__)
@@ -59,17 +58,10 @@ api.add_resource(AvailableSurveys, '/availablesurveys')
 api.add_resource(Survey, '/surveys/<string:surveyname>') # create & delete surveys
 api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 
-#Tests
-#api.add_resource(EvaluateSurvey, '/evaluate/<string:surveyid>')
-
-from resources.test_create_summaries import Test
-api.add_resource(Test, '/rest/test/<string:surveyid>')
-
-
-
 api.add_resource(Summary, '/rest/smmrs/<string:surveyid>') # GET, POST & DELETE for summaries.
 api.add_resource(ListSummaries, '/rest/listsummaries') # GET for listing all available summaries
-api.add_resource(CreateSummaries, '/rest/createsummaries/<string:surveyid>') # GET
+api.add_resource(CreateSummaries, '/rest/smmrs/create/<string:surveyid>') # Creates summaries for a surveyid.
+
 
 ### views ########################################################
 ## routes for the web GUI
@@ -191,7 +183,7 @@ def internaldata():
 @app.route('/tests', methods=['GET','POST'])
 def tests():
     '''
-    Testing options over the web GUI.
+    Testing options over the web GUI. Works only for hardcoded testsurvey at the moment.
     '''
     import requests
     from forms import TestForm
@@ -200,7 +192,7 @@ def tests():
     flash("test")
     if form.validate_on_submit():
             print("generate summary button pressed") #debug
-            r = requests.get('http://localhost:5000/rest/test/testsurvey')
+            r = requests.get('http://localhost:5000/rest/smmrs/create/testsurvey')
 
     return render_template('tests.html', form=form, title='server tests')
 
