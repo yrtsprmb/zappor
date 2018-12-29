@@ -9,7 +9,7 @@ from models.survey import SurveyModel
 
 import resources.parsers
 from resources.parsers import check_if_bits
-from internal.create_summaries import Summaries
+from internal.summaries import SummaryHelper
 
 
 class Summary(Resource):
@@ -76,7 +76,7 @@ class ListSummaries(Resource):
 
 class CreateSummaries(Resource):
     '''
-    TODO: get with two values -> soll die neu generierten summaries zurück geben als json.
+    Creates for all reports to a surveyid new summaries.
     '''
     def get(self,surveyid):
         '''
@@ -86,10 +86,13 @@ class CreateSummaries(Resource):
         '''
         reports = ReportModel.query.filter_by(surveyid=surveyid).all()
 
-        report_answers = Summaries.list_answers(reports)
-        qids = Summaries.extract_qids(report_answers)
+        report_answers = SummaryHelper.list_answers(reports)
+        qids = SummaryHelper.extract_qids(report_answers)
 
+        smmrs_per_survey = []
         for qid in qids:
-            Summaries.create_summary(surveyid,qid)
+            smmry = SummaryHelper.create_summary(surveyid,qid)
 
-        return {'message': 'fuck yeah' }, 200 #ok
+            smmrs_per_survey.append(smmry.tojson())
+
+        return {'summaries': smmrs_per_survey }, 200 #ok

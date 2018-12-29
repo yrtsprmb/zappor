@@ -6,7 +6,7 @@ from models.survey import SurveyModel
 from models.summaries import SummaryModel
 
 
-class Summaries:
+class SummaryHelper:
     '''
     Contains helper functions for generation summaries.
     '''
@@ -82,7 +82,7 @@ class Summaries:
         Counts values for histogram bins. Takes a qid and a list of report objects.
         Returns a histogram (list) with all summarized bins.
         '''
-        bins = Summaries.bins_per_qid(qid,list_of_report_objects)
+        bins = SummaryHelper.bins_per_qid(qid,list_of_report_objects)
         histogram_list = [0] * bins
         print("bins")
         print(bins)
@@ -112,16 +112,16 @@ class Summaries:
         reports = ReportModel.query.filter_by(surveyid=surveyid).all()
 
         #third: count histogram and determine counts
-        evaluation = Summaries.counting_histogram_values(qid,reports)
+        evaluation = SummaryHelper.counting_histogram_values(qid,reports)
         summed_answers = (evaluation['histogram'])
         count_answers = (evaluation['counts'])
 
         #fourth: determine other values for generating a summary:
-        infos_from_reports = Summaries.extract_from_reports(qid,reports)
+        infos_from_reports = SummaryHelper.extract_from_reports(qid,reports)
         report_name = infos_from_reports['name']
         report_options = infos_from_reports['options']
 
-        infos_from_survey = Summaries.extract_from_surveys(qid,survey)
+        infos_from_survey = SummaryHelper.extract_from_surveys(qid,survey)
         survey_name = infos_from_survey['name']
         survey_type = infos_from_survey['type']
         survey_options = infos_from_survey['options']
@@ -140,4 +140,5 @@ class Summaries:
         except:
             return {'message': "Error while saving summary."}, 500 #internal server error
 
-        return {'message': smmry.tojson}, 200 #ok
+        #return {'message': smmry.tojson}, 200 #ok
+        return smmry
