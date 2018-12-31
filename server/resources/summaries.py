@@ -8,8 +8,9 @@ from models.summaries import SummaryModel
 from models.survey import SurveyModel
 
 import resources.parsers
-from resources.parsers import check_if_bits
-from internal.summaries import SummaryHelper
+#from resources.parsers import check_if_bits
+#from internal.summaries import SummaryHelper
+from internal.helpers import Auxiliary
 
 
 class Summary(Resource):
@@ -76,7 +77,7 @@ class ListSummaries(Resource):
 
 class CreateSummaries(Resource):
     '''
-    Creates for all reports to a surveyid new summaries.
+    Creates for a surveyid new summaries.
     '''
     def get(self,surveyid):
         '''
@@ -86,12 +87,12 @@ class CreateSummaries(Resource):
         '''
         reports = ReportModel.query.filter_by(surveyid=surveyid).all()
 
-        report_answers = SummaryHelper.list_answers(reports)
-        qids = SummaryHelper.extract_qids(report_answers)
+        report_answers = Auxiliary.list_answers(reports)
+        qids = Auxiliary.extract_qids(report_answers)
 
         smmrs_per_survey = []
         for qid in qids:
-            smmry = SummaryHelper.create_summary(surveyid,qid)
+            smmry = Auxiliary.create_summary(surveyid,qid)
 
             smmrs_per_survey.append(smmry.tojson())
 

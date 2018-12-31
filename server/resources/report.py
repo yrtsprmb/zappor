@@ -6,7 +6,7 @@ from models.report import ReportModel
 from models.survey import SurveyModel
 
 import resources.parsers
-from resources.parsers import check_fpq, check_if_bits, check_incoming_report
+from resources.parsers import check_fpq, check_incoming_report #, check_if_bits
 
 ############################################
 ## Ressources for reports
@@ -33,17 +33,19 @@ class Report(Resource):
         # print("request: ", request.args) # debug: only for testing
         if SurveyModel.find_active_survey_by_id(surveyid):
             data = resources.parsers.ParseReportsPost.parser.parse_args()
+            survey = SurveyModel.find_survey_by_id(surveyid)
+            # print("----------------------------")
+            # print("survey")
+            # print(survey)
+            # print(type(survey))
 
+            # checks if fpq have correct values
             if not check_fpq(data['f'],data['p'],data['q']):
                 return {'message': "report discarded: f,p,q must have values between 0.0 and 1.0"}, 400 #bad request
 
-            helga = check_incoming_report(data['answers'])
-            #print (helga)
-
-            # check if qids correct
             # check if type is correct
             # check if length of answer is correct
-            
+
 
             #print(data)
             report = ReportModel(surveyid,
@@ -54,13 +56,17 @@ class Report(Resource):
                 data['q'],
                 json.dumps(data['answers'])
             )
-            try:
-                report.save_to_db()
-            except:
-                return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500 #internal server error
-            return report.tojson(), 201 #created
-        else:
-            return {'message': "no report inserted, surveyid '{}' unknown or not active".format(surveyid)}, 400 #bad request
+
+            if check_incoming_report(report,survey):
+                print("report ok")
+                try:
+                    report.save_to_db()
+                except:
+                    return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500 #internal server error
+                return report.tojson(), 201 #created
+
+        return {'message': "report not accecpted. Incoming data not valid."}, 400 #bad request
+
 
     def delete(self,surveyid):
         '''

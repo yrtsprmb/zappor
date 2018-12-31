@@ -1,4 +1,4 @@
-#internal/create_summaries.py
+#internal/helpers.py
 
 import json
 from models.report import ReportModel
@@ -6,10 +6,22 @@ from models.survey import SurveyModel
 from models.summaries import SummaryModel
 
 
-class SummaryHelper:
+class Auxiliary:
     '''
-    Contains helper functions for generation summaries.
+    Contains helper functions.
     '''
+    def get_qids(answers):
+        '''
+        Takes a list of dictionaires (all answers belonging to reports for a specific survey).
+        Returns a list of all qids which are in this input list.
+        '''
+        qids = []
+        for answer in answers:
+            qid = (answer['qid'])
+            if qid not in qids:
+                qids.append(qid)
+        return qids
+
     def extract_from_reports(qid,list_of_report_objects):
         '''
         Returns the name and options to a qid for a specific report.
@@ -82,7 +94,7 @@ class SummaryHelper:
         Counts values for histogram bins. Takes a qid and a list of report objects.
         Returns a histogram (list) with all summarized bins.
         '''
-        bins = SummaryHelper.bins_per_qid(qid,list_of_report_objects)
+        bins = Auxiliary.bins_per_qid(qid,list_of_report_objects)
         histogram_list = [0] * bins
         print("bins")
         print(bins)
@@ -112,16 +124,16 @@ class SummaryHelper:
         reports = ReportModel.query.filter_by(surveyid=surveyid).all()
 
         #third: count histogram and determine counts
-        evaluation = SummaryHelper.counting_histogram_values(qid,reports)
+        evaluation = Auxiliary.counting_histogram_values(qid,reports)
         summed_answers = (evaluation['histogram'])
         count_answers = (evaluation['counts'])
 
         #fourth: determine other values for generating a summary:
-        infos_from_reports = SummaryHelper.extract_from_reports(qid,reports)
+        infos_from_reports = Auxiliary.extract_from_reports(qid,reports)
         report_name = infos_from_reports['name']
         report_options = infos_from_reports['options']
 
-        infos_from_survey = SummaryHelper.extract_from_surveys(qid,survey)
+        infos_from_survey = Auxiliary.extract_from_surveys(qid,survey)
         survey_name = infos_from_survey['name']
         survey_type = infos_from_survey['type']
         survey_options = infos_from_survey['options']
@@ -140,5 +152,4 @@ class SummaryHelper:
         except:
             return {'message': "Error while saving summary."}, 500 #internal server error
 
-        #return {'message': smmry.tojson}, 200 #ok
         return smmry

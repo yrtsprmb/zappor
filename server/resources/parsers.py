@@ -1,6 +1,8 @@
 # resources/parsers.py
 
 from flask_restful import reqparse
+from internal.helpers import Auxiliary
+import json
 
 ##################################################################
 ## This file contains all parsers for the REST API
@@ -150,27 +152,104 @@ def check_fpq(f,p,q):
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
 
 
-def check_if_bits(list):
-    '''
-    Checks if the values of a an answerlist are either 1 or 0.
-    '''
-    for value in list:
-        if(value !=0 and value !=1):
-            return False
-    return True
+# def check_if_bits(list):
+#     '''
+#     Checks if the values of a an answerlist are either 1 or 0.
+#     '''
+#     for value in list:
+#         if(value !=0 and value !=1):
+#             return False
+#     return True
 
 
 def check_status(status):
     '''
-    Checks if the values of the status string is valid.
+    Checks if the values of the status string of a survey is valid.
+    Validity check for surveys.
     '''
     if(status != 'created' and status != 'active' and status != 'done'):
         return False
     return True
 
 
-def check_incoming_report(input):
-    print("---------testing----------")
-    print(input)
-    print("---------type----------")
-    print(type(input))
+def correct_qids(report_list,survey_list):
+    '''
+    Checks if the qids in a report is also existing survey belonging to the report.
+    Validity check for reports.
+    '''
+    for qid in report_list:
+        if (qid not in survey_list):
+            return False
+    return True
+
+
+def correct_bin_count(qid_list,report_list,survey_list):
+    '''
+    Checks if the amount of bins are correct / same size like the survey.
+    Validity check for reports.
+    '''
+    bins_report = []
+    bins_survey = []
+
+    for qid in qid_list:
+        for answer in report_list:
+            if (qid == answer['qid']):
+                bins_report.append({'qid': qid, 'bins': len(answer['options'])})
+
+    for qid in qid_list:
+        for question in survey_list:
+            if (qid == question['qid']):
+                bins_survey.append({'qid': qid, 'bins': len(question['options'])})
+
+    for x in bins_report:
+        qid = x['qid']
+        bins = x['bins']
+        for y in bins_survey:
+            if qid == y['qid']:
+                if(bins != y['bins']):
+                    print("error: bin size not equal")
+                    return False
+    return True
+
+
+def check_answerlist_bits(answerlist):
+    '''
+    Checks if the values of the answers of a report are either 1 or 0.
+    Validity check for reports.
+    '''
+    for answer in answerlist:
+        for bit in answer['options']:
+            if(bit !=0 and bit !=1):
+                print("wrong value: not 0 or 1:") #debug
+                print(bit) #debug
+                return False
+    return True
+
+
+def check_incoming_report(reportobject,surveyobject):
+    '''
+    Checks if the values of an incoming report are correct.
+    Validity check for reports.
+    '''
+    questionlist = json.loads(surveyobject.questions)
+    answerlist = json.loads(reportobject.answers)
+
+    qids_survey = Auxiliary.get_qids(questionlist)
+    qids_report = Auxiliary.get_qids(answerlist)
+
+    # check if qids are correct.
+    if not correct_qids(qids_report,qids_survey):
+        print("wrong qids") #debug
+        return False
+
+    # check if binsize for answers are correct.
+    if not correct_bin_count(qids_report,answerlist,questionlist):
+        print("error in answerlist: wrong bin size") #debug
+        return False
+
+    # check if bit values int the answer are correct.
+    if not check_answerlist_bits(answerlist):
+        print("error in answerlist") #debug
+        return False
+
+    return True

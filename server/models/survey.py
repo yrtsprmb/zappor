@@ -32,7 +32,7 @@ class SurveyModel(db.Model):
         '''
         Representation of a survey object.
         '''
-        return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, created on: {self.created_on}, sdescription: {self.sdescription}"
+        return f" surveyid: {self.surveyid}, name: {self.surveyname}, status: {self.status}, created on: {self.created_on}, sdescription: {self.sdescription}, questions: {json.loads(self.questions)}"
 
 
     def tojson(self):
