@@ -28,9 +28,24 @@
       </div>
   </form>
 
+<div class="">
+
+
+  <span id="ex18-label-1" class="hidden">Example slider label</span>
+       <input id="ex19" type="text"
+             data-provide="slider"
+             data-slider-ticks="[1, 2, 3]"
+             data-slider-ticks-labels='["short", "medium", "long"]'
+             data-slider-min="1"
+             data-slider-max="3"
+             data-slider-step="1"
+             data-slider-value="3"
+             data-slider-tooltip="hide" />
+  </div>           
+
      <div>
-       <a class="btn btn-secondary" href="{{ url_for('survey_detail', id=srvy.id) }}">Change Status(Todo)</a>
-       <a class="btn btn-secondary" href="{{ url_for('survey_detail', id=srvy.id) }}">Evaluate Survey (Todo)</a>
+       <a class="btn btn-secondary" href="{{ url_for('survey_detail', id=srvy.id) }}">Show summaries (Todo)</a>
+       <a class="btn btn-secondary" href="{{ url_for('survey_detail', id=srvy.id) }}">Evaluate results (Todo)</a>
        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del_modal">Delete Survey</button>
      </div>
 </div>

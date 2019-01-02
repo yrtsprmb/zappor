@@ -206,8 +206,8 @@ def info():
     return render_template('info.html')
 
 
-@app.route('/histograms', methods=['GET','POST'])
-def histogram():
+@app.route('/<string:id>/histograms', methods=['GET','POST'])
+def histogram(id):
     '''
     Test: Histogram (web GUI).
     '''
@@ -216,7 +216,7 @@ def histogram():
     form = SummaryForm()
     if form.validate_on_submit():
         return redirect(url_for('surveys_list'))
-    return render_template('smmrs/histograms.html', form=form, title='summaries')
+    return render_template('smmrs/histograms.html', form=form, title='summaries', survey_id=id)
 
 
 ##################################################################

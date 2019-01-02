@@ -195,19 +195,19 @@ def inquiries_detail(id):
         if not check_fpq(f,p,q):
             print("Only values between 0 and 1 allowed for f,p,q!") #debug
             flash("Only values between 0 and 1 allowed for f,p,q!")
-            return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
+            return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
 
         # check length of answer
         if not (len(json.loads(answer)) == len(json.loads(inq.answer))):
             print("answer must have the same ordinal values!") #debug
             flash("answer must have the same ordinal values!")
-            return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
+            return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
 
         # if bits are zero and one
         if not check_if_bits(json.loads(answer)):
             print("only 0s and 1s allowed in the answer list") #debug
             flash("only 0s and 1s allowed in the answer list")
-            return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
+            return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
 
         # a PRR and IRR will be set after a answer is was changed
         if(inq.answer != answer):
@@ -224,7 +224,7 @@ def inquiries_detail(id):
         inq.q = q
         db.session.commit()
 
-    return render_template('inquiries/client_inquiry.html', inq=inq, form=form, title='question')
+    return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
 
 
 @app.route('/inquiries/create', methods=['GET','POST'])

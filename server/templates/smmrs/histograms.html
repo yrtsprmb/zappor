@@ -26,11 +26,12 @@
 </head>
 <body>
     <div id="graphDiv"></div>
+    <h2>{{ survey_id }}</h2>
 
-    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.v3.js"></script>
     <script>
       const API_URL = 'http://localhost:5000';
-      function buildHistogram(answers) {
+      function buildHistogram(answers, counter) {
       // Our Custom D3 JavaScript here!
       // set the dimensions of the canvas
       var margin = {top: 20, right: 20, bottom: 70, left: 40},
@@ -52,7 +53,7 @@
             .ticks(10);
 
             // add the SVG element
-            var svg = d3.select("body").append("svg")
+            var svg = d3.select(".container").append("svg")
            .attr("width", width + margin.left + margin.right)
            .attr("height", height + margin.top + margin.bottom)
            .append("g")
@@ -60,8 +61,8 @@
 
             // scale the range of the data
             x.domain(answers.map(function(d) { return d.option }));
-            y.domain([0, d3.max(answers, function(d) { return d.frequency })]);
-
+            //y.domain([0, d3.max(answers, function(d) { return d.frequency })]);
+            y.domain([0, 1]);
             // add axis
             svg.append("g")
                 .attr("class", "x axis")
@@ -94,16 +95,21 @@
             })
             .attr("width", x.rangeBand())
             .attr("y", function (d) {
-                return y(d.frequency);
+              console.log("y", y(d.frequency/counter));
+                return y(d.frequency / counter);
             })
             .attr("height", function (d) {
-                return height - y(d.frequency);
+              console.log("height", y(d.frequency/counter));
+                return height * (d.frequency / counter);
             });
 
         // Our Custom D3 JavaScript ended here!
         }
 
-        fetch(API_URL + '/rest/smmrs/histogramtest')
+        // URL parameter comes from controller and is rendered by jinja.
+        const survey_id = '{{ survey_id }}';
+
+        fetch(API_URL + '/rest/smmrs/' + survey_id)
             .then(function (response) {
                 if (response.ok) {
                     // handle success
@@ -116,7 +122,7 @@
                 // iterate over each summary-object in the response
                 for(let s of respJson.summaries) {
                     // create a histogram for each summary
-                    buildHistogram(s.answers);
+                    buildHistogram(s.answers, s.counter);
                 }
             })
             .catch(function (error) {

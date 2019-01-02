@@ -43,6 +43,53 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
           </div>
+
+          <div class="question-form-wrapper">
+
+            <div class="question-form">
+              <div class="form-group">
+                <label>Type</label>
+                <select class="questionType">
+                    <option value="boolean">boolean</option>
+                    <option value="mc">multiple choice</option>
+                    <option value="cbx">checkbox</option>
+                </select>
+              </div>
+
+              <div class="form-group question-type active" id="boolean-group">
+                <h3>Type: Boolean</h3>
+                <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
+                <label>
+                  Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
+                </label>
+                <br>
+                <label>
+                  Option 2: <input type="text" name="boolean-question-2" placeholder="No">
+                </label>
+
+              </div>
+
+              <div class="form-group question-type" id="mc-group" style="display: none;">
+                <h3>Type: MC</h3>
+                <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
+                <label>
+                  Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
+                </label>
+                <button type="button" class="option-adder">(+)</button>
+              </div>
+
+              <div class="form-group question-type" id="cbx-group" style="display: none;">
+                <h3>Type: CBX</h3>
+                <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
+                <label>
+                  Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
+                </label>
+                <button type="button" class="option-adder">(+)</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline-info" id="question-adder">Add another question</button>
+
           <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
           </div>
@@ -53,4 +100,85 @@
 </div>
 
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    $(document).on('change', '.questionType', function(event) {
+      let select = $(event.target);
+      let parentBlock = select.parents('.question-form');
+      let type = select.val();
+
+      parentBlock.find('.question-type.active')
+        .hide()
+        .removeClass('active');
+
+      parentBlock.find('#' + type + '-group')
+        .show()
+        .addClass('active');
+    })
+
+    $(document).on('click', '.option-adder', function(event) {
+      let btn = $(event.target);
+      let optionBlock = btn.parents('.question-type');
+
+      btn.before('<br><input type="text" name="boolean-question-1" placeholder="Yes">');
+    })
+
+    $('#question-adder').on('click', function() {
+      let qForm = $('#question-form-tpl').html();
+
+      $('form .question-form-wrapper')
+        .last()
+        .append('<hr>')
+        .append(qForm);
+
+    })
+  });
+</script>
+<script type="text/template" id="question-form-tpl">
+  <div class="question-form-wrapper">
+
+    <div class="question-form">
+      <div class="form-group">
+        <label>Type</label>
+        <select class="questionType">
+            <option value="boolean">boolean</option>
+            <option value="mc">multiple choice</option>
+            <option value="cbx">checkbox</option>
+        </select>
+      </div>
+
+      <div class="form-group question-type active" id="boolean-group">
+        <h3>Type: Boolean</h3>
+        <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
+        <label>
+          Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
+        </label>
+        <br>
+        <label>
+          Option 2: <input type="text" name="boolean-question-2" placeholder="No">
+        </label>
+
+      </div>
+
+      <div class="form-group question-type" id="mc-group" style="display: none;">
+        <h3>Type: MC</h3>
+        <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
+        <label>
+          Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
+        </label>
+        <button type="button" class="option-adder">(+)</button>
+      </div>
+
+      <div class="form-group question-type" id="cbx-group" style="display: none;">
+        <h3>Type: CBX</h3>
+        <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
+        <label>
+          Option 1: <input type="text" name="cbx-question-1" placeholder="Yes">
+        </label>
+        <button type="button" class="option-adder">(+)</button>
+      </div>
+    </div>
+  </div>
+</script>
 {% endblock %}

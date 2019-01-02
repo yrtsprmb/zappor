@@ -27,7 +27,7 @@ class SurveyForm(FlaskForm):
     '''
     status = SelectField('Status:', choices=[('created','created'),('active','active'),('done','done')], validators=[DataRequired()])
     mychoices = [('created','created'),('active','active'),('done','done')]
-    submit = SubmitField('Change Status:')
+    submit = SubmitField('Change Status')
 
 
 class CreateSurveyForm(FlaskForm):

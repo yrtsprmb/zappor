@@ -293,3 +293,12 @@ def check_if_bits(list):
         if(value !=0 and value !=1):
             return False
     return True
+
+
+def check_type(inq_type):
+    '''
+    Checks if the type of an inquiry is correct.
+    '''
+    if(status != 'ord_cbx' and status != 'ord_mc' and status != 'bool'):
+        return False
+    return True
