@@ -3,7 +3,7 @@ from flask_restful import Resource
 
 from models.client_inquiries import ClientInquiriesModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
-from internal.config import global_f, global_p, global_q, global_locked
+from internal.config import global_f, global_p, global_q, locked_config
 import resources.parsers
 from resources.parsers import check_fpq, check_if_bits
 

@@ -1,7 +1,8 @@
-#resouces/survey.py
+#resouces/surveys.py
+
 import json
 from flask_restful import Resource, reqparse
-from models.survey import SurveyModel
+from models.surveys import SurveyModel
 import resources.parsers
 from resources.parsers import check_status
 
@@ -109,29 +110,3 @@ class AvailableSurveys(Resource):
         A survey for a client is available if its status is 'active'.
         '''
         return {'surveys': [ x.tojsonforclient() for x in SurveyModel.query.filter_by(status='active')]}
-
-
-
-
-# allows to change the status of a survey in this order: created -> active -> done
-# class SurveyStatus(Resource):
-#     parser = reqparse.RequestParser()
-#     parser.add_argument('status',
-#         type=str,
-#         required=True,
-#         help="status is missing or not correct"
-#     )
-#
-#     def put(self,surveyname):
-#         data = SurveyStatus.parser.parse_args()
-#         survey = SurveyModel.find_survey_by_name(surveyname)
-#         if survey is None:
-#             return {'message': "Can not change status, survey '{}' does not exist".format(surveyname)}, 400 #bad request
-#
-#         if (survey.status == 'created' or survey.status == 'active') and (data['status'] == 'active' or data['status'] == 'done'):
-#             old_status = survey.status
-#             survey.status = data['status']
-#             survey.save_to_db()
-#             return {'message': "Status of survey '{}'  changed from '{}' to '{}' ".format(surveyname,old_status,survey.status)}, 200 #ok
-#
-#         return {'message': "no changes"}, 200 #ok

@@ -14,7 +14,7 @@ class ClientConf(Resource):
     def post(self,clientname):
         data = resources.parsers.ParseClientConf.parser.parse_args()
         #data = ClientConf.parser.parse_args()
-        #write question only in db if it belongs unique to a surveyid
+
         if ClientConfModel.find_by_name(clientname):
              return {'message': "client with name '{}' already exist in database.".format(clientname)}, 400 #bad request
 

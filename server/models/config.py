@@ -1,4 +1,5 @@
 #models.config.py
+
 from db import db
 from internal.config import serviceprovider_config
 

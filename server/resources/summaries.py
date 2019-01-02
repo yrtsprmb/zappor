@@ -3,13 +3,12 @@
 import json
 from flask_restful import Resource, request
 
-from models.report import ReportModel
+from models.reports import ReportModel
 from models.summaries import SummaryModel
-from models.survey import SurveyModel
+from models.surveys import SurveyModel
 
 import resources.parsers
-#from resources.parsers import check_if_bits
-#from internal.summaries import SummaryHelper
+
 from internal.helpers import Auxiliary
 
 

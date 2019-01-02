@@ -1,12 +1,13 @@
-#resources/report.py
+#resources/reports.py
+
 import json
 from flask_restful import Resource, request
 
-from models.report import ReportModel
-from models.survey import SurveyModel
+from models.reports import ReportModel
+from models.surveys import SurveyModel
 
 import resources.parsers
-from resources.parsers import check_fpq, check_incoming_report #, check_if_bits
+from resources.parsers import check_fpq, check_incoming_report
 
 ############################################
 ## Ressources for reports

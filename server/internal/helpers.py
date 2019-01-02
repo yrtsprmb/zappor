@@ -1,8 +1,8 @@
 #internal/helpers.py
 
 import json
-from models.report import ReportModel
-from models.survey import SurveyModel
+from models.reports import ReportModel
+from models.surveys import SurveyModel
 from models.summaries import SummaryModel
 
 

@@ -2,7 +2,7 @@ import json
 import requests
 from flask_restful import Resource, reqparse
 from models.server_inquiries import ServerInquiriesModel
-from internal.config import serviceprovider_surveys
+from internal.config import serviceprovider_surveys, quizmode_config, locked_config, quizmode_config
 
 #############################################################
 # requests surveys from the serviceprovider and store them
@@ -35,7 +35,8 @@ class RequestSurvey(Resource):
                 name = question['name']
                 qtype = question['type']
                 options = question['options']
-                qdescription = question['qdescription']
+                qdescription = question['description']
+                #qdescription = question['qdescription']
 
                 #save question to the db, only if it is not already known by surveyid
                 if ServerInquiriesModel.already_in_db(surveyid,name):
@@ -50,7 +51,7 @@ class RequestSurvey(Resource):
                     print("qoptions: " + json.dumps(options))       #debug
                     print("qdescription: " + qdescription)          #debug
                     print("____________________________")           #debug
-                    frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),qdescription,False,False) #TODO: quizmode und locked derzeit nur voreingestellt
+                    frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),qdescription,quizmode_config,quizmode_config)
                     frage.save_to_db()
                     print("new survey with surveyid '{}' available and fetched from the server.".format(surveyid))
                     #return {'message': }, 201 #created

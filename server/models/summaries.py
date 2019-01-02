@@ -38,7 +38,13 @@ class SummaryModel(db.Model):
         '''
         JSON representation of a summary object.
         '''
-        return {'surveyid': self.surveyid, 'name': self.name, 'type': self.type, 'options': json.loads(self.options), 'answers': json.loads(self.answers), 'created': self.created, 'counter': self.counter}
+        frequencies = []
+        for opt, ans in zip(json.loads(self.options), json.loads(self.answers)):
+            frequencies.append({
+                'option': opt,
+                'frequency': ans
+            })
+        return {'surveyid': self.surveyid, 'name': self.name, 'type': self.type, 'answers': frequencies, 'created': self.created, 'counter': self.counter}
 
     def save_to_db(self):
         '''

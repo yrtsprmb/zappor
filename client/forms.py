@@ -31,7 +31,7 @@ class EditClientInquiryForm(FlaskForm):
     f = DecimalField('f')
     p = DecimalField('p')
     q = DecimalField('q')
-    submit = SubmitField('Edit inquiry')
+    submit = SubmitField('Save')
 
 class ClientInquiryForm(FlaskForm):
     name = TextField('name')

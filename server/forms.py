@@ -3,7 +3,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, TextAreaField, SubmitField, SelectField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length
-from models.survey import SurveyModel
+from models.surveys import SurveyModel
 
 
 class TestForm(FlaskForm):
@@ -12,6 +12,13 @@ class TestForm(FlaskForm):
     '''
     submit_evaluation = SubmitField('Generate Summary')
     submit_summary = SubmitField('Generate Summary')
+
+
+class SummaryForm(FlaskForm):
+    '''
+    TODO: Back button for the histogram page in the web GUI.
+    '''
+    submit = SubmitField('Back to survey overview.')
 
 
 class SurveyForm(FlaskForm):

@@ -34,7 +34,8 @@ configfile_p = 0.75
 configfile_q = 0.5
 
 #global privacy settings
-global_locked = True
+locked_config = True    #determines if incoming questions are locked by the client
+quizmode_config = True  #if True incoming inquiries will be made to client inquiries
 
 #gdpr/dsgvo
 configfile_dsgvo = False

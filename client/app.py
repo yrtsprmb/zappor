@@ -251,7 +251,7 @@ def inquiries_create():
                                     prr_answer = json.dumps([0]* length_options_list),
                                     irr_answer = json.dumps([0]* length_options_list),
                                     qdescription = form.inq_qdescription.data,
-                                    responded = True,
+                                    responded = False,
                                     locked = True,
                                     f = global_f,
                                     p = global_p,
@@ -276,8 +276,8 @@ def inquiries_delete(id):
     return redirect(url_for('inquiries_list'))
 
 
-@app.route('/show')
-def show_inquiries():
+@app.route('/internal_data')
+def internal_data():
     '''
     This is for testing (web GUI).
     It shows all client-, and server inquiries and reports which are stored in the client database.
@@ -289,7 +289,7 @@ def show_inquiries():
     answers = ClientInquiriesModel.query.all()
     questions = ServerInquiriesModel.query.all()
     reports = ReportModel.query.all()
-    return render_template('show_inquiries.html', answers=answers, questions=questions, reports=reports, title='list of inquiries')
+    return render_template('internal_data.html', answers=answers, questions=questions, reports=reports, title='internal data: server & client inquiries, reports')
 
 
 @app.route('/config')

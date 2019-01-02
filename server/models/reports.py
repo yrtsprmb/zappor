@@ -1,4 +1,5 @@
-#models/report.py
+#models/reports.py
+
 import json
 from db import db
 

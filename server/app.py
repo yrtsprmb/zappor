@@ -1,4 +1,5 @@
 #app.py
+
 from flask import Flask, render_template, url_for, redirect, flash, abort
 from flask_restful import Api
 from flask_jwt import JWT
@@ -8,8 +9,8 @@ from security import authenticate, identity
 
 # import of resources
 from resources.user import UserRegister
-from resources.survey import Survey, ListSurveys, AvailableSurveys
-from resources.report import Report, ListReports
+from resources.surveys import Survey, ListSurveys, AvailableSurveys
+from resources.reports import Report, ListReports
 from resources.summaries import Summary, ListSummaries, CreateSummaries
 
 from internal.config import secretkey_config, serviceprovider_config
@@ -82,7 +83,7 @@ def surveys_list():
     '''
     Lists all surveys (web GUI).
     '''
-    from models.survey import SurveyModel
+    from models.surveys import SurveyModel
     surveys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
     return render_template('srvys/surveys.html', surveys=surveys, title='list of surveys')
 
@@ -92,7 +93,7 @@ def survey_detail(id):
     '''
     Shows the details of a survey specified by its id (web GUI).
     '''
-    from models.survey import SurveyModel
+    from models.surveys import SurveyModel
     from forms import SurveyForm
 
     srvy = db.session.query(SurveyModel).get(id)
@@ -117,7 +118,7 @@ def survey_create():
     '''
     Creates a survey (web GUI).
     '''
-    from models.survey import SurveyModel
+    from models.surveys import SurveyModel
     from forms import CreateSurveyForm
 
     form = CreateSurveyForm()
@@ -139,7 +140,7 @@ def survey_delete(id):
     '''
     Deletes a survey (web GUI).
     '''
-    from models.survey import SurveyModel
+    from models.surveys import SurveyModel
     from forms import SurveyForm
 
     srvy = SurveyModel.query.get_or_404(id)
@@ -169,8 +170,8 @@ def internaldata():
     This is for testing.
     It shows all client-, and server inquiries and reports which are stored in the client database.
     '''
-    from models.report import ReportModel
-    from models.survey import SurveyModel
+    from models.reports import ReportModel
+    from models.surveys import SurveyModel
     from models.summaries import SummaryModel
 
     rprts = ReportModel.query.all()
@@ -204,12 +205,19 @@ def info():
     '''
     return render_template('info.html')
 
-@app.route('/histogram')
+
+@app.route('/histograms', methods=['GET','POST'])
 def histogram():
     '''
     Test: Histogram (web GUI).
     '''
-    return render_template('histogram.html')
+    from forms import SummaryForm
+
+    form = SummaryForm()
+    if form.validate_on_submit():
+        return redirect(url_for('surveys_list'))
+    return render_template('smmrs/histograms.html', form=form, title='summaries')
+
 
 ##################################################################
 ## Server only starts when it will be executed over the file app.py

@@ -1,4 +1,4 @@
-#models/survey.py
+#models/surveys.py
 
 import json
 from datetime import datetime
