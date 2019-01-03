@@ -86,21 +86,14 @@ class Survey(Resource):
         return {'message': " No survey with this name."}, 400 #bad request
 
 
-##################################################################
-# Returns a list with all surveys in the datebase
-##################################################################
 class ListSurveys(Resource):
     def get(self):
         '''
         Server REST resource:
-        Lists all surveys.
+        Lists all  existing surveys.
         '''
         return {'surveys': [ x.tojson() for x in SurveyModel.query.all()]}
 
-
-##################################################################
-# Client Ressources (external ressources)
-##################################################################
 
 class AvailableSurveys(Resource):
     def get(self):

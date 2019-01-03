@@ -29,26 +29,17 @@ class Report(Resource):
     def post(self, surveyid):
         '''
         Client/public REST resource.
-        Saves a report sent by a client, only if f,p and q are valid and the survey is active.
+        Saves a report sent by a client, only if data is valid and the referenced survey is active.
         '''
         # print("request: ", request.args) # debug: only for testing
         if SurveyModel.find_active_survey_by_id(surveyid):
             data = resources.parsers.ParseReportsPost.parser.parse_args()
             survey = SurveyModel.find_survey_by_id(surveyid)
-            # print("----------------------------")
-            # print("survey")
-            # print(survey)
-            # print(type(survey))
 
             # checks if fpq have correct values
             if not check_fpq(data['f'],data['p'],data['q']):
                 return {'message': "report discarded: f,p,q must have values between 0.0 and 1.0"}, 400 #bad request
 
-            # check if type is correct
-            # check if length of answer is correct
-
-
-            #print(data)
             report = ReportModel(surveyid,
                 data['prr'],
                 data['irr'],
@@ -57,7 +48,7 @@ class Report(Resource):
                 data['q'],
                 json.dumps(data['answers'])
             )
-
+            # check if type is correct, check if length of answer is correct
             if check_incoming_report(report,survey):
                 print("report ok")
                 try:
@@ -66,7 +57,7 @@ class Report(Resource):
                     return {'message': "error while inserting report with surveyid '{}'. ".format(surveyid)}, 500 #internal server error
                 return report.tojson(), 201 #created
 
-        return {'message': "report not accecpted. Incoming data not valid."}, 400 #bad request
+        return {'message': "report not accecpted. Incoming data not valid or survey not existing."}, 400 #bad request
 
 
     def delete(self,surveyid):

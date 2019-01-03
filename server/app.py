@@ -87,6 +87,19 @@ def surveys_list():
     surveys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
     return render_template('srvys/surveys.html', surveys=surveys, title='list of surveys')
 
+#TODO: testing
+@app.route('/smmrs/<string:surveyid>', methods=['GET','POST'])
+def show_summaries(surveyid):
+    '''
+    Test: Histogram (web GUI).
+    '''
+    from forms import SummaryForm
+
+    form = SummaryForm()
+    if form.validate_on_submit():
+        return redirect(url_for('surveys_list'))
+    return render_template('smmrs/histograms.html', form=form, title='summaries', survey_id=surveyid)
+
 
 @app.route('/srvys/<int:id>/', methods=['GET','POST'])
 def survey_detail(id):
