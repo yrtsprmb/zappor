@@ -86,8 +86,8 @@ def surveys_list():
     '''
     Lists all surveys (web GUI).
     '''
-    surveys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
-    return render_template('srvys/surveys.html', surveys=surveys, title='list of surveys')
+    srvys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
+    return render_template('srvys/surveys.html', surveys=srvys, title='list of surveys')
 
 
 @app.route('/srvys/<int:id>/', methods=['GET','POST'])
@@ -95,6 +95,7 @@ def survey_detail(id):
     '''
     Shows the details of a survey specified by its id (web GUI).
     '''
+    #srvy = SurveyModel.find_survey_by_id(id)
     srvy = db.session.query(SurveyModel).get(id)
     if srvy is None:
         abort(404)

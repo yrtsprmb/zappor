@@ -19,7 +19,7 @@
 
   <div class="input-group">
     <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
-      <option selected>Choose...</option>
+      <option selected>Choose (does not work)...</option>
       <option value="active">active</option>
       <option value="done">done</option>
     </select>
@@ -50,11 +50,22 @@
   </div>
 
 <div class="">
-     <div>
-       <a class="btn btn-outline-primary" href="{{ url_for('survey_summaries', id=srvy.id) }}">Show summaries</a>
-       <a class="btn btn-outline-secondary" href="{{ url_for('survey_eval_summaries', id=srvy.id) }}">New evaluation</a>
-       <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
-     </div>
+  {% if srvy.status == 'created' %}
+      <div>
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
+      </div>
+  {% elif srvy.status == 'active' %}
+      <div>
+        <a class="btn btn-outline-primary" href="{{ url_for('survey_summaries', id=srvy.id) }}">Show summaries</a>
+        <a class="btn btn-outline-secondary" href="{{ url_for('survey_eval_summaries', id=srvy.id) }}">New evaluation</a>
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
+      </div>
+  {% else %}
+      <div>
+        <a class="btn btn-outline-primary" href="{{ url_for('survey_summaries', id=srvy.id) }}">Show summaries</a>
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
+      </div>
+  {% endif %}
 </div>
 
   <!-- Modal for Pop Up-->
