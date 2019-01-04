@@ -25,8 +25,15 @@
 	   </style>
 </head>
 <body>
+
+
+<div class="jumbotron">
+
+
+
     <div id="graphDiv"></div>
-    <h2>{{ survey_id }}</h2>
+    <h3>Summaries for the survey '{{ survey_id }}'</h3>
+
 
     <script src="https://d3js.org/d3.v3.js"></script>
     <script>
@@ -120,9 +127,9 @@
             })
             .then(function (respJson) {
                 // iterate over each summary-object in the response
-                for(let s of respJson.summaries) {
+                for(let smmry of respJson.summaries) {
                     // create a histogram for each summary
-                    buildHistogram(s.answers, s.counter);
+                    buildHistogram(smmry.answers, smmry.counter);
                 }
             })
             .catch(function (error) {
@@ -132,6 +139,7 @@
 
     </script>
 
+<div>
     <form method="POST">
         {# This hidden_tag is a CSRF security feature. #}
         {{ form.hidden_tag() }}
@@ -141,6 +149,21 @@
           {{ form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
+</div>
+
+{#
+<div class="card">
+        <div class="card-body">
+            <h2><a class="card-title" href="  {{ url_for('survey_detail', id=survey.id) }}">{{ survey.surveyname }}</a></h2>
+            <p> Description: {{ survey.sdescription }}</p>
+            <p> Status: {{ survey.status }}</p>
+            <a href="{{ url_for('survey_detail', id=survey.id) }}" class="btn btn-primary">Show Details</a>
+            {# <a href="{{ url_for('survey_detail', id=survey.id) }}">Info: {{ survey.comment }}</a> #}
+        </div>
+</div>
+#}
+
+</div>
 
 
 </body>

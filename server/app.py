@@ -87,18 +87,10 @@ def surveys_list():
     surveys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
     return render_template('srvys/surveys.html', surveys=surveys, title='list of surveys')
 
-#TODO: testing
-@app.route('/smmrs/<string:surveyid>', methods=['GET','POST'])
-def show_summaries(surveyid):
-    '''
-    Test: Histogram (web GUI).
-    '''
-    from forms import SummaryForm
 
-    form = SummaryForm()
-    if form.validate_on_submit():
-        return redirect(url_for('surveys_list'))
-    return render_template('smmrs/histograms.html', form=form, title='summaries', survey_id=surveyid)
+
+
+
 
 
 @app.route('/srvys/<int:id>/', methods=['GET','POST'])
@@ -146,6 +138,25 @@ def survey_create():
         flash("Survey created")
         return redirect(url_for('surveys_list'))
     return render_template('srvys/create.html', form=form, title='create a new survey')
+
+
+@app.route('/srvys/<int:id>/summaries', methods=['GET','POST'])
+def survey_summaries(id):
+    '''
+    Shows the summaries of a survey in form of histograms (web GUI).
+    '''
+    from models.surveys import SurveyModel
+    from forms import SummaryForm
+    srvy = db.session.query(SurveyModel).get(id)
+    if srvy is None:
+        abort(404)
+
+    form = SummaryForm()
+    if form.validate_on_submit():
+        #return redirect(url_for('surveys_list')) # srvys/<int:id>/
+        #return redirect(url_for('surveys_list'))
+        return redirect(url_for('survey_detail', id=srvy.id))
+    return render_template('srvys/histograms.html', form=form, title='summaries', survey_id=srvy.surveyid)
 
 
 @app.route('/srvys/<int:id>/delete', methods=['POST'])
@@ -218,18 +229,6 @@ def info():
     '''
     return render_template('info.html')
 
-
-@app.route('/<string:id>/histograms', methods=['GET','POST'])
-def histogram(id):
-    '''
-    Test: Histogram (web GUI).
-    '''
-    from forms import SummaryForm
-
-    form = SummaryForm()
-    if form.validate_on_submit():
-        return redirect(url_for('surveys_list'))
-    return render_template('smmrs/histograms.html', form=form, title='summaries', survey_id=id)
 
 
 ##################################################################
