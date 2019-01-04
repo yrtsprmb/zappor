@@ -135,8 +135,17 @@ api.add_resource(ServerInquiries, '/si/<string:name>')
 
 ### views ########################################################
 ## routes for the web GUI
-## TODO: move them to an own py. file
 ##################################################################
+import json
+import requests
+from models.client_inquiries import ClientInquiriesModel
+from models.server_inquiries import ServerInquiriesModel
+from models.reports import ReportModel
+from forms import ClientInquiryForm, CreateClientInquiryForm, EditClientInquiryForm, RequestSurveyTestForm
+
+from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
+from resources.parsers import check_fpq, check_if_bits
+
 
 @app.route('/')
 @app.route('/index')
@@ -152,9 +161,6 @@ def inquiries_list():
     '''
     List all client inquiries (web GUI).
     '''
-    from models.client_inquiries import ClientInquiriesModel
-    from forms import ClientInquiryForm
-
     inqs = (db.session.query(ClientInquiriesModel).order_by(ClientInquiriesModel.id.desc()).all())
     return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
 
@@ -164,12 +170,6 @@ def inquiries_detail(id):
     '''
     Detailed view of an inquiry (web GUI).
     '''
-    from models.client_inquiries import ClientInquiriesModel
-    from forms import EditClientInquiryForm
-    import json
-    from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
-    from resources.parsers import check_fpq, check_if_bits
-
     inq = db.session.query(ClientInquiriesModel).get(id)
     if inq is None:
         abort(404)
@@ -232,10 +232,6 @@ def inquiries_create():
     '''
     Creation of a (client) inquiry (web GUI).
     '''
-    from models.client_inquiries import ClientInquiriesModel
-    from forms import CreateClientInquiryForm
-    import json
-
     form = CreateClientInquiryForm()
     if ClientInquiriesModel.find_by_name(form.inq_name.data):
         print("name already in db") #debug
@@ -268,8 +264,6 @@ def inquiries_delete(id):
     '''
     Deleting a (client) inquiry (web GUI).
     '''
-    from models.client_inquiries import ClientInquiriesModel
-
     inq = ClientInquiriesModel.query.get_or_404(id)
     inq.delete_from_db()
     flash('inquiry has been deleted.')
@@ -282,10 +276,6 @@ def internal_data():
     This is for testing (web GUI).
     It shows all client-, and server inquiries and reports which are stored in the client database.
     '''
-    from models.server_inquiries import ServerInquiriesModel
-    from models.client_inquiries import ClientInquiriesModel
-    from models.reports import ReportModel
-
     answers = ClientInquiriesModel.query.all()
     questions = ServerInquiriesModel.query.all()
     reports = ReportModel.query.all()
@@ -305,9 +295,6 @@ def tests():
     '''
     Options for client testing (web GUI).
     '''
-    import requests
-    from forms import RequestSurveyTestForm
-
     form = RequestSurveyTestForm()
     flash("horst")
     if form.validate_on_submit():

@@ -1,0 +1,172 @@
+{# histogram code based on http://bl.ocks.org/Jverma/887877fc5c2c2d99be10 #}
+{% extends "base.html" %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <style>
+      .bar{
+            fill: steelblue;
+      }
+      .bar:hover{
+            fill: red;
+      }
+      .axis {
+  	  font: 10px sans-serif;
+  	  }
+      .axis path,
+  	  .axis line {
+  	               fill: none;
+  	               stroke: #000;
+  	               shape-rendering: crispEdges;
+  	  }
+	   </style>
+</head>
+<body>
+
+
+<div class="jumbotron">
+
+
+
+    <div id="graphDiv"></div>
+    <h3>Fresh summaries for the survey '{{ survey_id }}'</h3>
+
+
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <script>
+      const API_URL = 'http://localhost:5000';
+      function buildHistogram(answers, counter) {
+      // Our Custom D3 JavaScript here!
+      // set the dimensions of the canvas
+      var margin = {top: 20, right: 20, bottom: 70, left: 40},
+      width = 600 - margin.left - margin.right,
+      height = 300 - margin.top - margin.bottom;
+
+      // set the ranges
+      var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+      var y = d3.scale.linear().range([height, 0]);
+
+            // define the axis
+            var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+
+            var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(10);
+
+            // add the SVG element
+            var svg = d3.select(".container").append("svg")
+           .attr("width", width + margin.left + margin.right)
+           .attr("height", height + margin.top + margin.bottom)
+           .append("g")
+           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            // scale the range of the data
+            x.domain(answers.map(function(d) { return d.option }));
+            //y.domain([0, d3.max(answers, function(d) { return d.frequency })]);
+            y.domain([0, 1]);
+            // add axis
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", ".3em")
+                .attr("dy", ".5em")
+                .attr("transform", "rotate(-90)")
+            ;
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 5)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Frequency");
+
+        // Add bar chart
+        svg.selectAll("bar")
+            .data(answers)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function (d) {
+                return x(d.option);
+            })
+            .attr("width", x.rangeBand())
+            .attr("y", function (d) {
+              console.log("y", y(d.frequency/counter));
+                return y(d.frequency / counter);
+            })
+            .attr("height", function (d) {
+              console.log("height", y(d.frequency/counter));
+                return height * (d.frequency / counter);
+            });
+
+        // Our Custom D3 JavaScript ended here!
+        }
+
+        // URL parameter comes from controller and is rendered by jinja.
+        const survey_id = '{{ survey_id }}';
+//http://localhost:5000/rest/smmrs/create/testsurvey
+        fetch(API_URL + '/rest/smmrs/create/' + survey_id)
+            .then(function (response) {
+                if (response.ok) {
+                    // handle success
+                    return response.json();
+                }
+
+                throw new Error('Network response was not OK.');
+            })
+            .then(function (respJson) {
+                // iterate over each summary-object in the response
+                for(let smmry of respJson.summaries) {
+                    // create a histogram for each summary
+                    buildHistogram(smmry.answers, smmry.counter);
+                }
+            })
+            .catch(function (error) {
+                // handle network errors
+               console.log('An error occurred: ' + error.message);
+            });
+
+    </script>
+
+<div>
+    <form method="POST">
+        {# This hidden_tag is a CSRF security feature. #}
+        {{ form.hidden_tag() }}
+
+
+        <div class="form-group">
+          {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+
+{#
+<div class="card">
+        <div class="card-body">
+            <h2><a class="card-title" href="  {{ url_for('survey_detail', id=survey.id) }}">{{ survey.surveyname }}</a></h2>
+            <p> Description: {{ survey.sdescription }}</p>
+            <p> Status: {{ survey.status }}</p>
+            <a href="{{ url_for('survey_detail', id=survey.id) }}" class="btn btn-primary">Show Details</a>
+            {# <a href="{{ url_for('survey_detail', id=survey.id) }}">Info: {{ survey.comment }}</a> #}
+        </div>
+</div>
+#}
+
+</div>
+
+
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,92 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="jumbotron">
+  <h1>name: {{ inq.name }}</h1>
+  <p>Description: {{ inq.qdescription }}</p>
+
+  <h2> options: {{ inq.options }} </h2>
+  <p>type: {{ inq.type }} </p>
+  <p>answer: {{ inq.answer }} </p>
+  <p>PRR: {{ inq.prr_answer }} </p>
+  <p>IRR: {{ inq.irr_answer }} </p>
+  <p>responded: {{ inq.responded }} locked: {{ inq.locked }} </p>
+  <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
+
+  <form method="POST">
+      {# This hidden_tag is a CSRF security feature. #}
+      {{ form.hidden_tag() }}
+      <p> {{ form.answer.label }} {{ form.answer() }} </p>
+      {% for error in form.answer.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+      <p> {{ form.locked.label }} {{ form.locked() }} </p>
+      <p> {{ form.f.label }} {{ form.f(size=4) }} </p>
+      <p> {{ form.p.label }} {{ form.p(size=4) }} </p>
+      <p> {{ form.q.label }} {{ form.q(size=4) }} </p>
+      <p> {{ form.submit() }} </p>
+  </form>
+
+     <div>
+       <!-- <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Save Changes</a> -->
+       <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Save Changes</a>
+       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del_modal">Delete Inquiry</button>
+     </div>
+     <form>
+
+<!-- tests mit bootstrap -->
+  <div class="form-group">
+    <label for="formControlRange">Example Range input</label>
+    <input type="range" class="form-control-range" id="formControlRange">
+  </div>
+</form>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+  <label class="form-check-label" for="defaultCheck1">
+    Default checkbox for ordinal response.
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+  <label class="form-check-label" for="exampleRadios1">
+    Default radio
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+  <label class="form-check-label" for="exampleRadios2">
+    Second default radio
+  </label>
+</div>
+<!-- ende tests mit bootstrap -->
+
+</div>
+
+  <!-- Modal for Pop Up-->
+  {# https://getbootstrap.com/docs/4.1/components/modal/ #}
+  {# Notice how the link with the id to the button above! #}
+  <div class="modal" tabindex="-1" role="dialog" id="del_modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Inquiry?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Delete this question. Are you sure?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+          <form action="{{ url_for('inquiries_delete', id=inq.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

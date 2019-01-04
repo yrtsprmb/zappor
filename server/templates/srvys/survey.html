@@ -5,16 +5,36 @@
 <div class="container">
 
 <div class="jumbotron">
-  <h1>name: {{ srvy.surveyname }}</h1>
-  <h2> surveyid: {{ srvy.surveyid }} </h2>
-  <h3> serviceprovider: {{ srvy.serviceprovider }} </p>
-  <p>Status: {{ srvy.status }} </p>
+  <h1>{{ srvy.surveyname }}</h1>
   <p>Description: {{ srvy.sdescription }} </p>
-  <p>Created on: {{ srvy.created_on }} </p>
+
+  <p>This page shows detailed survey information. You can set a new status for the survey, show summaries made out of reports, or generate a new summery which consists recently added reports.</p>
+  <div class="">
+    surveyid: {{ srvy.surveyid }} </br>
+    serviceprovider: {{ srvy.serviceprovider }} </br>
+    Status: {{ srvy.status }} </br>
+    Created on: {{ srvy.created_on }} </br>
+  </div>
+
+
+  <div class="input-group">
+    <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+      <option selected>Choose...</option>
+      <option value="active">active</option>
+      <option value="done">done</option>
+    </select>
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="button">Set status</button>
+    </div>
+  </div>
+
+
 
   <form method="POST">
       {# This hidden_tag is a CSRF security feature. #}
       {{ form.hidden_tag() }}
+
+
 
       <div class="form-group">
       {{ form.status.label(class="form-control-label") }}
@@ -27,11 +47,12 @@
         {{ form.submit(class="btn btn-outline-info") }}
       </div>
   </form>
+  </div>
 
 <div class="">
      <div>
        <a class="btn btn-outline-primary" href="{{ url_for('survey_summaries', id=srvy.id) }}">Show summaries</a>
-       <a class="btn btn-outline-secondary" href="{{ url_for('survey_detail', id=srvy.id) }}">Evaluate results (Todo)</a>
+       <a class="btn btn-outline-secondary" href="{{ url_for('survey_eval_summaries', id=srvy.id) }}">New evaluation</a>
        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
      </div>
 </div>

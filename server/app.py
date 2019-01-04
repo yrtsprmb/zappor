@@ -66,8 +66,11 @@ api.add_resource(CreateSummaries, '/rest/smmrs/create/<string:surveyid>') # Crea
 
 ### views ########################################################
 ## routes for the web GUI
-## TODO: move them to an own py. file
 ##################################################################
+from models.reports import ReportModel
+from models.surveys import SurveyModel
+from models.summaries import SummaryModel
+from forms import SurveyForm, CreateSurveyForm, SummaryForm
 
 @app.route('/')
 @app.route('/index')
@@ -83,14 +86,8 @@ def surveys_list():
     '''
     Lists all surveys (web GUI).
     '''
-    from models.surveys import SurveyModel
     surveys = (db.session.query(SurveyModel).order_by(SurveyModel.id.desc()).all())
     return render_template('srvys/surveys.html', surveys=surveys, title='list of surveys')
-
-
-
-
-
 
 
 @app.route('/srvys/<int:id>/', methods=['GET','POST'])
@@ -98,9 +95,6 @@ def survey_detail(id):
     '''
     Shows the details of a survey specified by its id (web GUI).
     '''
-    from models.surveys import SurveyModel
-    from forms import SurveyForm
-
     srvy = db.session.query(SurveyModel).get(id)
     if srvy is None:
         abort(404)
@@ -123,9 +117,6 @@ def survey_create():
     '''
     Creates a survey (web GUI).
     '''
-    from models.surveys import SurveyModel
-    from forms import CreateSurveyForm
-
     form = CreateSurveyForm()
     if form.validate_on_submit():
         srvy = SurveyModel(surveyid = serviceprovider_config,
@@ -145,18 +136,29 @@ def survey_summaries(id):
     '''
     Shows the summaries of a survey in form of histograms (web GUI).
     '''
-    from models.surveys import SurveyModel
-    from forms import SummaryForm
     srvy = db.session.query(SurveyModel).get(id)
     if srvy is None:
         abort(404)
 
     form = SummaryForm()
     if form.validate_on_submit():
-        #return redirect(url_for('surveys_list')) # srvys/<int:id>/
-        #return redirect(url_for('surveys_list'))
         return redirect(url_for('survey_detail', id=srvy.id))
     return render_template('srvys/histograms.html', form=form, title='summaries', survey_id=srvy.surveyid)
+
+
+@app.route('/srvys/<int:id>/evaluate', methods=['GET','POST'])
+def survey_eval_summaries(id):
+    '''
+    When called it creates new summaries which are shown in form of histograms (web GUI).
+    '''
+    srvy = db.session.query(SurveyModel).get(id)
+    if srvy is None:
+        abort(404)
+
+    form = SummaryForm()
+    if form.validate_on_submit():
+        return redirect(url_for('survey_detail', id=srvy.id))
+    return render_template('srvys/evaluate.html', form=form, title='summaries', survey_id=srvy.surveyid)
 
 
 @app.route('/srvys/<int:id>/delete', methods=['POST'])
@@ -164,9 +166,6 @@ def survey_delete(id):
     '''
     Deletes a survey (web GUI).
     '''
-    from models.surveys import SurveyModel
-    from forms import SurveyForm
-
     srvy = SurveyModel.query.get_or_404(id)
     srvy.delete_from_db()
     flash('survey has been deleted.')
@@ -176,7 +175,7 @@ def survey_delete(id):
 @app.route('/settings', methods=['GET','POST'])
 def settings():
     '''
-    TODO: Server setting (web GUI).
+    TODO: Server setting (web GUI). This is for Testing
     '''
     from models.config import ConfigurationModel
     from forms import LoginForm
@@ -194,10 +193,6 @@ def internaldata():
     This is for testing.
     It shows all client-, and server inquiries and reports which are stored in the client database.
     '''
-    from models.reports import ReportModel
-    from models.surveys import SurveyModel
-    from models.summaries import SummaryModel
-
     rprts = ReportModel.query.all()
     smmrs = SummaryModel.query.all()
     srvys = SurveyModel.query.all()
@@ -228,7 +223,6 @@ def info():
     Infomation page (web GUI).
     '''
     return render_template('info.html')
-
 
 
 ##################################################################
