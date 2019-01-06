@@ -1,24 +1,31 @@
+#resources/client_inquiries.py
 import json
 from flask_restful import Resource
 
 from models.client_inquiries import ClientInquiriesModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
-from internal.config import global_f, global_p, global_q, locked_config
+from internal.config import locked_config, configfile_f, configfile_p, configfile_q
 import resources.parsers
-from resources.parsers import check_fpq, check_if_bits
+from resources.parsers import check_fpq, check_if_bits, check_type
 
-#############################################################
-# REST API for client inquiries
-#############################################################
+
 class ClientInquiries(Resource):
-
+    '''
+    REST API for client inquiries.
+    '''
     def get(self,name):
+        '''
+        Returns a client inquiry by its name.
+        '''
         answer = ClientInquiriesModel.find_by_name(name)
         if answer:
             return answer.tojson(), 200 #ok
         return {'message': "Inquiry with name '{}' not found.".format(name)}, 404 #not found
 
     def post(self,name):
+        '''
+        Creates a new client inquriy, if not already existing under the same name.
+        '''
         if ClientInquiriesModel.find_by_name(name):
             return {'message': "Inquiry with name '{}' already exists.".format(name)}, 400 #bad request
             #schreibe zeugs in db
@@ -29,16 +36,19 @@ class ClientInquiries(Resource):
         if (data['qdescription'] is not None):
             description = data['qdescription']
 
-
-        # a new inquiry is created, answer, prr_answer and irr_answer will set to 0
+        # answer, prr_answer and irr_answer will set to 0
         answer = [0]* len(data['options'])
         prr = [0]* len(data['options'])
         irr = [0]* len(data['options'])
 
+        #validity checks
+        if not check_type(data['type']):
+            return {'message': "type must be 'cbx', 'mc' or 'bool'."}, 400 #bad request
+
         if not check_if_bits(answer):
             return {'message': "only 0s and 1s allowed in answers"}, 400 #bad request
 
-        if not check_fpq(global_f, global_p, global_p):
+        if not check_fpq(configfile_f, configfile_p, configfile_q):
             return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
 
         inquiry = ClientInquiriesModel(name,
@@ -48,11 +58,11 @@ class ClientInquiries(Resource):
                                 json.dumps(prr),
                                 json.dumps(irr),
                                 description,
-                                False, #responded is False, because inquiry is created not answered
-                                global_locked, #data['locked'],
-                                global_f, #until first edit by the user global values are used instead of data['f'],
-                                global_p, #until first edit by the user global values are used instead of data['p'],
-                                global_q) #until first edit by the user global values are used instead of data['q'])
+                                False, #responded is False, because inquiry is created but not answered yet.
+                                locked_config, #data['locked'],
+                                configfile_f, #until first edit by the user global values are used instead of data['f'],
+                                configfile_p, #until first edit by the user global values are used instead of data['p'],
+                                configfile_q) #until first edit by the user global values are used instead of data['q'])
         try:
             inquiry.save_to_db()
         except:
@@ -60,8 +70,11 @@ class ClientInquiries(Resource):
         return inquiry.tojson(), 201 #created
         #return {'message': "inquiry with name '{}' sucessfully inserted.".format(name)}, 201 #created
 
-    # change a client inquiry
     def put(self,name):
+        '''
+        Changes a client inquiry by its name.
+        The following values can be changed by the user: answers, description, locked, f,p and q.
+        '''
         data = resources.parsers.ParseClientInquiriesPut.parser.parse_args()
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry is None:
@@ -72,7 +85,9 @@ class ClientInquiries(Resource):
         if (data['qdescription'] is  None):
             description = inquiry.qdescription
 
-        #check if the format of answers is correct
+        #check if the lengt of the answer is correct (still the same).
+        if not (len(json.dumps(data['answer'])) == len(inquiry.answer)):
+                    return {'message': "old and new answer must have the same amount of options"}, 400 #bad request
 
         #answer must be a list of 0s and 1s
         if not check_if_bits(data['answer']):
@@ -111,6 +126,9 @@ class ClientInquiries(Resource):
         #return {'message': " inquiry '{}' changed.".format(name)}, 202 #accepted
 
     def delete(self,name):
+        '''
+        Deletes a client inquiry by its name.
+        '''
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry:
             inquiry.delete_from_db()
@@ -118,21 +136,24 @@ class ClientInquiries(Resource):
         return {'message': "client inquiry '{}' not found".format(name)}, 404 #not found
 
 
-#############################################################
-# list all client inquiries
-#############################################################
 class ListClientInquiries(Resource):
     def get(self):
+        '''
+        List all client inquiries.
+        '''
         return {'inquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
 
 
-#############################################################
-# this ressources allows full access to all
-# ClientInquiries values through the REST api
-#############################################################
 class TestClientInquiries(Resource):
-
+    '''
+    This ressource allows full access to all ClientInquiries values through the REST API.
+    For testing only, not for productive usage.
+    '''
     def post(self,name):
+        '''
+        Creates a new client inquriy, if not already existing under the same name.
+        This request is for testing and should be used carefully.
+        '''
         if ClientInquiriesModel.find_by_name(name):
             return {'message': "Inquiry with name '{}' already exists.".format(name)}, 400 #bad request
 
@@ -170,6 +191,10 @@ class TestClientInquiries(Resource):
         return inquiry.tojson(), 201 #created
 
     def put(self,name):
+        '''
+        Changes a client inquiry by its name.
+        This request is for testing and should be used carefully.
+        '''
         data = resources.parsers.ParseTestClientInquiries.parser.parse_args()
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry is None:

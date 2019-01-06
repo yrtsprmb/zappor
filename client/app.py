@@ -26,7 +26,7 @@ import requests
 
 # import of configurations:
 from internal.config import secretkey_config, repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
-from internal.config import global_f, global_p,global_q
+from internal.config import configfile_f, configfile_p, configfile_q
 
 # for requests
 from resources.request_surveys import RequestSurvey
@@ -141,7 +141,7 @@ import requests
 from models.client_inquiries import ClientInquiriesModel
 from models.server_inquiries import ServerInquiriesModel
 from models.reports import ReportModel
-from forms import ClientInquiryForm, CreateClientInquiryForm, EditClientInquiryForm, RequestSurveyTestForm
+from forms import CreateClientInquiryForm, EditClientInquiryForm, RequestSurveyTestForm
 
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from resources.parsers import check_fpq, check_if_bits
@@ -249,9 +249,9 @@ def inquiries_create():
                                     qdescription = form.inq_qdescription.data,
                                     responded = False,
                                     locked = True,
-                                    f = global_f,
-                                    p = global_p,
-                                    q = global_q)
+                                    f = configfile_f,
+                                    p = configfile_p,
+                                    q = configfile_q)
         inq.save_to_db()
 
         flash("Inquiry created")

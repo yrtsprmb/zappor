@@ -4,13 +4,13 @@ import json
 from flask_restful import Resource, reqparse
 from models.surveys import SurveyModel
 import resources.parsers
-from resources.parsers import check_status
+from resources.parsers import check_status, check_incoming_survey
 
-##################################################################
-# REST API for surveys
-##################################################################
+
 class Survey(Resource):
-
+    '''
+    REST API for surveys.
+    '''
     def get(self, surveyname):
         '''
         Server REST resource.
@@ -33,6 +33,15 @@ class Survey(Resource):
 
         if not check_status(data['status']):
             return {'message': "wrong status. must be 'created', 'active', or 'done'."}, 400 #bad request
+
+        questionlist = data['questions']
+        print(data['questions'])
+        print(type(data['questions']))
+
+        if check_incoming_survey(questionlist):
+            print("Helga Testet")
+
+        #check_type(data['status']):
 
         survey = SurveyModel(data['serviceprovider'],
                                 data['serviceprovider'], # surveyid will be auto generated in the survey model

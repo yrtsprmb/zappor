@@ -2,7 +2,9 @@
 {% block content %}
 <div class="jumbotron">
   <h1>Client Testing</h1>
-  <p></p>
+  <p>These page is for testing the client. You can force the client direct to request new surveys from the server (if available),
+    to match incoming server inquiries with local client inquiries, and to send reports (if any matches apply) back to the server.
+  This is usually done automatically and can be configured in internal/config.py</p>
 
   <form action="" method="post" novalidate>
     {{ form.hidden_tag() }}

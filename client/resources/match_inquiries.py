@@ -1,3 +1,5 @@
+#resources/match_inquiries
+
 import json
 from flask_restful import Resource
 from models.server_inquiries import ServerInquiriesModel
@@ -5,13 +7,19 @@ from models.client_inquiries import ClientInquiriesModel
 from models.reports import ReportModel
 
 from internal.matchings import generate_answers_by_surveyid, find_matching_surveys, find_matches
-from internal.config import global_f, global_p, global_q
+from internal.config import configfile_f, configfile_p, configfile_q
 
 
-# tooks all available inquiries from client and server and match them together
-# positive matches are saved in the reports table
 class MatchInquiries(Resource):
+    '''
+    Takes all available inquiries from client and server and match them together.
+    Positive matches are saved in the reports table
+    '''
     def get(self):
+        '''
+        The get request fetches all client inquiries which are not locked and answered by the use
+        If they match in name, type and length of options they will be stored in reports belonging to a specific survey id.
+        '''
         # only inquiries which are not locked and answered by the user
         client = ClientInquiriesModel.query.filter_by(locked='0').filter_by(responded='1').all()
         #client = ClientInquiriesModel.query.filter_by(locked='0').all() # only inquiries which are not locked by the user
@@ -36,19 +44,14 @@ class MatchInquiries(Resource):
         # print(surveys)                              #debug
         # print("---------------------")              #debug
 
-        # 3rd) generate answers by surveyid
-        #for survey in surveys:
-        #        print(generate_answers_by_surveyid(survey['surveyid'],matches))
-
-
         # 3) generate report data and save the reports to the database
         for survey in surveys:
             surveyid = survey
-            prr = 1 #global_prr #TODO: nur global wenn, lokal nichts gesetzt #this values can be deleted
-            irr = 1 #global_irr #TODO: nur global wenn, lokal nichts gesetzt # this values can be deleted
-            f = global_f
-            p = global_p
-            q = global_q
+            prr = 1 #deprecated
+            irr = 1 #deprecated
+            f = configfile_f
+            p = configfile_p
+            q = configfile_q
 
             #3b) generate answers json.dumps(data['answers'])
             answers = generate_answers_by_surveyid(survey,matches)

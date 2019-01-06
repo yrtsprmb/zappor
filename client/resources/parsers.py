@@ -1,10 +1,9 @@
 # resources/parsers.py
-
 from flask_restful import reqparse
 
 ##################################################################
 ## This file contains all parsers for the REST API
-## and validation checks.
+## as well as validation checks for incoming data.
 ##################################################################
 
 class ParseClientInquiriesPost:
@@ -285,6 +284,7 @@ def check_fpq(f,p,q):
     '''
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
 
+
 def check_if_bits(list):
     '''
     Checks if the values of a an answerlist are either 1 or 0.
@@ -295,10 +295,11 @@ def check_if_bits(list):
     return True
 
 
-def check_type(inq_type):
+def check_type(status):
     '''
     Checks if the type of an inquiry is correct.
+    Valid values are 'cbx' for checkbox, 'mc' for multiple choice and 'bool' for boolean.
     '''
-    if(status != 'ord_cbx' and status != 'ord_mc' and status != 'bool'):
+    if(status != 'cbx' and status != 'mc' and status != 'bool'):
         return False
     return True
