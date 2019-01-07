@@ -170,6 +170,14 @@ def check_type(status):
         return False
     return True
 
+def check_bool(status):
+    '''
+    If a type is 'bool', the list 'options' must have a length of 2. TODO
+    '''
+    if(status != 'cbx' and status != 'mc' and status != 'bool'):
+        return False
+    return True
+
 
 def check_status(status):
     '''
@@ -260,12 +268,31 @@ def check_incoming_report(reportobject,surveyobject):
     if not check_answerlist_bits(answerlist):
         print("error in answerlist") #debug
         return False
-
     return True
 
 def check_incoming_survey(questionlist):
     '''
-    Checks if the values of an incoming survey are correct.
-    Validity check for survey questions.
+    Checks values of a created survey.
+    Check if the type is correct and when it is a 'bool' question, the options list should have a length of 2.
+    Checks if every qid is unique.
     '''
-    pass
+    qid_list = []
+    for question in questionlist:
+        print(question)
+        if not check_type(question['type']):
+            print("Error: wrong value for 'type' ") #debug
+            return False
+
+        # if a type is 'bool', the length of options should be 2.
+        if ((question['type'] == 'bool') and (len(question['options']) !=2)):
+            print("Error: for a 'bool' questions are only 2 options allowed") #debug
+            return False
+
+        # every qid should be unique
+        if question['qid'] in qid_list:
+            print("Error: 'qid' not unique.") #debug
+            return False
+        else:
+            qid_list.append(question['qid'])
+
+    return True

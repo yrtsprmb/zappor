@@ -80,13 +80,12 @@ class ServerInquiriesModel(db.Model):
         return cls.query.filter_by(surveyid=surveyid).all()
 
     @classmethod ## TODO: implement function from the send reports file
-    def delete_all_by_surveyid(cls, surveyid):
+    def delete_all_inqs_by_surveyid(cls, surveyid):
         '''
         TODO: needs to be implemented.
         '''
-        pass
-        # vorschlag von oli, ausprobieren
-        # cls.query.filter_by(surveyid==surveyid).delete()
+        cls.query.filter_by(surveyid=surveyid).delete()
+        db.session.commit()
         #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
 
     def save_to_db(self):

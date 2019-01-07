@@ -1,17 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
-  <h1>Client Testing</h1>
-  <p>These page is for testing the client. You can force the client direct to request new surveys from the server (if available),
+  <h1>Tests</h1>
+  <p>This is for testing. You can force the client direct to request new surveys from the server (if available),
     to match incoming server inquiries with local client inquiries, and to send reports (if any matches apply) back to the server.
   This is usually done automatically and can be configured in internal/config.py</p>
 
-  <form action="" method="post" novalidate>
+<form action="" method="post" novalidate>
     {{ form.hidden_tag() }}
       <div class="form-group">
-  <input type="submit" name="submit_request" value="Request Surveys">
-  <input type="submit" name="submit_report" value="Send Reports">
-  <input type="submit" name="submit_match" value="Match Inquiries">
+
+  <div class="">
+    <input type="submit" name="submit_request" value="Request Surveys"><br>
+    Forces the client to request surveys from the server. If surveys are availalbe the questions of the survey will be stored in 'server inquiries'.
+    If 'quizmode' ist activated, questions from the survey will be stored in client inquiries as well.
+  </div>
+  <p></p>
+
+  <div class="">
+    <input type="submit" name="submit_match" value="Match Inquiries"><br>
+    A match between client- and server inquiries will be made, if the client inquiries are not locked by the user.
+    If name, type and options are identical a match is made and a report is generated under the survey id of the server inquiries.
+  </div>
+  <p></p>
+<div class="">
+    <input type="submit" name="submit_report" value="Send Reports"><br>
+    Forces the client to send a report (if available) to the server. If a report was sent, it will be deleted from the client. The server inquiries belongig to the
+    surveyid of the report will be deleted as well.
+  </div>
   </div>
   </form>
 

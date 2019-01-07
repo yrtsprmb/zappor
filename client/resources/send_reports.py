@@ -1,23 +1,23 @@
+#resources/send_reports.py
 import json
 import requests
 from pprint import pprint
 from flask_restful import Resource
 
-from internal.config import serviceprovider_reports
+from internal.config import serviceprovider_reports, quizmode_config
 from models.reports import ReportModel
 from models.server_inquiries import ServerInquiriesModel
 
-from db import db #TODO: in model verlagern
 
-#############################################################
-# sends reports automatically to the server
-# if a report was sent, it will be deletetd from the db
-# with all belonging server_inquiries
-#############################################################
 class SendReport(Resource):
-
+    '''
+    This resource is responsible for sending reports to the server.
+    If a report was sent, it will be deletetd from the db with all belonging server_inquiries.
+    '''
     def get(self):
-
+        '''
+        Sends a report to the server. After the report was sent, it deletes the report from the client and server inquiries belonging to them.
+        '''
         if ReportModel.query.first():
             report = ReportModel.query.first()
             print('report')                                     #debug
@@ -43,25 +43,16 @@ class SendReport(Resource):
             report_to_delete = ReportModel.find_by_surveyid(surveyid)
             if report_to_delete:
                 try:
+                    print("helgahelgahelga")
+                    ServerInquiriesModel.delete_all_inqs_by_surveyid(surveyid)
                     report_to_delete.delete_from_db()
-                    print('report deleted from db.') #debug
+                    if quizmode_config:
+                        #TODO: delete also all client inquries.
+                        pass
+                    print('report and all server inquiries belonging to the report deleted from db.') #debug
                 except:
                    return {'message': "error while deleting report"}, 500 #internal server error
 
-            # after the report was sent to the server, server_inquiries belonging to the survey id should be deleted from the DB
-            server_inquiries_to_delete = ServerInquiriesModel.find_all_by_surveyid(surveyid)
-            if server_inquiries_to_delete is None:
-                return {'message': "no survey inquiries for surveyid '{}' to delete.".format(surveyid)}, 400 #bad request
-
-            try:
-                db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
-                #db.session.query(ServerInquiriesModel).filter(ServerInquiriesModel.surveyid==surveyid).delete()
-                db.session.commit()
-                print('server inquiries deleted') #debug
-
-            except:
-               return {'message': "error while deleting survey inquiries"}, 500 #internal server error
-            #return report.tojson(), 200 #ok
             return {'message': "report to surveyid '{}' was sent to the serviceprovider.".format(surveyid)}, 200 #ok
 
         return {'message': "no reports to send."}, 200 #ok

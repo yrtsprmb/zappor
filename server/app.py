@@ -1,5 +1,4 @@
 #app.py
-
 from flask import Flask, render_template, url_for, redirect, flash, abort
 from flask_restful import Api
 from flask_jwt import JWT
@@ -8,7 +7,7 @@ from flask_jwt import JWT
 from security import authenticate, identity
 
 # import of resources
-from resources.user import UserRegister
+from resources.users import UserRegister
 from resources.surveys import Survey, ListSurveys, AvailableSurveys
 from resources.reports import Report, ListReports
 from resources.summaries import Summary, ListSummaries, CreateSummaries
@@ -166,9 +165,18 @@ def survey_eval_summaries(id):
 def survey_delete(id):
     '''
     Deletes a survey (web GUI).
+    And all reports and summaries which belong to the survey.
     '''
     srvy = SurveyModel.query.get_or_404(id)
-    srvy.delete_from_db()
+    sid = srvy.surveyid
+
+    try:
+        ReportModel.delete_reports_by_surveyid(sid)
+        SummaryModel.delete_summaries_by_surveyid(sid)
+        srvy.delete_from_db()
+    except:
+        abort(404)
+
     flash('survey has been deleted.')
     return redirect(url_for('surveys_list'))
 

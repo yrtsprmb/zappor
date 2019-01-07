@@ -1,5 +1,4 @@
 #models/summaries.py
-
 import json
 from datetime import datetime
 from db import db
@@ -73,6 +72,14 @@ class SummaryModel(db.Model):
         Returns a summary with the unique combination survey id and qid.
         '''
         return cls.query.filter_by(surveyid=surveyid).filter_by(qid=qid).first()
+
+    @classmethod
+    def delete_summaries_by_surveyid(cls, surveyid):
+        '''
+        Deletes all summaries belonging to a surveyid.
+        '''
+        cls.query.filter_by(surveyid=surveyid).delete()
+        db.session.commit()
 
     @classmethod
     def find_by_id(cls, _id):
