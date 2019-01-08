@@ -118,20 +118,12 @@ api.add_resource(SendReport, '/sendreports/')
 api.add_resource(MatchInquiries, '/match/')
 api.add_resource(Report, '/reports/<string:surveyid>')
 
-
-
-#############################################################
+##################################################################
 # testing:
-# allows full access to the values through the REST API
-#############################################################
-
-from resources.client_inquiries import TestClientInquiries
-api.add_resource(TestClientInquiries, '/ci_test/<string:name>')
-
-from resources.server_inquiries import TestServerInquiries
-api.add_resource(TestServerInquiries, '/si_test/<string:name>')
-
+# allows  access to server inquiries through the REST API
+##################################################################
 api.add_resource(ServerInquiries, '/si/<string:name>')
+
 
 ### views ########################################################
 ## routes for the web GUI

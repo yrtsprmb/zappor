@@ -1,5 +1,4 @@
 #resources/reports.py
-
 import json
 from flask_restful import Resource, request
 
@@ -36,7 +35,7 @@ class Report(Resource):
             data = resources.parsers.ParseReportsPost.parser.parse_args()
             survey = SurveyModel.find_survey_by_id(surveyid)
 
-            # checks if fpq have correct values
+            # validity: check if global fpq values are correct.
             if not check_fpq(data['f'],data['p'],data['q']):
                 return {'message': "report discarded: f,p,q must have values between 0.0 and 1.0"}, 400 #bad request
 
@@ -58,7 +57,6 @@ class Report(Resource):
                 return report.tojson(), 201 #created
 
         return {'message': "report not accecpted. Incoming data not valid or survey not existing."}, 400 #bad request
-
 
     def delete(self,surveyid):
         '''

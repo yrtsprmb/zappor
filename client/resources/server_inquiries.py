@@ -13,36 +13,13 @@ class ServerInquiries(Resource):
     def get(self,name):
         '''
         If existing, returns a server inquiry by its name.
+        This request is for testing and should be used carefully.
         '''
         question = ServerInquiriesModel.find_by_name(name)
         if question:
             return question.tojson()
         return {'message': "Server inquiry '{}' not found".format(name)}, 404 #not found
 
-    def delete(self,name):
-        '''
-        If existing, deletes a server inquiry by its name.
-        '''
-        question = ServerInquiriesModel.find_by_name(name)
-        if question:
-            question.delete_from_db()
-            return {'message': "Server inquiry '{}' deleted.".format(name)}, 202 #accepted
-        return {'message': "Server inquiry '{}' not found.".format(name)}, 404 #not found
-
-
-class ListServerInquiries(Resource):
-    def get(self):
-        '''
-        List all server inquiries.
-        '''
-        return {'inquiries': [ x.tojson() for x in ServerInquiriesModel.query.all()]}
-
-
-class TestServerInquiries(Resource):
-    '''
-    This ressource allows full access to all server inquiry values through the REST API.
-    For testing only, not for productive usage.
-    '''
     def post(self,name):
         '''
         Creates a new server inquriy, if not already existing under the same name.
@@ -72,3 +49,23 @@ class TestServerInquiries(Resource):
         except:
             return {'message': "error while inserting server inquiry '{}'. ".format(name)}, 500 #internal server error
         return question.tojson(), 201 #created
+
+    def delete(self,name):
+        '''
+        If existing, deletes a server inquiry by its name.
+        This request is for testing and should be used carefully.
+        '''
+        question = ServerInquiriesModel.find_by_name(name)
+        if question:
+            question.delete_from_db()
+            return {'message': "Server inquiry '{}' deleted.".format(name)}, 202 #accepted
+        return {'message': "Server inquiry '{}' not found.".format(name)}, 404 #not found
+
+
+class ListServerInquiries(Resource):
+    def get(self):
+        '''
+        List all server inquiries.
+        This request is for testing and should be used carefully.
+        '''
+        return {'inquiries': [ x.tojson() for x in ServerInquiriesModel.query.all()]}

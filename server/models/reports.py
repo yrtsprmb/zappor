@@ -35,13 +35,11 @@ class ReportModel(db.Model):
         '''
         return f" surveyid: {self.surveyid}, prr: {self.prr}, irr: {self.irr}, f: {self.f}, p: {self.p}, q: {self.q}, answers: {self.answers}"
 
-
     def tojson(self):
         '''
         Returns a json representation of the report model.
         '''
         return {'surveyid': self.surveyid, 'prr': bool(self.prr), 'irr': bool(self.irr), 'f': self.f, 'p': self.p,'q': self.q, 'answers': json.loads(self.answers)}
-
 
     @classmethod
     def find_report_by_surveyid(cls, surveyid):
@@ -49,7 +47,6 @@ class ReportModel(db.Model):
         Returns all reports belonging to a specific survey id.
         '''
         return ReportModel.query.filter_by(surveyid=surveyid).all()
-
 
     @classmethod
     def delete_reports_by_surveyid(cls, surveyid):
@@ -59,14 +56,12 @@ class ReportModel(db.Model):
         cls.query.filter_by(surveyid=surveyid).delete()
         db.session.commit()
 
-
     def save_to_db(self):
         '''
         Saves a report to the db.
         '''
         db.session.add(self)
         db.session.commit()
-
 
     def delete_from_db(self):
         '''

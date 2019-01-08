@@ -1,0 +1,67 @@
+{
+   "prr": true,
+   "irr": true,
+   "f": 0.5,
+   "p": 0.75,
+   "q": 0.5,
+   "answers":
+   [
+      {
+	   "qid": 1,
+	   "question": "Smartphone",
+       "options": [1,0],
+	   "f":  0.5,
+	   "p":  0.75,
+	   "q":  0.5
+      },
+      {	
+	   "qid": 2,
+       "question": "Marke",
+       "options": [1,0,0,0,0,1],
+	   "f":  0.5,
+	   "p":  0.8,
+	   "q":  0.5
+      },
+      {
+       "qid": 3, 
+       "question": "Provider",
+       "options": [1,0,0,0,0],
+	   "f":  0.5,
+	   "p":  0.75,
+	   "q":  0.5
+      },
+      {
+       "qid": 4, 
+       "question": "Vertrag",
+       "options": [1,0],
+	   "f":  0.5,
+	   "p":  0.75,
+	   "q":  0.5
+      },
+      {
+       "qid": 5, 
+       "question": "Alter",
+       "options": [0,0,0,0,0,0,1],
+	   "f":  0.5,
+	   "p":  0.75,
+	   "q":  0.5
+      },
+      {
+       "qid": 6, 
+       "question": "Geschlecht",
+       "options": [1,0,0],
+	   "f":  0.5,
+	   "p":  0.75,
+	   "q":  0.5
+      },
+      {
+       "qid": 7, 
+       "question": "Bildung",
+       "options": [1,0,0,0,0],
+	   "f":  0.5,
+	   "p":  0.75,
+	   "q":  0.5
+      }
+
+   ]
+}

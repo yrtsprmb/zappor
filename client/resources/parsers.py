@@ -277,13 +277,31 @@ class ParseClientConf:
         help="global slider"
     )
 
+def check_bool(type,list):
+    '''
+    If a type is 'bool', the list 'options' must have a length of 2.
+    And only one option can be set to 1.
+    '''
+    if not (type =='bool'):
+        return True
+
+    if (len(list) == 2) and (list == [0,1] or list == [1,0]):
+            return True
+    return False
+
+def check_mc(type,list):
+    '''
+    If a type is 'mc', only 1 digit is allowed in the whole answer list.
+    '''
+    if (type == 'mc') and (list.count(1) != 1):
+        return False
+    return True
 
 def check_fpq(f,p,q):
     '''
     Checks if f,p and q values are correct (between 0.0 and 1.0).
     '''
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
-
 
 def check_if_bits(list):
     '''
@@ -293,7 +311,6 @@ def check_if_bits(list):
         if(value !=0 and value !=1):
             return False
     return True
-
 
 def check_type(status):
     '''

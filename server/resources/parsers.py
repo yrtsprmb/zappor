@@ -143,13 +143,20 @@ class ParseSummariesPost:
         help="counter is missing"
     )
 
-
 def check_fpq(f,p,q):
     '''
     Checks if f,p and q values are correct (between 0.0 and 1.0).
     '''
     return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
 
+def check_local_fpq(list):
+    '''
+    Checks if the local (individual per question) f,p and q values are correct (between 0.0 and 1.0).
+    '''
+    for item in list:
+        if not check_fpq(item['f'],item['p'],item['q']):
+            return False
+    return True
 
 def check_if_bits(list):
     '''
@@ -160,7 +167,6 @@ def check_if_bits(list):
             return False
     return True
 
-
 def check_type(status):
     '''
     Checks if the type of an inquiry is correct.
@@ -170,14 +176,13 @@ def check_type(status):
         return False
     return True
 
-def check_bool(status):
-    '''
-    If a type is 'bool', the list 'options' must have a length of 2. TODO
-    '''
-    if(status != 'cbx' and status != 'mc' and status != 'bool'):
-        return False
-    return True
-
+# def check_bool(type,list):
+#     '''
+#     If a type is 'bool', the list 'options' must have a length of 2.
+#     '''
+#     if (type =='bool') and (len(list) == 2):
+#         return True
+#     return False
 
 def check_status(status):
     '''
@@ -187,7 +192,6 @@ def check_status(status):
     if(status != 'created' and status != 'active' and status != 'done'):
         return False
     return True
-
 
 def correct_qids(report_list,survey_list):
     '''
@@ -199,6 +203,15 @@ def correct_qids(report_list,survey_list):
             return False
     return True
 
+def correct_name(report_list,survey_list):
+    '''
+    Checks if the qids in a report is also existing survey belonging to the report.
+    Validity check for reports.
+    '''
+    for name in report_list:
+        if (name not in survey_list):
+            return False
+    return True
 
 def correct_bin_count(qid_list,report_list,survey_list):
     '''
@@ -228,7 +241,6 @@ def correct_bin_count(qid_list,report_list,survey_list):
                     return False
     return True
 
-
 def check_answerlist_bits(answerlist):
     '''
     Checks if the values of the answers of a report are either 1 or 0.
@@ -240,6 +252,26 @@ def check_answerlist_bits(answerlist):
                 print("wrong value: not 0 or 1:") #debug
                 print(bit) #debug
                 return False
+    return True
+
+def valid_qid_name(surveyquestions,reportanswers):
+    '''
+    Checks if the values 'name' and 'qid' exist in the corresponding survey.
+    Takes a list of survey questions and a list of report answers.
+    '''
+    quest_dict = []
+    answr_dict = []
+    for question in surveyquestions:
+        quest_dict.append({ question['qid'] : question['name']})
+
+    for answer in reportanswers:
+        answr_dict.append({ answer['qid'] : answer['question']})
+
+    for item in answr_dict:
+        #print(item)
+        if item not in quest_dict:
+            return False
+
     return True
 
 
@@ -254,9 +286,18 @@ def check_incoming_report(reportobject,surveyobject):
     qids_survey = Auxiliary.get_qids(questionlist)
     qids_report = Auxiliary.get_qids(answerlist)
 
+    if not check_local_fpq(answerlist):
+        print("wrong local f,p,q values.") #debug
+        return False
+
     # check if qids are correct.
     if not correct_qids(qids_report,qids_survey):
         print("wrong qids") #debug
+        return False
+
+    # check if the combination of qid and name exist also on the server.
+    if not valid_qid_name(questionlist,answerlist):
+        print("error: qid/name combination does not exist in survey.")
         return False
 
     # check if binsize for answers are correct.
@@ -270,13 +311,14 @@ def check_incoming_report(reportobject,surveyobject):
         return False
     return True
 
-def check_incoming_survey(questionlist):
+def check_survey_questions(questionlist):
     '''
     Checks values of a created survey.
     Check if the type is correct and when it is a 'bool' question, the options list should have a length of 2.
     Checks if every qid is unique.
     '''
     qid_list = []
+    name_list = []
     for question in questionlist:
         print(question)
         if not check_type(question['type']):
@@ -294,5 +336,12 @@ def check_incoming_survey(questionlist):
             return False
         else:
             qid_list.append(question['qid'])
+
+        # every name should be unique
+        if question['name'] in name_list:
+            print("Error: 'name' not unique.") #debug
+            return False
+        else:
+            name_list.append(question['name'])
 
     return True

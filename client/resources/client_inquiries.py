@@ -6,7 +6,7 @@ from models.client_inquiries import ClientInquiriesModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from internal.config import locked_config, configfile_f, configfile_p, configfile_q
 import resources.parsers
-from resources.parsers import check_fpq, check_if_bits, check_type
+from resources.parsers import check_fpq, check_if_bits, check_type, check_bool, check_mc
 
 
 class ClientInquiries(Resource):
@@ -44,6 +44,9 @@ class ClientInquiries(Resource):
         #validity checks
         if not check_type(data['type']):
             return {'message': "type must be 'cbx', 'mc' or 'bool'."}, 400 #bad request
+
+        if (data['type'] == 'bool' and len(data['options']) != 2):
+            return {'message': "when type 'bool' is chosen, only 2 answer options are possible."}, 400 #bad request
 
         if not check_if_bits(answer):
             return {'message': "only 0s and 1s allowed in answers"}, 400 #bad request
@@ -87,7 +90,15 @@ class ClientInquiries(Resource):
 
         #check if the lengt of the answer is correct (still the same).
         if not (len(json.dumps(data['answer'])) == len(inquiry.answer)):
-                    return {'message': "old and new answer must have the same amount of options"}, 400 #bad request
+                    return {'message': "old and new answer must have the same amount of options."}, 400 #bad request
+
+        #check bool
+        if not check_bool(inquiry.type,data['answer']):
+            return {'message': "error: give a correct answer for type 'bool'."}, 400 #bad request
+
+        #check mc
+        if not check_mc(inquiry.type,data['answer']):
+            return {'message': "error: only one answer options is allowed for mc questions."}, 400 #bad request
 
         #answer must be a list of 0s and 1s
         if not check_if_bits(data['answer']):
@@ -142,89 +153,3 @@ class ListClientInquiries(Resource):
         List all client inquiries.
         '''
         return {'inquiries': [ x.tojson() for x in ClientInquiriesModel.query.all()]}
-
-
-class TestClientInquiries(Resource):
-    '''
-    This ressource allows full access to all ClientInquiries values through the REST API.
-    For testing only, not for productive usage.
-    '''
-    def post(self,name):
-        '''
-        Creates a new client inquriy, if not already existing under the same name.
-        This request is for testing and should be used carefully.
-        '''
-        if ClientInquiriesModel.find_by_name(name):
-            return {'message': "Inquiry with name '{}' already exists.".format(name)}, 400 #bad request
-
-        data = resources.parsers.ParseTestClientInquiries.parser.parse_args()
-
-        if not (len(data['answer']) == len(data['prr_answer']) == len(data['irr_answer'])):
-            return {'message': "'answer', 'prr_answer' and 'irr_answer' must have the same length"}, 400 #bad request
-
-        if not (check_if_bits(data['answer']) and check_if_bits(data['prr_answer']) and check_if_bits(data['irr_answer'])):
-            return {'message': "only 0s and 1s allowed in answer, prr_answer and irr_answer"}, 400 #bad request
-
-        if not check_fpq(data['f'],data['p'],data['q']):
-            return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
-
-        # a PRR will be made after a answer is was changed
-        prr = permanent_RandomizedResponse(float(data['f']),data['answer'])
-        # a IRR will be made after every request for an inquiry
-        irr = instantaneous_RandomizedResponse(float(data['p']),float(data['q']),prr)
-        inquiry = ClientInquiriesModel(name,
-                                data['type'],
-                                json.dumps(data['options']),
-                                json.dumps(data['answer']),
-                                json.dumps(prr), #json.dumps(data['prr_answer']),
-                                json.dumps(irr),#json.dumps(data['irr_answer']),
-                                data['qdescription'],
-                                data['responded'],
-                                data['locked'],
-                                data['f'],
-                                data['p'],
-                                data['q'])
-        try:
-            inquiry.save_to_db()
-        except:
-            return {'message': "error while inserting inquiry with name '{}'.".format(name)}, 500 #internal server error
-        return inquiry.tojson(), 201 #created
-
-    def put(self,name):
-        '''
-        Changes a client inquiry by its name.
-        This request is for testing and should be used carefully.
-        '''
-        data = resources.parsers.ParseTestClientInquiries.parser.parse_args()
-        inquiry = ClientInquiriesModel.find_by_name(name)
-        if inquiry is None:
-            return {'message': "No changes - inquiry '{}' does not exist".format(name)}, 400 #bad request
-
-        #check if description is empty
-        description = data['qdescription']
-        if (data['qdescription'] is  None):
-            description = inquiry.qdescription
-
-        if not check_fpq(data['f'],data['p'],data['q']):
-            return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
-
-        if not (check_if_bits(data['answer']) and check_if_bits(data['prr_answer']) and check_if_bits(data['irr_answer'])):
-            return {'message': "only 0s and 1s allowed in answer, prr_answer and irr_answer"}, 400 #bad request
-
-        inquiry.type = data['type']
-        inquiry.options = json.dumps(data['options'])
-        inquiry.answer = json.dumps(data['answer'])
-        inquiry.prr_answer = json.dumps(data['prr_answer'])
-        inquiry.irr_answer = json.dumps(data['irr_answer'])
-        inquiry.qdescription = description #data['qdescription']
-        inquiry.responded = data['responded']
-        inquiry.locked = data['locked']
-        inquiry.f = data['f']
-        inquiry.p = data['p']
-        inquiry.q = data['q']
-
-        try:
-            inquiry.save_to_db()
-        except:
-            return {'message': "error while editing inquiry with name: '{}'.".format(name)}, 500 #internal server error
-        return inquiry.tojson(), 202 #accepted

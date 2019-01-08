@@ -8,7 +8,6 @@ class UserRegister(Resource):
     '''
     Testing resource, which registers a new user.
     '''
-
     def post(self):
         '''
         If a user not already exists, the user will be created.

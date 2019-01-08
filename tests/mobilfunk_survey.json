@@ -1,0 +1,57 @@
+{
+  "serviceprovider": "Hans Dampf International",
+  "status": "created",
+  "sdescription": "Umfragen zur Handynutzung",
+  "questions":
+   [
+     {
+       "qid": 1,	   
+       "name" : "Smartphone",
+       "type": "bool",
+       "options":["ja", "nein"],
+       "description": "Haben Sie ein Smartphone?"
+     },
+     {
+       "qid": 2,
+       "name" : "Marke",
+       "type": "cbx",
+       "options":["Apple", "Huawai", "Nokia", "Samsung", "Sony", "ZTE"],
+       "description": "Welche dieser Marken benutzen Sie?"
+     },
+     {
+       "qid": 3,
+       "name" : "Provider",
+       "type": "cbx",
+       "options":["o2", "Congstar","Telekom", "Vodafone", "andere"],
+       "description": "Welche dieser Provider nutzen Sie?"
+     },
+     {
+       "qid": 4,
+       "name" : "Vertrag",
+       "type": "mc",
+       "options":["Vertrag mit Laufzeit", "Prepaid"],
+       "description": "Welche Art von Bindung zu dem Provider?"
+     }, 
+     {
+       "qid": 5,
+       "name" : "Alter",
+       "type": "mc",
+       "options":["0-11", "12-18", "19-29", "29-39","40-49","50-64","above"],
+       "description": "Wie alt sind sie?"
+     },
+     {
+       "qid": 6,
+       "name" : "Geschlecht",
+       "type": "mc",
+       "options": ["männlich", "weiblich", "divers"],
+       "description": "Welches Geschlecht haben Sie?"
+     },
+     {
+       "qid": 7,
+       "name" : "Bildung",
+       "type": "ord",
+       "options": ["keine", "wenig", "etwas","klug","gscheid"],
+       "description": "Welche Bildung haben Sie?"
+     }
+   ]
+}
