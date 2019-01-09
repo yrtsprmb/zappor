@@ -5,6 +5,7 @@ import requests
 from flask_restful import Resource, reqparse
 from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
+from models.archive import ArchiveModel
 from internal.config import serviceprovider_surveys, quizmode_config, locked_config, quizmode_config, configfile_f, configfile_p, configfile_q
 from resources.parsers import check_type
 
@@ -27,12 +28,11 @@ class RequestSurvey(Resource):
             print(e)    #debug
             return {'message': "server not available. no survey was requested: {} ".format(e)}, 500 #ok
 
+
         if quizmode_config is True:
-            print("helga hat titten")
             #creates client inquiries:
             for survey in listevonsurveys:
                 inquiries = (survey['questions']) #fuer jedes dictonairy in der liste
-                print(inquiries)
                 for inq in inquiries:
                     name = inq['name']
                     qtype = inq['type']
@@ -64,6 +64,10 @@ class RequestSurvey(Resource):
             surveyid = (survey['surveyid'])
             serviceprovider = (survey['serviceprovider'])
 
+            #test
+            #rchv = ArchiveModel(surveyid)
+            #rchv.save_to_db()
+
             #generate qid, qname, qtype, qoptions and qdescpritons for the questions format
             questions = (survey['questions'])
 
@@ -92,5 +96,10 @@ class RequestSurvey(Resource):
                         frage.save_to_db()
                         print("new survey with surveyid '{}' available and fetched from the server.".format(surveyid))
                     print("error: Type '{}' not correct.".format(qtype))
+
+            # create a new entry in the archive:
+            if not ArchiveModel.find_by_surveyid(surveyid):
+                rchv = ArchiveModel(surveyid)
+                rchv.save_to_db()
 
         return {'message': "done."}, 200 #ok

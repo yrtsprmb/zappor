@@ -15,10 +15,16 @@
     <li>{{answer}}</li>
     {% endfor %}
   </ul>
-  <h3>saved reports:</h3>
+  <h3>reports:</h3>
   <ul>
     {% for report in reports %}
     <li>{{report}}</li>
+    {% endfor %}
+  </ul>
+  <h3>archive:</h3>
+  <ul>
+    {% for stat in stats %}
+    <li>{{stat}}</li>
     {% endfor %}
   </ul>
 

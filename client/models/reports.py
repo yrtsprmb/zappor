@@ -5,7 +5,7 @@ from db import db
 class ReportModel(db.Model):
     #infos for sqlalchemy
     __tablename__ = "reports"
-    rid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     surveyid = db.Column(db.String(30))
     prr = db.Column(db.Integer)
     irr = db.Column(db.Integer)
@@ -14,8 +14,8 @@ class ReportModel(db.Model):
     q = db.Column(db.Float(precision=5))
     answers = db.Column(db.String())
 
-    survey_sid = db.Column(db.Integer, db.ForeignKey('surveys.sid'))
-    survey = db.relationship('SurveyModel')
+    #survey_sid = db.Column(db.Integer, db.ForeignKey('surveys.sid'))
+    #survey = db.relationship('SurveyModel')
 
     def __init__(self, surveyid, prr, irr, f, p, q, answers):
         self.surveyid = surveyid

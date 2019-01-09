@@ -1,5 +1,4 @@
 #resources/match_inquiries
-
 import json
 from flask_restful import Resource
 from models.server_inquiries import ServerInquiriesModel

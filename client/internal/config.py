@@ -1,5 +1,4 @@
 #internal/config.py
-
 '''
 Configuration settings
 '''

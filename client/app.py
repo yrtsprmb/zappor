@@ -8,7 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 from resources.client_inquiries import ClientInquiries, ListClientInquiries
 from resources.server_inquiries import ServerInquiries, ListServerInquiries
 
-from resources.surveys import Survey, ListSurveys
 from resources.clientconf import ClientConf
 
 ### Threading ####################################################
@@ -100,17 +99,13 @@ app.register_blueprint(error_pages)
 
 api.add_resource(ClientInquiries, '/ci/<string:name>')
 api.add_resource(ListClientInquiries, '/lci')
-
 api.add_resource(ListServerInquiries, '/lsi')
 
-api.add_resource(Survey, '/survey/<string:surveyid>')
-api.add_resource(ListSurveys, '/surveys')
 
 api.add_resource(ListReports, '/listreports/')
 
 api.add_resource(ClientConf, '/configuration/<string:clientname>')
 
-# TEST API' for server inquiries
 
 # API's for client/server communication
 api.add_resource(RequestSurvey, '/requestsurveys/')
@@ -132,6 +127,7 @@ import json
 import requests
 from models.client_inquiries import ClientInquiriesModel
 from models.server_inquiries import ServerInquiriesModel
+from models.archive import ArchiveModel
 from models.reports import ReportModel
 from forms import CreateClientInquiryForm, EditClientInquiryForm, RequestSurveyTestForm
 
@@ -271,7 +267,8 @@ def internal_data():
     answers = ClientInquiriesModel.query.all()
     questions = ServerInquiriesModel.query.all()
     reports = ReportModel.query.all()
-    return render_template('internal_data.html', answers=answers, questions=questions, reports=reports, title='internal data: server & client inquiries, reports')
+    stats = ArchiveModel.query.all()
+    return render_template('internal_data.html', answers=answers, questions=questions, reports=reports, stats=stats, title='internal data: inquiries, reports & archive')
 
 
 @app.route('/config')
