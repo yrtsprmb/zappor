@@ -21,7 +21,7 @@
       {% for error in form.answer.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-      <p> {{ form.locked.label }} {{ form.locked() }} </p>
+      <p> {{ form.locked.label }} {{ form.locked(checked=(inq.locked == True)) }} </p>
       <p> {{ form.f.label }} {{ form.f(size=4) }} </p>
       <p> {{ form.p.label }} {{ form.p(size=4) }} </p>
       <p> {{ form.q.label }} {{ form.q(size=4) }} </p>

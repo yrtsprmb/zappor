@@ -1,9 +1,6 @@
 #internal/matchings.py
 import json
 
-#tests
-#from test_matching import servertest, clienttest
-
 #############################################################
 # operates on all answer and question inquiries
 # takes whole dictionairies as input
@@ -13,9 +10,9 @@ import json
 #############################################################
 
 
-def check_correctness(client,server):
-    # should check if the values are correct
-    pass
+# def check_correctness(client,server):
+#     # should check if the values are correct
+#     pass
 
 
 def find_matches(client,server):
@@ -27,12 +24,17 @@ def find_matches(client,server):
         #c['name'] == s['name'] and
         #c['type'] == s['type'] and
         #sorted(c['options']) == sorted(s['options'])
+        # print("test")
+        # print(c.options)
+        # print(type(c.options))
+        # print(s.options)
         if (c.name == s.name and
             c.type == s.type and
             sorted(c.options) == sorted(s.options)):
             # data from client and server inquiries are gone be mixed here
             #results.append({'surveyid': s["surveyid"], 'qid': s["qid"], 'question': s["name"], 'options': c["randomanswer"], 'f': c["f"], 'p': c["p"], 'q': c["q"] })
-            results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': c.irr_answer, 'f': c.f, 'p': c.p, 'q': c.q })
+            #results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': c.irr_answer, 'f': c.f, 'p': c.p, 'q': c.q })
+            results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': json.loads(c.irr_answer), 'f': c.f, 'p': c.p, 'q': c.q })
             return True
         else:
             return False

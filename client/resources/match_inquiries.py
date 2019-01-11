@@ -19,18 +19,19 @@ class MatchInquiries(Resource):
         The get request fetches all client inquiries which are not locked and answered by the use
         If they match in name, type and length of options they will be stored in reports belonging to a specific survey id.
         '''
-        # only inquiries which are not locked and answered by the user
+        # returns only inquiries which are not locked and answered by the user
         client = ClientInquiriesModel.query.filter_by(locked='0').filter_by(responded='1').all()
-        #client = ClientInquiriesModel.query.filter_by(locked='0').all() # only inquiries which are not locked by the user
-        server = ServerInquiriesModel.query.all() # all server inquiries
-        print('client inquiries')       #debug
-        print(client)                   #debug
+
+        # all server inquiries
+        server = ServerInquiriesModel.query.all()
+        # print('client inquiries')       #debug
+        # print(client)                   #debug
         # print('server inquiries')       #debug
         # print(server)                   #debug
         # print("---------------------")  #debug
 
         # 1st: find all matches
-        matches = find_matches(client,server)
+        matches = find_matches(client,server) # TODO: find error in this function.
         #matches = find_matches(client,servertest)
 
         # print("matches")                #debug
@@ -54,6 +55,10 @@ class MatchInquiries(Resource):
 
             #3b) generate answers json.dumps(data['answers'])
             answers = generate_answers_by_surveyid(survey,matches)
+            print("testanswers")
+            print(answers)
+            print(type(answers))
+
             # save them to the db
             report = ReportModel(surveyid,prr,irr,f,p,q,json.dumps(answers))
 

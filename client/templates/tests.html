@@ -12,21 +12,22 @@
 
   <div class="">
     <input type="submit" name="submit_request" value="Request Surveys"><br>
-    Forces the client to request surveys from the server. If surveys are availalbe the questions of the survey will be stored in 'server inquiries'.
+    Forces the client to request surveys from the server. If surveys are availalbe, they will be fetched by ther server and each question will be stored indivdually in 'server inquiries'.
     If 'quizmode' ist activated, questions from the survey will be stored in client inquiries as well.
   </div>
   <p></p>
 
   <div class="">
     <input type="submit" name="submit_match" value="Match Inquiries"><br>
-    A match between client- and server inquiries will be made, if the client inquiries are not locked by the user.
-    If name, type and options are identical a match is made and a report is generated under the survey id of the server inquiries.
+    A match between client- and server inquiries will be made, if the the corresponding client inquiries are not locked by the user.
+    If name, type and options are identical between client- and server inquiries a report will be generated under the relating surveyid.
+    One report will be created for each call of 'match inquiries'.
   </div>
   <p></p>
 <div class="">
-    <input type="submit" name="submit_report" value="Send Reports"><br>
-    Forces the client to send a report (if available) to the server. If a report was sent, it will be deleted from the client. The server inquiries belongig to the
-    surveyid of the report will be deleted as well.
+    <input type="submit" name="submit_report" value="Send Report"><br>
+    Forces the client to send a report (if available) to the server. If a report was sent, it will be deleted from the client. Server inquiries belongig to the
+    surveyid of the report will be deleted as well. One report will be sent for every call of 'send report'.
   </div>
   </div>
   </form>

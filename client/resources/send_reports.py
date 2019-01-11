@@ -7,6 +7,8 @@ from flask_restful import Resource
 from internal.config import serviceprovider_reports, quizmode_config
 from models.reports import ReportModel
 from models.server_inquiries import ServerInquiriesModel
+from models.archive import ArchiveModel
+from datetime import datetime
 
 
 class SendReport(Resource):
@@ -41,13 +43,19 @@ class SendReport(Resource):
 
             # after the report was sent to the server, it should be deleted from the DB
             report_to_delete = ReportModel.find_by_surveyid(surveyid)
+            #new
+            rchv = ArchiveModel.find_by_surveyid(surveyid)
+            rchv.processed = True
+            rchv.exit = datetime.now().strftime('%d.%m.%Y - %H:%M:%S')
+
+
             if report_to_delete:
                 try:
-                    print("helgahelgahelga")
                     ServerInquiriesModel.delete_all_inqs_by_surveyid(surveyid)
                     report_to_delete.delete_from_db()
-                    if quizmode_config:
-                        #TODO: delete also all client inquries.
+                    rchv.save_to_db()
+
+                    if quizmode_config: #TODO: delete also all client inquries.
                         pass
                     print('report and all server inquiries belonging to the report deleted from db.') #debug
                 except:
