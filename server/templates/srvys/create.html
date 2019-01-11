@@ -6,7 +6,7 @@
 
 <div class="jumbotron">
   <h1>Create a new survey:</h1>
-  <form action="" method="post" novalidate>
+  <form id="the-form" action="/srvys/create" method="post" novalidate>
 
         {{ form.hidden_tag() }}
         <div class="form-group">
@@ -36,7 +36,7 @@
             {% endfor %}
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="display: none;">
             {{ form.questions.label(class="form-control-label") }}
             {{ form.questions(class="form-control form-control-lg ") }}
             {% for error in form.questions.errors %}
@@ -56,40 +56,47 @@
                 </select>
               </div>
 
-              <div class="form-group question-type active" id="boolean-group">
-                <h3>Type: Boolean</h3>
-                <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
-                <label>
-                  Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
-                </label>
-                <br>
-                <label>
-                  Option 2: <input type="text" name="boolean-question-2" placeholder="No">
-                </label>
-
+              <div class="form-group question-type active" id="bool-group">
+                  <h3>Type: Boolean</h3>
+                  <label>Title: <input class="q-title" type="text" placeholder="Are you OK?"></label><br>
+                  <label>Name: <input class="q-name" type="text" placeholder="Name of question"></label><br>
+                  <div class="options-group">
+                    <label>
+                      Option 1: <input type="text" name="boolean-question" placeholder="Yes">
+                    </label>
+                    <br>
+                    <label>
+                      Option 2: <input type="text" name="boolean-question" placeholder="No">
+                    </label>
+                  </div>
               </div>
 
               <div class="form-group question-type" id="mc-group" style="display: none;">
                 <h3>Type: MC</h3>
-                <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
-                <label>
-                  Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
-                </label>
+                <label>Title: <input class="q-title" type="text" placeholder="Are you OK?"></label><br>
+                <label>Name: <input class="q-name" type="text" placeholder="Name of question"></label><br>
+                <div class="options-group">
+                  <label>
+                    Option 1: <input type="text" name="mc-question-1" placeholder="Yes">
+                  </label>
+                </div>
                 <button type="button" class="option-adder">(+)</button>
               </div>
 
               <div class="form-group question-type" id="cbx-group" style="display: none;">
                 <h3>Type: CBX</h3>
-                <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
-                <label>
-                  Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
-                </label>
+                <label>Title: <input class="q-title" type="text" placeholder="Are you OK?"></label><br>
+                <label>Name: <input class="q-name" type="text" placeholder="Name of question"></label><br>
+                <div class="options-group">
+                  <label>
+                    Option 1: <input type="text" name="cbx-question-1" placeholder="Yes">
+                  </label>
+                </div>
                 <button type="button" class="option-adder">(+)</button>
               </div>
             </div>
           </div>
           <button type="button" class="btn btn-outline-info" id="question-adder">Add another question</button>
-
           <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
           </div>
@@ -115,14 +122,14 @@
       parentBlock.find('#' + type + '-group')
         .show()
         .addClass('active');
-    })
+    });
 
     $(document).on('click', '.option-adder', function(event) {
       let btn = $(event.target);
       let optionBlock = btn.parents('.question-type');
 
-      btn.before('<br><input type="text" name="boolean-question-1" placeholder="Yes">');
-    })
+      optionBlock.find('.options-group').append('<br><input type="text">');
+    });
 
     $('#question-adder').on('click', function() {
       let qForm = $('#question-form-tpl').html();
@@ -132,7 +139,44 @@
         .append('<hr>')
         .append(qForm);
 
-    })
+    });
+
+    $('#submit').on('click', function(e) {
+
+      let questions = [];
+      let qid = 1;
+
+      $('.question-type:visible').each(function(idx, val) {
+        let q = {};
+        let $val = $(val);
+        // type is word before dash: "boolean-group", "mc-group" etc
+        let type = $val.attr('id').split('-')[0];
+
+        q.qid = qid;
+        qid = qid + 1;
+
+        q.name = $val.find('.q-name').val();
+        q.type = type;
+        q.description = $val.find('.q-title').val();
+        q.options = [];
+        $val.find('.options-group').find('input[type="text"]').each(function(idx, el) {
+          q.options.push($(el).val());
+        });
+
+        questions.push(q);
+
+      });
+
+      questions = JSON.stringify(questions);
+
+      console.log(questions);
+
+      $('#questions').val(questions);
+
+      $('#the-form').submit();
+
+    });
+
   });
 </script>
 <script type="text/template" id="question-form-tpl">
@@ -148,34 +192,43 @@
         </select>
       </div>
 
-      <div class="form-group question-type active" id="boolean-group">
+      <div class="form-group question-type active" id="bool-group">
         <h3>Type: Boolean</h3>
-        <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
-        <label>
-          Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
-        </label>
-        <br>
-        <label>
-          Option 2: <input type="text" name="boolean-question-2" placeholder="No">
-        </label>
+        <label>Title: <input class="q-title" type="text" placeholder="Are you OK?"></label><br>
+        <label>Name: <input class="q-name" type="text" placeholder="Name of question"></label><br>
+        <div class="options-group">
+          <label>
+            Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
+          </label>
+          <br>
+          <label>
+            Option 2: <input type="text" name="boolean-question-2" placeholder="No">
+          </label>
+        </div>
 
       </div>
 
       <div class="form-group question-type" id="mc-group" style="display: none;">
         <h3>Type: MC</h3>
-        <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
-        <label>
-          Option 1: <input type="text" name="boolean-question-1" placeholder="Yes">
-        </label>
+        <label>Title: <input class="q-title" type="text" placeholder="Are you OK?"></label><br>
+        <label>Name: <input class="q-name" type="text" placeholder="Name of question"></label><br>
+        <div class="options-group">
+          <label>
+            Option 1: <input type="text" name="mc-question-1" placeholder="Yes">
+          </label>
+        </div>
         <button type="button" class="option-adder">(+)</button>
       </div>
 
       <div class="form-group question-type" id="cbx-group" style="display: none;">
         <h3>Type: CBX</h3>
-        <label>Title: <input type="text" placeholder="Are you OK?"></label><br>
-        <label>
-          Option 1: <input type="text" name="cbx-question-1" placeholder="Yes">
-        </label>
+        <label>Title: <input class="q-title" type="text" placeholder="Are you OK?"></label><br>
+        <label>Name: <input class="q-name" type="text" placeholder="Name of question"></label><br>
+        <div class="options-group">
+          <label>
+            Option 1: <input type="text" name="cbx-question-1" placeholder="Yes">
+          </label>
+        </div>
         <button type="button" class="option-adder">(+)</button>
       </div>
     </div>

@@ -1,5 +1,5 @@
 #app.py
-from flask import Flask, render_template, url_for, redirect, flash, abort
+from flask import Flask, render_template, url_for, redirect, flash, abort, request
 from flask_restful import Api
 from flask_jwt import JWT
 
@@ -118,7 +118,9 @@ def survey_create():
     Creates a survey (web GUI).
     '''
     form = CreateSurveyForm()
+
     if form.validate_on_submit():
+
         srvy = SurveyModel(surveyid = serviceprovider_config,
                                 serviceprovider = serviceprovider_config,
                                 surveyname = form.surveyname.data,

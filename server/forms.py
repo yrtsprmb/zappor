@@ -37,7 +37,7 @@ class CreateSurveyForm(FlaskForm):
     surveyname = StringField('Surveyname:', validators=[DataRequired()])
     status = SelectField('Status:', choices=[('created','created'),('active','active')], validators=[DataRequired()])
     sdescription = StringField('Description of the survey:')
-    questions = TextAreaField('Questions:', validators=[DataRequired()])
+    questions = TextAreaField('Questions:')
     submit = SubmitField('Create Survey')
 
     def validate_surveyname(self,surveyname):

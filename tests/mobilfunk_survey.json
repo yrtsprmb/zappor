@@ -49,7 +49,7 @@
      {
        "qid": 7,
        "name" : "Bildung",
-       "type": "ord",
+       "type": "mc",
        "options": ["keine", "wenig", "etwas","klug","gscheid"],
        "description": "Welche Bildung haben Sie?"
      }
