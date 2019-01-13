@@ -246,6 +246,72 @@ def inquiries_create():
         return redirect('inquiries/')
     return render_template('inquiries/create.html', form=form, title='create a new inquiry')
 
+#this is for testing
+@app.route('/create', methods=['GET','POST'])
+def inq_create():
+    '''
+    Creates a survey (web GUI).
+    '''
+    from forms import CreateInquiryForm
+    import json
+    form = CreateInquiryForm()
+
+    if form.validate_on_submit():
+
+        inquiries = json.loads(form.questions.data)
+        # print("client inquiries")
+        # print(type(inquiries))
+        # print(inquiries)
+        for inquiry in inquiries:
+            #length_options_list = len(json.loads(inquiry['options']))
+            length_options_list = len(inquiry['options'])
+            print("inquiry")
+            print(inquiry)
+            print("liste laenge")
+            print(length_options_list)
+
+            name = inquiry['name']
+
+            inq_type = inquiry['type']
+            options = inquiry['options']
+            print("options")
+            print(options)
+            answer = [0]* length_options_list
+            prr_answer = [0]* length_options_list
+            irr_answer = [0]* length_options_list
+            qdescription = inquiry['description']
+            #responded = False
+            #locked = True
+            f = configfile_f
+            p = configfile_p
+            q = configfile_q
+
+            print("typ")
+            print(inq_type)
+
+            inq = ClientInquiriesModel(name,
+                                        inq_type,
+                                        options,
+                                        answer,
+                                        prr_answer,
+                                        irr_answer,
+                                        qdescription,
+                                        False,
+                                        True,
+                                        f,p,q)
+            print("das objekt")
+            print(inq)
+            inq.save_to_db()
+            #try:
+            #    inq.save_to_db()
+            #except:
+            #    return render_template('/error_pages/500.html', title='error while trying to save inquiries.')
+
+        return redirect(url_for('inquiries_list'))
+    return render_template('create.html', form=form, title='create a new inquiry')
+
+
+###### ENDE TEST
 
 @app.route("/inquiries/<int:id>/delete", methods=['POST'])
 def inquiries_delete(id):

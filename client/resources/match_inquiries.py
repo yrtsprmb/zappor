@@ -19,7 +19,7 @@ class MatchInquiries(Resource):
         The get request fetches all client inquiries which are not locked and answered by the use
         If they match in name, type and length of options they will be stored in reports belonging to a specific survey id.
         '''
-        # returns only inquiries which are not locked and answered by the user
+        # clinet inquiries which are not locked and answered by the user
         client = ClientInquiriesModel.query.filter_by(locked='0').filter_by(responded='1').all()
 
         # all server inquiries
@@ -31,8 +31,7 @@ class MatchInquiries(Resource):
         # print("---------------------")  #debug
 
         # 1st: find all matches
-        matches = find_matches(client,server) # TODO: find error in this function.
-        #matches = find_matches(client,servertest)
+        matches = find_matches(client,server)
 
         # print("matches")                #debug
         # print(matches)                  #debug

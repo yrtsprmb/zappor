@@ -10,24 +10,16 @@ import json
 #############################################################
 
 
-# def check_correctness(client,server):
-#     # should check if the values are correct
-#     pass
-
-
 def find_matches(client,server):
     '''
-    TODO: should return an evaluation of allreports belonging to a surveyidself.
+    Find all matching inquiries and
+    Takes all available inquiries from client and server and match them together.
+    Stores the matches in a list which is returned.
     '''
-    # compare client inquiries with server inquieres and returns matching qids
     def compare_data(c, s, results):
-        #c['name'] == s['name'] and
-        #c['type'] == s['type'] and
-        #sorted(c['options']) == sorted(s['options'])
-        # print("test")
-        # print(c.options)
-        # print(type(c.options))
-        # print(s.options)
+        '''
+        Compare client inquiries with server inquieres and returns matching qids.
+        '''
         if (c.name == s.name and
             c.type == s.type and
             sorted(c.options) == sorted(s.options)):
@@ -48,10 +40,11 @@ def find_matches(client,server):
 
     return results
 
-#############################################################
-# returs a list with surveyids which have matches
-#############################################################
+
 def find_matching_surveys(items):
+    '''
+    Returs a list with with matching surveyids.
+    '''
     results = []
     for item in items:
         if item['surveyid'] not in results:
@@ -59,10 +52,10 @@ def find_matching_surveys(items):
     return(results)
 
 
-#############################################################
-# returns answers in form of list filled with dictionaries
-#############################################################
 def generate_answers_by_surveyid(surveyid,results):
+    '''
+    Returns answers in form of a list filled with dictionaries.
+    '''
     answers = []
     for entry in results:
         answerentry = {}
@@ -77,8 +70,6 @@ def generate_answers_by_surveyid(surveyid,results):
             answers.append(answerentry)
     return answers
 
-
-###########################################################
 
 # testing
 # # #1) match client and server inquiries

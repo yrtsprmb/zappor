@@ -4,6 +4,31 @@ from wtforms import TextAreaField, BooleanField, DecimalField, FloatField, Strin
 from wtforms.validators import DataRequired, Length
 
 
+#tests
+class CreateInquiryForm(FlaskForm):
+    '''
+    Form for creating a client inquiry (web GUI).
+    '''
+    # surveyname = StringField('Surveyname:', validators=[DataRequired()])
+    # status = SelectField('Status:', choices=[('created','created'),('active','active')], validators=[DataRequired()])
+    # sdescription = StringField('Description of the survey:')
+    questions = TextAreaField('Questions:')
+    submit = SubmitField('Create Inquiry')
+
+# ende test
+
+class CreateClientInquiryForm(FlaskForm):
+    '''
+    Form for creating a client inquiry (web GUI).
+    '''
+    inq_name = StringField('Name:', validators=[DataRequired()])
+    inq_type = SelectField('Type:', choices=[('bool','boolean'),('mc','multiple choice (1 option)'),('cbx','checkbox (n options)')], validators=[DataRequired()])
+    inq_options = TextAreaField('Options:', validators=[DataRequired()])
+    inq_qdescription = StringField('Description of the inquiry:')
+    submit = SubmitField('Create inquiry')
+
+
+
 #purpose of forms: render a input form in html and validate submitted data
 class EditClientInquiryForm(FlaskForm):
     '''
@@ -24,15 +49,8 @@ class EditClientInquiryForm(FlaskForm):
     submit = SubmitField('Save')
 
 
-class CreateClientInquiryForm(FlaskForm):
-    '''
-    Form for creating a client inquiry (web GUI).
-    '''
-    inq_name = StringField('Name:', validators=[DataRequired()])
-    inq_type = SelectField('Type:', choices=[('bool','boolean'),('mc','multiple choice (1 option)'),('cbx','checkbox (n options)')], validators=[DataRequired()])
-    inq_options = TextAreaField('Options:', validators=[DataRequired()])
-    inq_qdescription = StringField('Description of the inquiry:')
-    submit = SubmitField('Create inquiry')
+
+
 
 
 class RequestSurveyTestForm(FlaskForm):
