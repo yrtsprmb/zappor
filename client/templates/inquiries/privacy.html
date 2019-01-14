@@ -1,0 +1,63 @@
+{# PrivacyForm #}
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+
+<div class="jumbotron">
+  <h1>name: {{ inq.name }}</h1>
+  <p>Description: {{ inq.qdescription }}</p>
+  <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
+
+  <form method="POST">
+      {# This hidden_tag is a CSRF security feature. #}
+      {{ form.hidden_tag() }}
+
+      <p> {{ form.locked.label }} {{ form.locked(checked=(inq.locked == True)) }} </p>
+      <p> {{ form.f.label }} {{ form.f(size=4) }} </p>
+      <p> {{ form.p.label }} {{ form.p(size=4) }} </p>
+      <p> {{ form.q.label }} {{ form.q(size=4) }} </p>
+      <p> {{ form.submit() }} </p>
+  </form>
+
+
+
+
+
+<!-- tests mit bootstrap -->
+
+<form>
+  <div class="form-group">
+    <label for="formControlRange">Range input f (Lie factor)</label>
+    <input type="range" class="form-control-range" id="formControlRange">
+  </div>
+</form>
+<form>
+  <div class="form-group">
+    <label for="formControlRange">Example Range input p (noise)</label>
+    <input type="range" class="form-control-range" id="formControlRange">
+  </div>
+</form>
+<form>
+  <div class="form-group">
+    <label for="formControlRange">Example Range inputq (signal)</label>
+    <input type="range" class="form-control-range" id="formControlRange">
+  </div>
+</form>
+
+</div>
+
+<!-- ende tests mit bootstrap -->
+
+<div>
+  <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Back</a>
+  <!--
+  <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Save Changes</a>
+  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del_modal">Delete Inquiry</button>
+-->
+</div>
+
+
+
+</div>
+</div>
+{% endblock content %}

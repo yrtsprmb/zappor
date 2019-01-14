@@ -29,8 +29,17 @@
     Forces the client to send a report (if available) to the server. If a report was sent, it will be deleted from the client. Server inquiries belongig to the
     surveyid of the report will be deleted as well. One report will be sent for every call of 'send report'.
   </div>
+  <p></p>
+<div class="">
+    <input type="submit" name="clean_archive" value="Clean Archive"><br>
+    Deletes all archive entries.<br>
+    If a survey is stored in the archive, no new surveys with the corresponding surveyid will be accepted.
   </div>
   </form>
+
+
+  </div>
+
 
 
 {% endblock %}

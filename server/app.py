@@ -118,7 +118,6 @@ def survey_create():
     Creates a survey (web GUI).
     '''
     form = CreateSurveyForm()
-
     if form.validate_on_submit():
 
         srvy = SurveyModel(surveyid = serviceprovider_config,
@@ -127,8 +126,12 @@ def survey_create():
                                 status = form.status.data,
                                 sdescription = form.sdescription.data,
                                 questions = form.questions.data)
-        srvy.save_to_db()
-        flash("Survey created")
+        try:
+            srvy.save_to_db()
+            flash("Survey created")
+        except:
+            return render_template('/error_pages/500.html', title='error while creating survey.')
+
         return redirect(url_for('surveys_list'))
     return render_template('srvys/create.html', form=form, title='create a new survey')
 
@@ -166,7 +169,7 @@ def survey_eval_summaries(id):
 @app.route('/srvys/<int:id>/delete', methods=['POST'])
 def survey_delete(id):
     '''
-    Deletes a survey (web GUI).
+    Deletes a survey from the db.
     And all reports and summaries which belong to the survey.
     '''
     srvy = SurveyModel.query.get_or_404(id)

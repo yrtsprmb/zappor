@@ -28,9 +28,8 @@ class RequestSurvey(Resource):
             print(e)    #debug
             return {'message': "server not available. no survey was requested: {} ".format(e)}, 500 #ok
 
-
+        #this creates client inquiries if quizmode is set.
         if quizmode_config is True:
-            #creates client inquiries:
             for survey in listevonsurveys:
                 inquiries = (survey['questions']) #fuer jedes dictonairy in der liste
                 for inq in inquiries:
@@ -56,17 +55,14 @@ class RequestSurvey(Resource):
                             inquiry = ClientInquiriesModel(name,qtype,json.dumps(options),json.dumps(answer),json.dumps(prr_answer),json.dumps(irr_answer),qdescription,responded,locked,f,p,q)
                             inquiry.save_to_db()
                             print("quizmode on: new inquiry with name '{}' saved to client inquiry.".format(name))
-                        print("error: Type '{}' not correct.".format(qtype))
+                        continue #print("error: Type '{}' not correct.".format(qtype))
 
         # creates questions and save the to the db
         for survey in listevonsurveys: #for every dictonairy in a list of dictionairies
             #generate surveyids, serviceprovider for the questions format
             surveyid = (survey['surveyid'])
-            serviceprovider = (survey['serviceprovider'])
 
-            #test
-            #rchv = ArchiveModel(surveyid)
-            #rchv.save_to_db()
+            serviceprovider = (survey['serviceprovider'])
 
             #generate qid, qname, qtype, qoptions and qdescpritons for the questions format
             questions = (survey['questions'])
@@ -79,9 +75,16 @@ class RequestSurvey(Resource):
                 qdescription = question['description']
 
                 #save question to the db, only if it is not already known by surveyid
-                if ServerInquiriesModel.already_in_db(surveyid,name):
-                    print("survey and matching inquiries already in DB")
+
+                #if survey is in archive, inquiries will not saved.
+                if ArchiveModel.find_by_surveyid(surveyid):
+                    print("survey already in archive. ".format(surveyid)) #debug
                     continue
+
+                elif ServerInquiriesModel.already_in_db(surveyid,name):
+                    print("survey and matching inquiries already in DB") #debug
+                    continue
+
                 else:
                     print("surveyid: " + surveyid)                  #debug
                     print("serviceprovider: " + serviceprovider)    #debug

@@ -5,6 +5,24 @@ from wtforms.validators import DataRequired, Length
 
 
 #tests
+class PrivacyForm(FlaskForm):
+    '''
+    Form for editing privacy setings (web GUI).
+    '''
+    # name = TextField('name')
+    # options = TextField('name')
+    # answer = TextField('your answer', validators=[DataRequired()])
+    locked = BooleanField("lock question?")
+    # qdescription = TextField('Descpription')
+    #locked = TextField("p", [validators.Length(min=0,max=5)])
+    #f = TextField('f', validators=[DataRequired(message="value must be between 0 and 1")])
+    #p = TextField("p", [validators.Length(min=0,max=5)])
+    f = DecimalField('f')
+    p = DecimalField('p')
+    q = DecimalField('q')
+    submit = SubmitField('Save')
+
+
 class CreateInquiryForm(FlaskForm):
     '''
     Form for creating a client inquiry (web GUI).
@@ -14,6 +32,7 @@ class CreateInquiryForm(FlaskForm):
     # sdescription = StringField('Description of the survey:')
     questions = TextAreaField('Questions:')
     submit = SubmitField('Create Inquiry')
+
 
 # ende test
 

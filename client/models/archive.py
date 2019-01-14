@@ -39,3 +39,10 @@ class ArchiveModel(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
+    def delete_archive():
+        '''
+        Deletes the whole archive.
+        '''
+        db.session.query(ArchiveModel).delete()
+        db.session.commit()

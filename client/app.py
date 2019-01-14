@@ -18,9 +18,8 @@ import time
 import requests
 
 
-
-### TEST #########################################################
-## imports for testing
+### Requests and configunration ##################################
+## imports for REST resources and config.py
 ##################################################################
 
 # import of configurations:
@@ -153,12 +152,49 @@ def inquiries_list():
     return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
 
 
+@app.route('/privacy/<int:id>/', methods=['GET','POST'])
+def inquiries_privacy(id):
+    '''
+    This is for privacy settings.
+    '''
+    from forms import PrivacyForm
+
+    #inq = db.session.query(ClientInquiriesModel).get(id)
+    inq = ClientInquiriesModel.find_by_id(id)
+    if inq is None:
+        abort(404)
+
+    form = PrivacyForm()
+    if form.validate_on_submit():
+        #answer = form.answer.data
+        locked = form.locked.data
+        f = form.f.data
+        p = form.p.data
+        q = form.q.data
+
+        if not check_fpq(f,p,q):
+            print("Only values between 0 and 1 allowed for f,p,q!") #debug
+            flash("Only values between 0 and 1 allowed for f,p,q!")
+            return render_template('inquiries/privacy.html', inq=inq, form=form, title='privacy settings')
+
+        inq.f = f
+        inq.p = p
+        inq.q = q
+        try:
+            inq.save_to_db()
+        except:
+            return render_template('/error_pages/500.html', title='error while trying to save inquiries.')
+
+    return render_template('inquiries/privacy.html', inq=inq, form=form, title='privacy')
+
+
 @app.route('/inquiries/<int:id>/', methods=['GET','POST'])
 def inquiries_detail(id):
     '''
     Detailed view of an inquiry (web GUI).
     '''
-    inq = db.session.query(ClientInquiriesModel).get(id)
+    inq = ClientInquiriesModel.find_by_id(id)
+    #inq = db.session.query(ClientInquiriesModel).get(id)
     if inq is None:
         abort(404)
 
@@ -168,9 +204,9 @@ def inquiries_detail(id):
     if form.validate_on_submit():
         answer = form.answer.data
         locked = form.locked.data
-        f = form.f.data
-        p = form.p.data
-        q = form.q.data
+        # f = form.f.data
+        # p = form.p.data
+        # q = form.q.data
 
         # print("answer")
         # #print(json.loads(answer))
@@ -180,10 +216,13 @@ def inquiries_detail(id):
         #validation checks:
         #print(len(json.loads(answer)))
         # if fpq is between 0 and 1
-        if not check_fpq(f,p,q):
-            print("Only values between 0 and 1 allowed for f,p,q!") #debug
-            flash("Only values between 0 and 1 allowed for f,p,q!")
-            return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
+        # if not check_fpq(f,p,q):
+        #     print("Only values between 0 and 1 allowed for f,p,q!") #debug
+        #     flash("Only values between 0 and 1 allowed for f,p,q!")
+        #     return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
+        f = inq.f
+        p = inq.p
+        q = inq.q
 
         # check length of answer
         if not (len(json.loads(answer)) == len(json.loads(inq.answer))):
@@ -207,10 +246,13 @@ def inquiries_detail(id):
         inq.answer = answer
         inq.responded = True # if a answer was given by the user, responed will be set to TRUE
         inq.locked = locked
-        inq.f = f
-        inq.p = p
-        inq.q = q
-        db.session.commit()
+        inq.f = configfile_f
+        inq.p = configfile_p
+        inq.q = configfile_q
+        try:
+            inq.save_to_db()
+        except:
+            return render_template('/error_pages/500.html', title='error while trying to save inquiries.')
 
     return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
 
@@ -240,13 +282,17 @@ def inquiries_create():
                                     f = configfile_f,
                                     p = configfile_p,
                                     q = configfile_q)
-        inq.save_to_db()
+        try:
+            inq.save_to_db()
+        except:
+            return render_template('/error_pages/500.html', title='error while creating inquiry.')
 
         flash("Inquiry created")
         return redirect('inquiries/')
     return render_template('inquiries/create.html', form=form, title='create a new inquiry')
 
-#this is for testing
+
+###### BEGINN TEST
 @app.route('/create', methods=['GET','POST'])
 def inq_create():
     '''
@@ -269,47 +315,29 @@ def inq_create():
             print(inquiry)
             print("liste laenge")
             print(length_options_list)
-
-            name = inquiry['name']
-
-            inq_type = inquiry['type']
             options = inquiry['options']
             print("options")
             print(options)
-            answer = [0]* length_options_list
-            prr_answer = [0]* length_options_list
-            irr_answer = [0]* length_options_list
-            qdescription = inquiry['description']
-            #responded = False
-            #locked = True
-            f = configfile_f
-            p = configfile_p
-            q = configfile_q
 
-            print("typ")
-            print(inq_type)
-
-            inq = ClientInquiriesModel(name,
-                                        inq_type,
-                                        options,
-                                        answer,
-                                        prr_answer,
-                                        irr_answer,
-                                        qdescription,
-                                        False,
-                                        True,
-                                        f,p,q)
-            print("das objekt")
-            print(inq)
-            inq.save_to_db()
-            #try:
-            #    inq.save_to_db()
-            #except:
-            #    return render_template('/error_pages/500.html', title='error while trying to save inquiries.')
+            inq = ClientInquiriesModel(name = inquiry['name'],
+                                        type = inquiry['type'],
+                                        options = inquiry['options'],
+                                        answer = [0]* length_options_list,
+                                        prr_answer = [0]* length_options_list,
+                                        irr_answer = [0]* length_options_list,
+                                        qdescription = inquiry['description'],
+                                        responded = False,
+                                        locked = True,
+                                        f = configfile_f,
+                                        p = configfile_p,
+                                        q = configfile_q)
+            try:
+                inq.save_to_db()
+            except:
+                return render_template('/error_pages/500.html', title='error while creating inquiry.')
 
         return redirect(url_for('inquiries_list'))
     return render_template('create.html', form=form, title='create a new inquiry')
-
 
 ###### ENDE TEST
 
@@ -319,7 +347,11 @@ def inquiries_delete(id):
     Deleting a (client) inquiry (web GUI).
     '''
     inq = ClientInquiriesModel.query.get_or_404(id)
-    inq.delete_from_db()
+    try:
+        inq.delete_from_db()
+    except:
+        return render_template('/error_pages/500.html', title='error while trying to delete inquiry.')
+
     flash('inquiry has been deleted.')
     return redirect(url_for('inquiries_list'))
 
@@ -364,6 +396,13 @@ def tests():
         elif 'submit_match' in request.form:
             print("Match inquiries button pressed") #debug
             r = requests.get('http://127.0.0.1:5001/match/')
+
+        elif 'clean_archive' in request.form:
+            print("Match inquiries button pressed") #debug
+            try:
+                ArchiveModel.delete_archive()
+            except:
+                return render_template('/error_pages/500.html', title='error while trying to delete inquiry.')
 
     return render_template('tests.html', form=form, title='client tests')
 
