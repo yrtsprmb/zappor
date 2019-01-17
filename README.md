@@ -3,22 +3,32 @@
 ## Installation & Startup
 
 First create a new python environment.
-Then install the required packages in your code folder.
+Go to the folder where you want to use the application and type the following command to create a virtual environment for python 3:
+'virtualenv venv --python=python3'
+
+Then you are able to start you virtual environment with the following command:
+'source venv/bin/activate'
+
+When your environment is active use the 'requirements.txt' file for installing the required python packages:
 'pip install -r requirements.txt'
 
-For first us:
-Please note that tables will be created after startup of the app when the first request is made.
+To deactivate the virtual environment type:
+'deactivate'
 
-## Description
+After the environment is set up and the requirements are installed you can start client & server in their responding folder with:
+'python app.py'
 
-new:
-for the field types are only the values valid: cbx,mc and bool
-
-You can start the server and client application with 'python app.py' in the corresponding 'client' or 'server' folder.
-After starting, you can reach them in the browser under the following URL:
+After starting, you can reach the WEB GUI in the browser under the following URL:
 
 Client: http://localhost:5001
 Server: http://localhost:5001
+
+
+For first usage:
+Please note that tables will be created when the first request is made. after startup of the app (server & client). 
+
+## Description
+
 
 Ports can be changed in the responsible internal/config.py file.
 

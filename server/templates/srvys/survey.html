@@ -19,7 +19,7 @@
 
   <div class="input-group">
     <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
-      <option selected>Choose (does not work)...</option>
+      <option selected="created">created</option>
       <option value="active">active</option>
       <option value="done">done</option>
     </select>
@@ -33,8 +33,6 @@
   <form method="POST">
       {# This hidden_tag is a CSRF security feature. #}
       {{ form.hidden_tag() }}
-
-
 
       <div class="form-group">
       {{ form.status.label(class="form-control-label") }}

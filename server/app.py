@@ -148,7 +148,7 @@ def survey_summaries(id):
     form = SummaryForm()
     if form.validate_on_submit():
         return redirect(url_for('survey_detail', id=srvy.id))
-    return render_template('srvys/histograms.html', form=form, title='summaries', survey_id=srvy.surveyid)
+    return render_template('srvys/histograms.html', form=form, title='summaries', srvy=srvy, survey_id=srvy.surveyid)
 
 
 @app.route('/srvys/<int:id>/evaluate', methods=['GET','POST'])
@@ -163,7 +163,7 @@ def survey_eval_summaries(id):
     form = SummaryForm()
     if form.validate_on_submit():
         return redirect(url_for('survey_detail', id=srvy.id))
-    return render_template('srvys/evaluate.html', form=form, title='summaries', survey_id=srvy.surveyid)
+    return render_template('srvys/evaluate.html', form=form, title='summaries', srvy=srvy, survey_id=srvy.surveyid)
 
 
 @app.route('/srvys/<int:id>/delete', methods=['POST'])

@@ -331,10 +331,13 @@ def inq_create():
                                         f = configfile_f,
                                         p = configfile_p,
                                         q = configfile_q)
-            try:
-                inq.save_to_db()
-            except:
-                return render_template('/error_pages/500.html', title='error while creating inquiry.')
+            print("inq test")
+            print(inq)
+            print(type(inq))
+            #try:
+            #inq.save_to_db()
+            #except:
+            #    return render_template('/error_pages/500.html', title='error while creating inquiry.')
 
         return redirect(url_for('inquiries_list'))
     return render_template('create.html', form=form, title='create a new inquiry')

@@ -41,14 +41,14 @@ class SendReport(Resource):
                 print(e)    #debug
                 return {'message': "server not available. no report was sent: {} ".format(e)}, 500 #ok
 
-            # after the report was sent to the server, it should be deleted from the DB
+            # a archive entry is made, for not answering surveys twice.
             report_to_delete = ReportModel.find_by_surveyid(surveyid)
             #new
             rchv = ArchiveModel.find_by_surveyid(surveyid)
             rchv.processed = True
             rchv.exit = datetime.now().strftime('%d.%m.%Y - %H:%M:%S')
 
-
+            # after the report was sent to the server, it should be deleted from the DB
             if report_to_delete:
                 try:
                     ServerInquiriesModel.delete_all_inqs_by_surveyid(surveyid)

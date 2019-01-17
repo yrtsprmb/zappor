@@ -18,7 +18,7 @@ class SummaryForm(FlaskForm):
     '''
     TODO: Back button for the histogram page in the web GUI.
     '''
-    submit = SubmitField('Back to survey overview.')
+    submit = SubmitField('Back to survey overview')
 
 
 class SurveyForm(FlaskForm):
