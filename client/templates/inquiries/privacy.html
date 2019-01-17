@@ -3,7 +3,8 @@
 {% block content %}
 
 <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-<script type="text/javascript" src="http://www.cip.ifi.lmu.de/~buchnerma/chernoff.js"></script>
+<script type="text/javascript" src="../../static/chernoff.js"></script>
+<!-- <script type="text/javascript" src="http://www.cip.ifi.lmu.de/~buchnerma/chernoff.js"></script> -->
 
 
       <style type="text/css">
@@ -17,37 +18,12 @@
 
 <div class="jumbotron">horst
 
-  <div id="face"></div>
-          <script type="text/javascript">
-          (function () {
-          var c = d3.chernoff()
-              .face(function(d) { return d.f; })
-              .hair(function(d) { return d.h; })
-              .mouth(function(d) { return d.m; })
-              .nosew(function(d) { return d.nw; })
-              .noseh(function(d) { return d.nh; })
-              .eyew(function(d) { return d.ew; })
-              .eyeh(function(d) { return d.eh; })
-              .brow(function(d) { return d.b; });
+  <div id="face">
+<svg height="300" width="1000">
 
-          var svg = d3.select("#face").append("svg:svg")
-                  .attr("height", 300).attr("width", 1000),
-              dat = [
-                  {f: 0, h: -1, m: -1, nw: 0.3, nh: 0.3, ew: 0.3, eh: 0.3, b: -1},
-                  {f: 1, h: 1, m: 1, nw: 1, nh: 1, ew: 1, eh: 1, b: 1},
-                  {f: 0, h: 0, m: 0, nw: 0.1, nh: 1, ew: 0, eh: 0, b: 0},
-                  {f: -1, h: -1, m: -1, nw: -1, nh: -1, ew: -1, eh: -1, b: -1}];
+</svg>
+  </div>
 
-          svg.selectAll("g.chernoff").data(dat).enter()
-              .append("svg:g")
-              .attr("class", "chernoff")
-              .attr("transform", function(d, i) {
-                  return "scale(1." + i + ")translate(" +
-                      (i*200) + "," + (i*0) + ")";
-              })
-              .call(c);
-          })();
-          </script>
 
 
   </div>
@@ -74,19 +50,19 @@
 <form>
   <div class="form-group">
     <label for="formControlRange">Range input f (Lie factor)</label>
-    <input type="range" class="form-control-range" id="formControlRange">
+    <input type="range" class="form-control-range" id="formControlRange-f" min="-1" max="1" step="0.1">
   </div>
 </form>
 <form>
   <div class="form-group">
     <label for="formControlRange">Example Range input p (noise)</label>
-    <input type="range" class="form-control-range" id="formControlRange">
+    <input type="range" class="form-control-range" id="formControlRange-p">
   </div>
 </form>
 <form>
   <div class="form-group">
     <label for="formControlRange">Example Range inputq (signal)</label>
-    <input type="range" class="form-control-range" id="formControlRange">
+    <input type="range" class="form-control-range" id="formControlRange-q">
   </div>
 </form>
 
@@ -102,7 +78,51 @@
 -->
 </div>
 
+<script type="text/javascript">
 
+    var svg = d3.select("svg");
+
+    function update(data) {
+      console.log("update");
+      var c = d3.chernoff()
+        .face(function(d) { return d.f; })
+        .hair(function(d) { return d.h; })
+        .mouth(function(d) { return d.m; })
+        .nosew(function(d) { return d.nw; })
+        .noseh(function(d) { return d.nh; })
+        .eyew(function(d) { return d.ew; })
+        .eyeh(function(d) { return d.eh; })
+        .brow(function(d) { return d.b; });
+
+    var faces = svg.selectAll("g.chernoff").data(data);
+
+    faces.enter()
+        .append("g")
+        .attr("class", "chernoff")
+        .attr("transform", function(d, i) {
+/* translate(" +
+(i*200) + "," + (i*0) + ")
+*/
+            return "scale(1." + i + ")";
+        })
+        .call(c);
+
+        //faces.exit().remove();
+      };
+
+      update([
+          //{f: 0, h: -1, m: -1, nw: 0.3, nh: 0.3, ew: 0.3, eh: 0.3, b: -1},
+          //{f: 1, h: 1, m: 1, nw: 1, nh: 1, ew: 1, eh: 1, b: 1},
+          //{f: 0, h: 0, m: 0, nw: 0.1, nh: 1, ew: 0, eh: 0, b: 0},
+          {f: -1, h: -1, m: -1, nw: -1, nh: -1, ew: -1, eh: -1, b: -1}]);
+
+    d3.select('#formControlRange-f').on('change', function () {
+      let nose = $('#formControlRange-f').val();
+      update({f: -1, h: -1, m: -1, nw: 0, nh: 0, ew: -1, eh: -1, b: -1},
+      {f: -1, h: -1, m: -1, nw: 0, nh: 0, ew: -1, eh: -1, b: -1})
+    });
+
+    </script>
 
 </div>
 </div>

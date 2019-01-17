@@ -15,39 +15,24 @@
   <p>responded: {{ inq.responded }} locked: {{ inq.locked }} </p>
   <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
 
-  <form method="POST">
+  <form method="POST" data-type="{{ inq.type }}" data-answer="{{ inq.answer }}">
       {# This hidden_tag is a CSRF security feature. #}
       {{ form.hidden_tag() }}
-      <p> {{ form.answer.label }} {{ form.answer() }} </p>
-      {% for error in form.answer.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
+
+      {% if inq.type == 'mc' %}
+        <p>{{ form.radio_elem() }}</p>
+      {% elif inq.type == 'cbx' %}
+        <p>{{ form.checkbox_elem() }}</p>
+      {% elif inq.type == 'bool' %}
+        <p>{{ form.boolean_elem() }}</p>
+      {% endif %}
+
+      {{ form.answer() }}
+
       <p> {{ form.locked.label }} {{ form.locked(checked=(inq.locked == True)) }} </p>
 
       <p> {{ form.submit() }} </p>
   </form>
-
-
-<!-- tests mit bootstrap -->
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-  <label class="form-check-label" for="defaultCheck1">
-    Default checkbox for ordinal response.
-  </label>
-</div>
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-  <label class="form-check-label" for="exampleRadios1">
-    Default radio
-  </label>
-</div>
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-  <label class="form-check-label" for="exampleRadios2">
-    Second default radio
-  </label>
-</div>
-<!-- ende tests mit bootstrap -->
 
 <div>
   <a class="btn btn-primary" href="{{ url_for('inquiries_privacy', id=inq.id) }}">Edit Privacy Settings</a>
@@ -56,8 +41,57 @@
 </div>
 
 
-
 </div>
+
+<script type="text/javascript">
+ $(function() {
+
+   let answer = $('form').data('answer');
+
+   $('form').find('ul input').each(function(idx, elem) {
+
+     if(answer[idx] === 1) {
+       $(elem).attr('checked', 'checked');
+     }
+
+   })
+
+   $('#submit').on('click', function(e) {
+
+     let type = $('form').data('type');
+     let inputs;
+     let answers = [];
+
+     switch(type) {
+       case 'mc':
+        inputs = $('ul input[type=radio]');
+        break;
+       case 'cbx':
+        inputs = $('ul input[type=checkbox]');
+        break;
+       case 'bool':
+        inputs = $('ul input[type=radio]');
+        break;
+       default:
+        alert('Undefined question type: ' + type + ', cannot submit form.');
+        throw Error('Undefined question type');
+        return false;
+     }
+
+     inputs.each(function(idx, elem) {
+       if($(elem).is(':checked')) {
+         answers.push(1);
+       } else {
+         answers.push(0);
+       }
+     });
+
+     $('#answer').val(JSON.stringify(answers));
+     console.log(JSON.stringify(answers));
+     return true;
+   });
+ });
+</script>
 
   <!-- Modal for Pop Up-->
   {# https://getbootstrap.com/docs/4.1/components/modal/ #}

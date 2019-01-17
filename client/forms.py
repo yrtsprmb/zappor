@@ -1,7 +1,8 @@
 #forms.py
 from flask_wtf import FlaskForm
-from wtforms import TextAreaField, BooleanField, DecimalField, FloatField, StringField, IntegerField, SubmitField, SelectField, TextField, validators
+from wtforms import FieldList, SelectMultipleField, TextAreaField, BooleanField, DecimalField, FloatField, StringField, IntegerField, SubmitField, SelectField, TextField, RadioField, HiddenField, validators
 from wtforms.validators import DataRequired, Length
+from wtforms.widgets import ListWidget, CheckboxInput
 
 
 #tests
@@ -67,9 +68,30 @@ class EditClientInquiryForm(FlaskForm):
     q = DecimalField('q')
     submit = SubmitField('Save')
 
+class MultiCheckboxField(SelectMultipleField):
+    """
+    A multiple-select, except displays a list of checkboxes.
+
+    Iterating the field will produce subfields, allowing custom rendering of
+    the enclosed checkbox fields.
+    """
+    widget = ListWidget(prefix_label=False)
+    option_widget = CheckboxInput()
 
 
+class TestClientInquiryForm(FlaskForm):
 
+    radio_elem = RadioField(choices=[()], validators=[validators.optional()])
+    checkbox_elem = MultiCheckboxField(choices=[()], validators=[validators.optional()])
+    boolean_elem = RadioField(choices=[()], validators=[validators.optional()])
+    answer = HiddenField('answer')
+
+
+    locked = BooleanField("lock question?")
+    f = DecimalField('f')
+    p = DecimalField('p')
+    q = DecimalField('q')
+    submit = SubmitField('Save')
 
 
 class RequestSurveyTestForm(FlaskForm):

@@ -128,8 +128,8 @@ from models.client_inquiries import ClientInquiriesModel
 from models.server_inquiries import ServerInquiriesModel
 from models.archive import ArchiveModel
 from models.reports import ReportModel
-from forms import CreateClientInquiryForm, EditClientInquiryForm, RequestSurveyTestForm
-
+from forms import CreateClientInquiryForm, EditClientInquiryForm, RequestSurveyTestForm, TestClientInquiryForm
+from wtforms import BooleanField
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from resources.parsers import check_fpq, check_if_bits
 
@@ -200,7 +200,25 @@ def inquiries_detail(id):
 
     # if the user changes a client inquiry, responded will be set to TRUE
     # and a PRR will be made with the answer value
-    form = EditClientInquiryForm()
+    # form = EditClientInquiryForm()
+    form = TestClientInquiryForm()
+
+    if inq.type == 'mc':
+        form.radio_elem.description = inq.qdescription
+        form.radio_elem.choices = [('_'.join(o.lower().split(' ')), o) for o in json.loads(inq.options)]
+        form.radio_elem.name = inq.name
+
+    elif inq.type == 'cbx':
+        form.checkbox_elem.description = inq.qdescription
+        form.checkbox_elem.name = inq.name
+        form.checkbox_elem.choices = [('_'.join(o.lower().split(' ')), o) for o in json.loads(inq.options)]
+    elif inq.type == 'bool':
+        form.boolean_elem.description = inq.qdescription
+        form.boolean_elem.name = inq.name
+        form.boolean_elem.choices = [('_'.join(o.lower().split(' ')), o) for o in json.loads(inq.options)]
+    else:
+        abort(400, "Unknown question type {}".format(inq.type))
+
     if form.validate_on_submit():
         answer = form.answer.data
         locked = form.locked.data
@@ -208,8 +226,8 @@ def inquiries_detail(id):
         # p = form.p.data
         # q = form.q.data
 
-        # print("answer")
-        # #print(json.loads(answer))
+        #print("answer")
+        #print((answer))
         # print(len(json.loads(answer)))
         # print(len(json.loads(inq.answer)))
 
@@ -321,10 +339,10 @@ def inq_create():
 
             inq = ClientInquiriesModel(name = inquiry['name'],
                                         type = inquiry['type'],
-                                        options = inquiry['options'],
-                                        answer = [0]* length_options_list,
-                                        prr_answer = [0]* length_options_list,
-                                        irr_answer = [0]* length_options_list,
+                                        options = json.dumps(inquiry['options']),
+                                        answer = json.dumps([0]* length_options_list),
+                                        prr_answer = json.dumps([0]* length_options_list),
+                                        irr_answer = json.dumps([0]* length_options_list),
                                         qdescription = inquiry['description'],
                                         responded = False,
                                         locked = True,
@@ -335,7 +353,7 @@ def inq_create():
             print(inq)
             print(type(inq))
             #try:
-            #inq.save_to_db()
+            inq.save_to_db()
             #except:
             #    return render_template('/error_pages/500.html', title='error while creating inquiry.')
 
