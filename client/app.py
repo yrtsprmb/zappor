@@ -32,9 +32,6 @@ from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
 from resources.reports import Report, ListReports
 
-from forms import RequestSurveyTestForm
-
-
 ### app #########################################################
 ## app and db settings
 ##################################################################
@@ -128,7 +125,7 @@ from models.client_inquiries import ClientInquiriesModel
 from models.server_inquiries import ServerInquiriesModel
 from models.archive import ArchiveModel
 from models.reports import ReportModel
-from forms import CreateClientInquiryForm, EditClientInquiryForm, RequestSurveyTestForm, TestClientInquiryForm
+from forms import InquiryCreateForm, TestsForm, InquiryDetailForm
 from wtforms import BooleanField
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from resources.parsers import check_fpq, check_if_bits
@@ -200,8 +197,7 @@ def inquiries_detail(id):
 
     # if the user changes a client inquiry, responded will be set to TRUE
     # and a PRR will be made with the answer value
-    # form = EditClientInquiryForm()
-    form = TestClientInquiryForm()
+    form = InquiryDetailForm()
 
     if inq.type == 'mc':
         form.radio_elem.description = inq.qdescription
@@ -278,47 +274,9 @@ def inquiries_detail(id):
 @app.route('/inquiries/create', methods=['GET','POST'])
 def inquiries_create():
     '''
-    Creation of a (client) inquiry (web GUI).
+    Create new inquiries (web GUI).
     '''
-    form = CreateClientInquiryForm()
-    if ClientInquiriesModel.find_by_name(form.inq_name.data):
-        print("name already in db") #debug
-        flash("name already in db")
-        return render_template('inquiries/create.html', form=form, title='create a new inquiry')
-
-    if form.validate_on_submit():
-        length_options_list = len(json.loads(form.inq_options.data))
-        inq = ClientInquiriesModel(name = form.inq_name.data,
-                                    type = form.inq_type.data,
-                                    options = form.inq_options.data,
-                                    answer = json.dumps([0]* length_options_list),
-                                    prr_answer = json.dumps([0]* length_options_list),
-                                    irr_answer = json.dumps([0]* length_options_list),
-                                    qdescription = form.inq_qdescription.data,
-                                    responded = False,
-                                    locked = True,
-                                    f = configfile_f,
-                                    p = configfile_p,
-                                    q = configfile_q)
-        try:
-            inq.save_to_db()
-        except:
-            return render_template('/error_pages/500.html', title='error while creating inquiry.')
-
-        flash("Inquiry created")
-        return redirect('inquiries/')
-    return render_template('inquiries/create.html', form=form, title='create a new inquiry')
-
-
-###### BEGINN TEST
-@app.route('/create', methods=['GET','POST'])
-def inq_create():
-    '''
-    Creates a survey (web GUI).
-    '''
-    from forms import CreateInquiryForm
-    import json
-    form = CreateInquiryForm()
+    form = InquiryCreateForm()
 
     if form.validate_on_submit():
 
@@ -352,15 +310,14 @@ def inq_create():
             print("inq test")
             print(inq)
             print(type(inq))
-            #try:
-            inq.save_to_db()
-            #except:
-            #    return render_template('/error_pages/500.html', title='error while creating inquiry.')
+            try:
+                inq.save_to_db()
+            except:
+                return render_template('/error_pages/500.html', title='error while creating inquiry.')
 
-        return redirect(url_for('inquiries_list'))
-    return render_template('create.html', form=form, title='create a new inquiry')
+        return redirect('inquiries/')
+    return render_template('inquiries/create.html', form=form, title='create new inquiries')
 
-###### ENDE TEST
 
 @app.route("/inquiries/<int:id>/delete", methods=['POST'])
 def inquiries_delete(id):
@@ -403,7 +360,7 @@ def tests():
     '''
     Options for client testing (web GUI).
     '''
-    form = RequestSurveyTestForm()
+    form = TestsForm()
     flash("horst")
     if form.validate_on_submit():
         if 'submit_request' in request.form:
