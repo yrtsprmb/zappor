@@ -6,7 +6,7 @@ from models.client_inquiries import ClientInquiriesModel
 from models.reports import ReportModel
 
 from internal.matchings import generate_answers_by_surveyid, find_matching_surveys, find_matches
-from internal.config import configfile_f, configfile_p, configfile_q
+from internal.config import config_f, config_p, config_q
 
 
 class MatchInquiries(Resource):
@@ -48,9 +48,9 @@ class MatchInquiries(Resource):
             surveyid = survey
             prr = 1 #deprecated
             irr = 1 #deprecated
-            f = configfile_f
-            p = configfile_p
-            q = configfile_q
+            f = config_f
+            p = config_p
+            q = config_q
 
             #3b) generate answers json.dumps(data['answers'])
             answers = generate_answers_by_surveyid(survey,matches)

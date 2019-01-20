@@ -4,7 +4,7 @@ from flask_restful import Resource
 
 from models.client_inquiries import ClientInquiriesModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
-from internal.config import locked_config, configfile_f, configfile_p, configfile_q
+from internal.config import config_locked, config_f, config_p, config_q
 import resources.parsers
 from resources.parsers import check_fpq, check_if_bits, check_type, check_bool, check_mc
 
@@ -51,7 +51,7 @@ class ClientInquiries(Resource):
         if not check_if_bits(answer):
             return {'message': "only 0s and 1s allowed in answers"}, 400 #bad request
 
-        if not check_fpq(configfile_f, configfile_p, configfile_q):
+        if not check_fpq(config_f, config_p, config_q):
             return {'message': "f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
 
         inquiry = ClientInquiriesModel(name,
@@ -62,10 +62,10 @@ class ClientInquiries(Resource):
                                 json.dumps(irr),
                                 description,
                                 False, #responded is False, because inquiry is created but not answered yet.
-                                locked_config, #data['locked'],
-                                configfile_f, #until first edit by the user global values are used instead of data['f'],
-                                configfile_p, #until first edit by the user global values are used instead of data['p'],
-                                configfile_q) #until first edit by the user global values are used instead of data['q'])
+                                config_locked, #data['locked'],
+                                config_f, #until first edit by the user global values are used instead of data['f'],
+                                config_p, #until first edit by the user global values are used instead of data['p'],
+                                config_q) #until first edit by the user global values are used instead of data['q'])
         try:
             inquiry.save_to_db()
         except:

@@ -88,3 +88,10 @@ class ClientInquiriesModel(db.Model):
         '''
         db.session.delete(self)
         db.session.commit()
+
+    def delete_all_client_inquiries():
+        '''
+        Deletes all client inquiries.
+        '''
+        db.session.query(ClientInquiriesModel).delete()
+        db.session.commit()

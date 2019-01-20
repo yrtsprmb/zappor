@@ -1,12 +1,11 @@
 #resources/request_surveys
-
 import json
 import requests
 from flask_restful import Resource, reqparse
 from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
 from models.archive import ArchiveModel
-from internal.config import serviceprovider_surveys, quizmode_config, locked_config, quizmode_config, configfile_f, configfile_p, configfile_q
+from internal.config import serviceprovider_surveys, config_quizmode, config_locked, config_f, config_p, config_q
 from resources.parsers import check_type
 
 
@@ -29,7 +28,7 @@ class RequestSurvey(Resource):
             return {'message': "server not available. no survey was requested: {} ".format(e)}, 500 #ok
 
         #this creates client inquiries if quizmode is set.
-        if quizmode_config is True:
+        if config_quizmode is True:
             for survey in listevonsurveys:
                 inquiries = (survey['questions']) #fuer jedes dictonairy in der liste
                 for inq in inquiries:
@@ -42,10 +41,10 @@ class RequestSurvey(Resource):
                     irr_answer = [0]* options_count
                     qdescription = inq['description']
                     responded = False
-                    locked = locked_config
-                    f = configfile_f
-                    p = configfile_p
-                    q = configfile_q
+                    locked = config_locked
+                    f = config_f
+                    p = config_p
+                    q = config_q
 
                     if ClientInquiriesModel.find_by_name(name):
                         print("client inquiry with name " + name + "already in db" ) #debug
@@ -95,7 +94,7 @@ class RequestSurvey(Resource):
                     print("qdescription: " + qdescription)          #debug
                     print("____________________________")           #debug
                     if check_type(qtype):
-                        frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),qdescription,quizmode_config,quizmode_config)
+                        frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),qdescription,config_locked,config_quizmode)
                         frage.save_to_db()
                         print("new survey with surveyid '{}' available and fetched from the server.".format(surveyid))
                     print("error: Type '{}' not correct.".format(qtype))

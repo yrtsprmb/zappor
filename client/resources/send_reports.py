@@ -4,7 +4,7 @@ import requests
 from pprint import pprint
 from flask_restful import Resource
 
-from internal.config import serviceprovider_reports, quizmode_config
+from internal.config import serviceprovider_reports, config_quizmode
 from models.reports import ReportModel
 from models.server_inquiries import ServerInquiriesModel
 from models.archive import ArchiveModel
@@ -55,7 +55,8 @@ class SendReport(Resource):
                     report_to_delete.delete_from_db()
                     rchv.save_to_db()
 
-                    if quizmode_config: #TODO: delete also all client inquries.
+                    if config_quizmode: #TODO: delete also all client inquries.
+                        #ClientInquiriesModel.delete_all_client_inquiries()
                         pass
                     print('report and all server inquiries belonging to the report deleted from db.') #debug
                 except:

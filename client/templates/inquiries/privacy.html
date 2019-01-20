@@ -2,128 +2,190 @@
 {% extends "base.html" %}
 {% block content %}
 
-<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-<script type="text/javascript" src="../../static/chernoff.js"></script>
-<!-- <script type="text/javascript" src="http://www.cip.ifi.lmu.de/~buchnerma/chernoff.js"></script> -->
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="../../static/chernoff.js"></script>
+    <!-- <script type="text/javascript" src="http://www.cip.ifi.lmu.de/~buchnerma/chernoff.js"></script> -->
 
-
-      <style type="text/css">
-          .chernoff > * {
+    <style type="text/css">
+        .chernoff > * {
             fill: none;
             stroke: #000;
-          }
-      </style>
+        }
+        label {
+            display: inline-block;
+        }
+    </style>
 
-<div class="container">
-
-<div class="jumbotron">horst
-
-  <div id="face">
-<svg height="300" width="1000">
-
-</svg>
-  </div>
+    <div class="container">
 
 
+        <div class="jumbotron">
+          <h1>name: {{ inq.name }}</h1>
+          <p>Description: {{ inq.qdescription }}</p>
+          <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
 
-  </div>
+            <div id="face">
+                <svg height="300" width="1000"></svg>
+            </div>
 
-<div class="jumbotron">
-  <h1>name: {{ inq.name }}</h1>
-  <p>Description: {{ inq.qdescription }}</p>
-  <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
+            <div id="params">
+                <label>
+                    f: <input name="f" id="param-f" type="text" disabled value="">
+                </label>
+                <label>
+                    p: <input name="p" id="param-p" type="text" disabled value="">
+                </label>
+                <label>
+                    q: <input name="q" id="param-q" type="text" disabled value="">
+                </label>
+            </div>
 
-  <form method="POST">
-      {# This hidden_tag is a CSRF security feature. #}
-      {{ form.hidden_tag() }}
+            <form>
+                <div class="form-group">
+                    <label for="formControlRange">Range input f (Lie factor)</label>
+                    <input type="range" class="form-control-range" id="formControlRange-f" min="0" max="1" step="0.01">
+                </div>
 
-      <p> {{ form.locked.label }} {{ form.locked(checked=(inq.locked == True)) }} </p>
-      <p> {{ form.f.label }} {{ form.f(size=4) }} </p>
-      <p> {{ form.p.label }} {{ form.p(size=4) }} </p>
-      <p> {{ form.q.label }} {{ form.q(size=4) }} </p>
-      <p> {{ form.submit() }} </p>
-  </form>
+                <div class="form-group">
+                    <label for="formControlRange">Example Range input p (noise)</label>
+                    <input type="range" class="form-control-range" id="formControlRange-p" min="-1" max="1" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="formControlRange">Example Range input q (signal)</label>
+                    <input type="range" class="form-control-range" id="formControlRange-q" min="-1" max="1" step="0.01">
+                </div>
+            </form>
+            <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Back</a>
+
+        </div>
+
+<!-- kann weg -->
+        <div class="jumbotron">
+
+            <form method="POST">
+                {# This hidden_tag is a CSRF security feature. #}
+                {{ form.hidden_tag() }}
+
+                <p> {{ form.locked.label }} {{ form.locked(checked=(inq.locked == True)) }} </p>
+                <p> {{ form.f.label }} {{ form.f(size=4) }} </p>
+                <p> {{ form.p.label }} {{ form.p(size=4) }} </p>
+                <p> {{ form.q.label }} {{ form.q(size=4) }} </p>
+                <p> {{ form.submit() }} </p>
+            </form>
 
 
-<!-- tests mit bootstrap -->
+        </div>
 
-<form>
-  <div class="form-group">
-    <label for="formControlRange">Range input f (Lie factor)</label>
-    <input type="range" class="form-control-range" id="formControlRange-f" min="-1" max="1" step="0.1">
-  </div>
-</form>
-<form>
-  <div class="form-group">
-    <label for="formControlRange">Example Range input p (noise)</label>
-    <input type="range" class="form-control-range" id="formControlRange-p">
-  </div>
-</form>
-<form>
-  <div class="form-group">
-    <label for="formControlRange">Example Range inputq (signal)</label>
-    <input type="range" class="form-control-range" id="formControlRange-q">
-  </div>
-</form>
+<!-- ende kann weg -->
 
-</div>
+        <script type="text/javascript">
 
-<!-- ende tests mit bootstrap -->
+            $(function () {
 
-<div>
-  <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Back</a>
-  <!--
-  <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Save Changes</a>
-  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del_modal">Delete Inquiry</button>
--->
-</div>
+                // face -- shape of the face {0..1}
+                // hair -- shape of the hair {-1..1}
+                // mouth -- shape of the mouth {-1..1}
+                // noseh -- height of the nose {0..1}
+                // nosew -- width of the nose {0..1}
+                // eyeh -- height of the eyes {0..1}
+                // eyew -- width of the eyes {0..1}
+                // brow -- slant of the brows {-1..1}
 
-<script type="text/javascript">
+                let faceState = {
+                    f: 0.5,
+                    h: 0,
+                    m: 0,
+                    nw: 0.5,
+                    nh: 0.5,
+                    ew: 0.5,
+                    eh: 0.5,
+                    b: 0
+                };
 
-    var svg = d3.select("svg");
+                let c = d3.chernoff()
+                    .face(function (d) {
+                        return d.f;
+                    })
+                    .hair(function (d) {
+                        return d.h;
+                    })
+                    .mouth(function (d) {
+                        return d.m;
+                    })
+                    .nosew(function (d) {
+                        return d.nw;
+                    })
+                    .noseh(function (d) {
+                        return d.nh;
+                    })
+                    .eyew(function (d) {
+                        return d.ew;
+                    })
+                    .eyeh(function (d) {
+                        return d.eh;
+                    })
+                    .brow(function (d) {
+                        return d.b;
+                    });
 
-    function update(data) {
-      console.log("update");
-      var c = d3.chernoff()
-        .face(function(d) { return d.f; })
-        .hair(function(d) { return d.h; })
-        .mouth(function(d) { return d.m; })
-        .nosew(function(d) { return d.nw; })
-        .noseh(function(d) { return d.nh; })
-        .eyew(function(d) { return d.ew; })
-        .eyeh(function(d) { return d.eh; })
-        .brow(function(d) { return d.b; });
+                function drawFace(data) {
+                    let faces = d3.select('svg')
+                        .selectAll('g.chernoff');
 
-    var faces = svg.selectAll("g.chernoff").data(data);
+                    faces.data([data])
+                        .enter()
+                        .append('g')
+                        .attr('class', 'chernoff')
+                        .call(c);
+                }
 
-    faces.enter()
-        .append("g")
-        .attr("class", "chernoff")
-        .attr("transform", function(d, i) {
-/* translate(" +
-(i*200) + "," + (i*0) + ")
-*/
-            return "scale(1." + i + ")";
-        })
-        .call(c);
+                function removeFace() {
+                    d3.select('svg')
+                        .selectAll('g.chernoff')
+                        .remove();
+                }
 
-        //faces.exit().remove();
-      };
+                function update() {
+                    removeFace();
+                    drawFace(faceState);
 
-      update([
-          //{f: 0, h: -1, m: -1, nw: 0.3, nh: 0.3, ew: 0.3, eh: 0.3, b: -1},
-          //{f: 1, h: 1, m: 1, nw: 1, nh: 1, ew: 1, eh: 1, b: 1},
-          //{f: 0, h: 0, m: 0, nw: 0.1, nh: 1, ew: 0, eh: 0, b: 0},
-          {f: -1, h: -1, m: -1, nw: -1, nh: -1, ew: -1, eh: -1, b: -1}]);
+                    $('#param-f').val(faceState.nw);
+                    $('#param-p').val(faceState.b);
+                    $('#param-q').val(faceState.m);
+                }
 
-    d3.select('#formControlRange-f').on('change', function () {
-      let nose = $('#formControlRange-f').val();
-      update({f: -1, h: -1, m: -1, nw: 0, nh: 0, ew: -1, eh: -1, b: -1},
-      {f: -1, h: -1, m: -1, nw: 0, nh: 0, ew: -1, eh: -1, b: -1})
-    });
+                function bindSliders() {
+                    d3.select('#formControlRange-f').on('input', function () {
+                        let nose = parseFloat($('#formControlRange-f').val());
+                        faceState.nw = nose;
+                        faceState.nh = nose;
+                        update();
+                    });
 
-    </script>
+                    d3.select('#formControlRange-p').on('input', function () {
+                        let brow = parseFloat($('#formControlRange-p').val());
+                        faceState.b = brow;
+                        update();
+                    });
 
-</div>
-</div>
+                    d3.select('#formControlRange-q').on('input', function () {
+                        let mouth = parseFloat($('#formControlRange-q').val());
+                        faceState.m = mouth;
+                        update();
+                    });
+                }
+
+                function init() {
+                    bindSliders();
+                    update();
+                }
+
+                init();
+
+            });
+        </script>
+
+    </div>
+    </div>
 {% endblock content %}

@@ -24,7 +24,7 @@ import requests
 
 # import of configurations:
 from internal.config import secretkey_config, repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
-from internal.config import configfile_f, configfile_p, configfile_q
+from internal.config import config_f, config_p, config_q, config_client
 
 # for requests
 from resources.request_surveys import RequestSurvey
@@ -55,6 +55,7 @@ def create_tables():
 def activate_job():
     '''
     Starts threads with automatic background jobs.
+    To activate this comment in the above
     '''
     def request_survey():
         '''
@@ -106,7 +107,7 @@ api.add_resource(ClientConf, '/configuration/<string:clientname>')
 # API's for client/server communication
 api.add_resource(RequestSurvey, '/requestsurveys/')
 api.add_resource(SendReport, '/sendreports/')
-api.add_resource(MatchInquiries, '/match/')
+api.add_resource(MatchInquiries, '/matchinquiries/')
 api.add_resource(Report, '/reports/<string:surveyid>')
 
 ##################################################################
@@ -260,9 +261,9 @@ def inquiries_detail(id):
         inq.answer = answer
         inq.responded = True # if a answer was given by the user, responed will be set to TRUE
         inq.locked = locked
-        inq.f = configfile_f
-        inq.p = configfile_p
-        inq.q = configfile_q
+        inq.f = config_f
+        inq.p = config_p
+        inq.q = config_q
         try:
             inq.save_to_db()
         except:
@@ -304,9 +305,9 @@ def inquiries_create():
                                         qdescription = inquiry['description'],
                                         responded = False,
                                         locked = True,
-                                        f = configfile_f,
-                                        p = configfile_p,
-                                        q = configfile_q)
+                                        f = config_f,
+                                        p = config_p,
+                                        q = config_q)
             print("inq test")
             print(inq)
             print(type(inq))
@@ -365,15 +366,16 @@ def tests():
     if form.validate_on_submit():
         if 'submit_request' in request.form:
             print("Request Survey button pressed") #debug
-            r = requests.get('http://127.0.0.1:5001/requestsurveys/')
+            r = requests.get(config_client + '/requestsurveys/')
+            #r = requests.get('http://127.0.0.1:5001/requestsurveys/')
 
         elif 'submit_report' in request.form:
             print("Send report button pressed") #debug
-            r = requests.get('http://127.0.0.1:5001/sendreports/')
+            r = requests.get(config_client + '/sendreports/')
 
         elif 'submit_match' in request.form:
             print("Match inquiries button pressed") #debug
-            r = requests.get('http://127.0.0.1:5001/match/')
+            r = requests.get(config_client + '/matchinquiries/')
 
         elif 'clean_archive' in request.form:
             print("Match inquiries button pressed") #debug

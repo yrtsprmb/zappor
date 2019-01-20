@@ -1,7 +1,7 @@
 #models/config.py
 from db import db
-from internal.config import configfile_server, configfile_port, configfile_repeat_request_surveys, configfile_repeat_send_reports
-from internal.config import configfile_dsgvo, configfile_f, configfile_p, configfile_q
+from internal.config import serveraddress_config, serverport_config, config_repeat_request_surveys, config_repeat_send_reports
+from internal.config import config_dsgvo, config_f, config_p, config_q
 
 class ConfigurationModel(db.Model):
     '''
@@ -28,12 +28,12 @@ class ConfigurationModel(db.Model):
         self.name = "rapporclient"
         self.serveraddress = configfile_server
         self.serverport = configfile_port
-        self.server_get_surveys = server + ':' + port + '/availablesurveys'
-        self.server_post_reports = server + ':' + port + '/reports/'
+        self.server_get_surveys = serveraddress_config + ':' + serverport_config + '/availablesurveys'
+        self.server_post_reports = serveraddress_config + ':' + serverport_config + '/reports/'
         self.repeat_send_reports = configfile_repeat_send_reports
-        self.global_f = configfile_f
-        self.global_p = configfile_p
-        self.global_q = configfile_q
+        self.global_f = config_f
+        self.global_p = config_p
+        self.global_q = config_q
 
     def tojson(self):
         '''
