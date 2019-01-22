@@ -23,12 +23,6 @@ clientaddress_config = 'http://127.0.0.1'
 clientport_config = '5001'
 config_client = clientaddress_config + ':' + clientport_config
 
-print("reports")
-print(serviceprovider_reports)
-
-print("serveradresse")
-print(config_server)
-
 
 '''
 Timing of threads in seconds.

@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from resources.client_inquiries import ClientInquiries, ListClientInquiries
 from resources.server_inquiries import ServerInquiries, ListServerInquiries
 
-from resources.clientconf import ClientConf
+
 
 ### Threading ####################################################
 ## imports for autojobs
@@ -25,6 +25,7 @@ import requests
 # import of configurations:
 from internal.config import secretkey_config, repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
 from internal.config import config_f, config_p, config_q, config_client
+from resources.config import Configuration
 
 # for requests
 from resources.request_surveys import RequestSurvey
@@ -99,16 +100,19 @@ api.add_resource(ListClientInquiries, '/lci')
 api.add_resource(ListServerInquiries, '/lsi')
 
 
-api.add_resource(ListReports, '/listreports/')
 
-api.add_resource(ClientConf, '/configuration/<string:clientname>')
+
+api.add_resource(Configuration, '/configuration/')
 
 
 # API's for client/server communication
 api.add_resource(RequestSurvey, '/requestsurveys/')
 api.add_resource(SendReport, '/sendreports/')
+
 api.add_resource(MatchInquiries, '/matchinquiries/')
+
 api.add_resource(Report, '/reports/<string:surveyid>')
+api.add_resource(ListReports, '/listreports/')
 
 ##################################################################
 # testing:
@@ -126,6 +130,7 @@ from models.client_inquiries import ClientInquiriesModel
 from models.server_inquiries import ServerInquiriesModel
 from models.archive import ArchiveModel
 from models.reports import ReportModel
+from models.config import ConfigurationModel
 from forms import InquiryCreateForm, TestsForm, InquiryDetailForm
 from wtforms import BooleanField
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
@@ -348,12 +353,17 @@ def internal_data():
     return render_template('internal_data.html', answers=answers, questions=questions, reports=reports, stats=stats, title='internal data: inquiries, reports & archive')
 
 
-@app.route('/config')
-def client_config():
+@app.route('/settings')
+def settings():
     '''
     Configuration page (web GUI).
     '''
-    return render_template('client_config.html', title='Configuration')
+    #cnfg = ConfigurationModel.find_by_name("rapporclient")
+    cnfg = ConfigurationModel.find()
+    if cnfg is None:
+        client = ConfigurationModel()
+        client.save_to_db()
+    return render_template('settings.html', title='client settings')
 
 
 @app.route('/tests', methods=['GET','POST'])

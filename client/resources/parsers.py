@@ -245,36 +245,35 @@ class ParseTestReports:
     )
 
 
-class ParseClientConf:
+class ParseConfiguration:
     '''
-    TODO: Parser for client configuration.
+    TODO: Parser for configuration of the client.
     '''
     parser = reqparse.RequestParser()
-
-    parser.add_argument('serveraddress',
+    parser.add_argument('clientname',
         type=str,
-        required=True,
-        help="server address is missing"
+        required=False,
+        help="clientname"
     )
     parser.add_argument('global_f',
         type=float,
-        required=True,
+        required=False,
         help="global f is missing"
     )
     parser.add_argument('global_p',
         type=float,
-        required=True,
+        required=False,
         help="global p is missing"
     )
     parser.add_argument('global_q',
         type=float,
-        required=True,
+        required=False,
         help="global q missing"
     )
-    parser.add_argument('slider',
-        type=float,
-        required=True,
-        help="global slider"
+    parser.add_argument('dsgvo',
+        type=bool,
+        required=False,
+        help="dsgvo"
     )
 
 def check_bool(type,list):
