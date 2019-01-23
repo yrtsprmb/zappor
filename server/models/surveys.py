@@ -78,12 +78,14 @@ class SurveyModel(db.Model):
         '''
         return SurveyModel.query.filter_by(surveyname=surveyname).first()
 
+
     def save_to_db(self):
         '''
         Saves a survey to the database.
         '''
         db.session.add(self) # session is a collection of objects we going to write into the db
         db.session.commit()
+
 
     def delete_from_db(self):
         '''

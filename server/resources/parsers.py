@@ -189,7 +189,7 @@ def check_status(status):
     Checks if the values of the status string of a survey is valid.
     Validity check for surveys.
     '''
-    if(status != 'created' and status != 'active' and status != 'done'):
+    if(status != 'created' and status != 'active' and status != 'paused' and status != 'done'):
         return False
     return True
 

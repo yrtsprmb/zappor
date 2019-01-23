@@ -34,7 +34,7 @@ class Survey(Resource):
 
         #validty check of status.
         if not check_status(data['status']):
-            return {'message': "Wrong status: must be 'created', 'active', or 'done'."}, 400 #bad request
+            return {'message': "Wrong status: must be 'created', 'active', 'paused' or 'done'."}, 400 #bad request
 
         #validty check of all question options.
         questionlist = data['questions']
@@ -58,7 +58,7 @@ class Survey(Resource):
         '''
         Server REST resource:
         Changes the status of a survey.
-        After a survey is created, only it's status can be changed from 'created' -> 'active' -> 'done'.
+        After a survey is created, it can be paused or it's status can be changed from 'created' -> 'active' -> 'done'.
         '''
         data = resources.parsers.ParseSurveysPut.parser.parse_args()
         survey = SurveyModel.find_survey_by_name(surveyname)
@@ -67,9 +67,9 @@ class Survey(Resource):
             return {'message': "Can not change status, survey '{}' does not exist".format(surveyname)}, 400 #bad request
 
         if not check_status(data['status']):
-            return {'message': "wrong status. must be 'created', 'active', or 'done'."}, 400 #bad request
+            return {'message': "wrong status. must be 'created', 'active', 'paused' or 'done'."}, 400 #bad request
 
-        if (survey.status == 'created' or survey.status == 'active') and (data['status'] == 'active' or data['status'] == 'done'):
+        if (survey.status == 'created' or survey.status == 'active' or survey.status == 'paused') and (data['status'] == 'active' or data['status'] == 'paused' or data['status'] == 'done'):
             old_status = survey.status
             survey.status = data['status']
             survey.save_to_db()

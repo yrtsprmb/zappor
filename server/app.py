@@ -58,9 +58,9 @@ api.add_resource(AvailableSurveys, '/availablesurveys')
 api.add_resource(Survey, '/surveys/<string:surveyname>') # create & delete surveys
 api.add_resource(ListSurveys, '/listsurveys') # lists all available surveys
 
-api.add_resource(Summary, '/rest/smmrs/<string:surveyid>') # GET, POST & DELETE for summaries.
-api.add_resource(ListSummaries, '/rest/listsummaries') # GET for listing all available summaries
-api.add_resource(CreateSummaries, '/rest/smmrs/create/<string:surveyid>') # Creates summaries for a surveyid.
+api.add_resource(Summary, '/smmrs/<string:surveyid>') # GET, POST & DELETE for summaries.
+api.add_resource(ListSummaries, '/listsummaries') # GET for listing all available summaries
+api.add_resource(CreateSummaries, '/smmrs/create/<string:surveyid>') # Creates summaries for a surveyid.
 
 
 ### views ########################################################
@@ -102,7 +102,7 @@ def survey_detail(id):
     form = SurveyForm()
 
     if form.validate_on_submit():
-            if (srvy.status == 'created' or srvy.status == 'active') and (form.status.data == 'active' or form.status.data == 'done'):
+            if (srvy.status == 'created' or srvy.status == 'active' or srvy.status == 'paused') and (form.status.data == 'active' or form.status.data == 'paused' or form.status.data == 'done'):
                 old_status = srvy.status
                 srvy.status = form.status.data
                 srvy.save_to_db()
@@ -128,7 +128,6 @@ def survey_create():
                                 questions = form.questions.data)
         try:
             srvy.save_to_db()
-            flash("Survey created")
         except:
             return render_template('/error_pages/500.html', title='error while creating survey.')
 
@@ -154,7 +153,7 @@ def survey_summaries(id):
 @app.route('/srvys/<int:id>/evaluate', methods=['GET','POST'])
 def survey_eval_summaries(id):
     '''
-    When called it creates new summaries which are shown in form of histograms (web GUI).
+    Creates new summaries which are shown in form of histograms, when called (web GUI).
     '''
     srvy = db.session.query(SurveyModel).get(id)
     if srvy is None:
@@ -210,7 +209,6 @@ def internaldata():
     rprts = ReportModel.query.all()
     smmrs = SummaryModel.query.all()
     srvys = SurveyModel.query.all()
-
     return render_template('internal_data.html', rprts=rprts, smmrs=smmrs, srvys=srvys, title='internal data')
 
 
@@ -226,7 +224,7 @@ def tests():
     flash("test")
     if form.validate_on_submit():
             print("generate summary button pressed") #debug
-            r = requests.get('http://localhost:5000/rest/smmrs/create/testsurvey')
+            r = requests.get('http://localhost:5000/smmrs/create/testsurvey')
 
     return render_template('tests.html', form=form, title='server tests')
 
@@ -234,7 +232,7 @@ def tests():
 @app.route('/info')
 def info():
     '''
-    Infomation page (web GUI).
+    Information page (web GUI).
     '''
     return render_template('info.html')
 
