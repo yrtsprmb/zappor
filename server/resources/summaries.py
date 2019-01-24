@@ -1,5 +1,4 @@
 #resources/summaries.py
-
 import json
 from flask_restful import Resource, request
 

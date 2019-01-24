@@ -1,4 +1,4 @@
-{# histogram code based on http://bl.ocks.org/Jverma/887877fc5c2c2d99be10 #}
+{# parts of histogram code based on http://bl.ocks.org/Jverma/887877fc5c2c2d99be10 #}
 {% extends "base.html" %}
 {% block content %}
 
@@ -29,10 +29,8 @@
 
 <div class="jumbotron">
 
-
-
     <div id="graphDiv"></div>
-    <h3>Fresh summaries for the survey '{{ survey_id }}'</h3>
+    <h3>New created summaries for the survey '{{ survey_id }}'</h3>
 
 
     <script src="https://d3js.org/d3.v3.js"></script>
@@ -115,8 +113,8 @@
 
         // URL parameter comes from controller and is rendered by jinja.
         const survey_id = '{{ survey_id }}';
-//http://localhost:5000/rest/smmrs/create/testsurvey
-        fetch(API_URL + '/rest/smmrs/create/' + survey_id)
+
+        fetch(API_URL + '/smmrs/create/' + survey_id)
             .then(function (response) {
                 if (response.ok) {
                     // handle success
@@ -139,7 +137,11 @@
 
     </script>
 
+</div>
 
+</div>
+
+<div class="jumbotron">
 
 <div class="card">
         <div class="card-body">
@@ -149,9 +151,7 @@
             {# <a href="{{ url_for('survey_detail', id=srvy.id) }}">Info: {{ srvy.sdescription }}</a> #}
         </div>
 </div>
-
 </div>
-
 
 </body>
 </html>

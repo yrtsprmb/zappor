@@ -47,7 +47,7 @@ api = Api(app)
 @app.before_first_request
 def create_tables():
     '''
-    Creates all needed tables (if not already existing) after the first request was made.
+    Creates all tables (if not already existing) after the first request was made.
     '''
     db.create_all()
 
@@ -56,7 +56,7 @@ def create_tables():
 def activate_job():
     '''
     Starts threads with automatic background jobs.
-    To activate this comment in the above
+    To activate this comment in the above decorator.
     '''
     def request_survey():
         '''
@@ -131,7 +131,7 @@ from models.server_inquiries import ServerInquiriesModel
 from models.archive import ArchiveModel
 from models.reports import ReportModel
 from models.config import ConfigurationModel
-from forms import InquiryCreateForm, TestsForm, InquiryDetailForm
+from forms import InquiryCreateForm, InquiryDetailForm, PrivacyForm, SettingsForm, TestsForm
 from wtforms import BooleanField
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from resources.parsers import check_fpq, check_if_bits
@@ -160,8 +160,6 @@ def inquiries_privacy(id):
     '''
     This is for privacy settings.
     '''
-    from forms import PrivacyForm
-
     #inq = db.session.query(ClientInquiriesModel).get(id)
     inq = ClientInquiriesModel.find_by_id(id)
     if inq is None:
@@ -353,17 +351,43 @@ def internal_data():
     return render_template('internal_data.html', answers=answers, questions=questions, reports=reports, stats=stats, title='internal data: inquiries, reports & archive')
 
 
-@app.route('/settings')
+@app.route('/settings', methods=['GET','POST'])
 def settings():
     '''
     Configuration page (web GUI).
     '''
     #cnfg = ConfigurationModel.find_by_name("rapporclient")
+    # cnfg = ConfigurationModel.find()
+    # if cnfg is None:
+    #     client = ConfigurationModel()
+    #     client.save_to_db()
     cnfg = ConfigurationModel.find()
     if cnfg is None:
-        client = ConfigurationModel()
-        client.save_to_db()
-    return render_template('settings.html', title='client settings')
+        abort(404)
+    form = SettingsForm()
+    if form.validate_on_submit():
+            dsgvo = form.dsgvo.data
+            quiz = form.quiz.data
+            f = form.f.data
+            p = form.p.data
+            q = form.q.data
+            if not check_fpq(f,p,q):
+                print("Only values between 0 and 1 allowed for f,p,q!") #debug
+                flash("Only values between 0 and 1 allowed for f,p,q!")
+                return render_template('settings.html', form=form, title='client settings')
+
+            cnfg.dsgvo = dsgvo
+            cnfg.quizmode = quiz
+            cnfg.global_f = f
+            cnfg.global_p = p
+            cnfg.global_q = q
+            try:
+                cnfg.save_to_db()
+            except:
+                return render_template('/error_pages/500.html', title='error while trying to save inquiries.')
+
+
+    return render_template('settings.html', form=form, title='client settings')
 
 
 @app.route('/tests', methods=['GET','POST'])
@@ -377,7 +401,6 @@ def tests():
         if 'submit_request' in request.form:
             print("Request Survey button pressed") #debug
             r = requests.get(config_client + '/requestsurveys/')
-            #r = requests.get('http://127.0.0.1:5001/requestsurveys/')
 
         elif 'submit_report' in request.form:
             print("Send report button pressed") #debug
@@ -402,6 +425,18 @@ def info():
     Infomation page (web GUI).
     '''
     return render_template('info.html')
+
+
+'''
+Ensures that settings will be created at first startup.
+'''
+@app.before_first_request
+def create_configuration():
+    cnfg = ConfigurationModel.find()
+    if cnfg is None:
+        client = ConfigurationModel()
+        client.save_to_db()
+
 
 ##################################################################
 ## Client only starts when it will be executed over the file app.py

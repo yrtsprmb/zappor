@@ -114,7 +114,7 @@
         // URL parameter comes from controller and is rendered by jinja.
         const survey_id = '{{ survey_id }}';
 
-        fetch(API_URL + '/rest/smmrs/' + survey_id)
+        fetch(API_URL + '/smmrs/' + survey_id)
             .then(function (response) {
                 if (response.ok) {
                     // handle success
@@ -148,7 +148,7 @@
             <h2><a class="card-title" href="  {{ url_for('survey_detail', id=srvy.id) }}">{{ srvy.surveyname }}</a></h2>
             <p> Description:  smmry.counter {{ srvy.sdescription }}</p>
             <a href="{{ url_for('survey_detail', id=srvy.id) }}" class="btn btn-primary">Back to overview</a>
-            {# <a href="{{ url_for('survey_detail', id=srvy.id) }}">Info: {{ srvy.sdescription }}</a> #}
+            <a class="btn btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="creates a new summary with all recently added reports" href="{{ url_for('survey_eval_summaries', id=srvy.id) }}">New evaluation</a> 
         </div>
 </div>
 </div>

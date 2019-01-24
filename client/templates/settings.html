@@ -1,7 +1,28 @@
+{# SettingsForm #}
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
-  <h1>todo</h1>
-  <p>control values from the config.py file?</p>
+  <h1>Settings</h1>
+  <p>control values from the config.py file</p>
+
+<p>Settings for dsgvo, privacy, quizmode, global f, p, and q values.</p>
+
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+      <div class="form-group">
+
+  <div class="">
+    <div>{{ form.dsgvo.label }} {{ form.dsgvo}}</div>
+    <div>{{ form.quiz.label }} {{ form.quiz}}</div>
+    <div>{{ form.f.label }} {{ form.f}} {{ form.p.label }} {{ form.p}} {{ form.q.label }} {{ form.q}}</div>
+
+            <div>
+            blalbaladsfs
+            <input type="submit" name="save_settings" value="Save Settings"><br>
+            </div>
+  </div>
+
+</form>
+
 </div>
 {% endblock %}

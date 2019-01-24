@@ -58,6 +58,25 @@ class InquiryDetailForm(FlaskForm):
     submit = SubmitField('Save')
 
 
+class SettingsForm(FlaskForm):
+    '''
+    Form for client settings (web GUI).
+    '''
+    # name = TextField('name')
+    # options = TextField('name')
+    # answer = TextField('your answer', validators=[DataRequired()])
+    # qdescription = TextField('Descpription')
+    #locked = TextField("p", [validators.Length(min=0,max=5)])
+    #f = TextField('f', validators=[DataRequired(message="value must be between 0 and 1")])
+    #p = TextField("p", [validators.Length(min=0,max=5)])
+    dsgvo = BooleanField("dsgvo")
+    quiz = BooleanField("quizmode")
+    f = DecimalField('f')
+    p = DecimalField('p')
+    q = DecimalField('q')
+    submit = SubmitField('Save')
+
+
 class TestsForm(FlaskForm):
     '''
     Form for the tests page (web GUI).

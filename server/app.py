@@ -141,6 +141,8 @@ def survey_summaries(id):
     Shows the summaries of a survey in form of histograms (web GUI).
     '''
     srvy = db.session.query(SurveyModel).get(id)
+    print("hilfe")
+    print(srvy)
     if srvy is None:
         abort(404)
 
@@ -157,6 +159,7 @@ def survey_eval_summaries(id):
     '''
     srvy = db.session.query(SurveyModel).get(id)
     if srvy is None:
+        print("srvy is none") #debug
         abort(404)
 
     form = SummaryForm()
