@@ -42,9 +42,9 @@ class RequestSurvey(Resource):
                     qdescription = inq['description']
                     responded = False
                     locked = config_locked
-                    f = config_f
-                    p = config_p
-                    q = config_q
+                    f = config_f    #todo, gegen db settings tauschen
+                    p = config_p    #todo, gegen db settings tauschen
+                    q = config_q    #todo, gegen db settings tauschen
 
                     if ClientInquiriesModel.find_by_name(name):
                         print("client inquiry with name " + name + "already in db" ) #debug

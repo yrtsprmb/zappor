@@ -37,6 +37,12 @@ class ConfigurationModel(db.Model):
         self.get_surveys = serviceprovider_surveys
         self.post_reports = serviceprovider_reports
 
+    def __repr__(self):
+        '''
+        Object representaion of the client settings.
+        '''
+        return f" dsgvo: {bool(self.dsgvo)}, quizmode: {bool(self.quizmode)}, f: {self.global_f}, p: {self.global_p}, q: {self.global_q}"
+
     def tojson(self):
         '''
         JSON representaion of the client settings.

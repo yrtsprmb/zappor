@@ -101,6 +101,11 @@ def survey_detail(id):
 
     form = SurveyForm()
 
+    if request.method != 'POST':
+        form.status.default = srvy.status
+        form.process()
+
+
     if form.validate_on_submit():
             if (srvy.status == 'created' or srvy.status == 'active' or srvy.status == 'paused') and (form.status.data == 'active' or form.status.data == 'paused' or form.status.data == 'done'):
                 old_status = srvy.status
@@ -108,6 +113,8 @@ def survey_detail(id):
                 srvy.save_to_db()
                 flash("Status changed")
                 return redirect(url_for('surveys_list'))
+    else:
+        print(form.errors)
 
     return render_template('srvys/survey.html', srvy=srvy, form=form, title='survey details')
 

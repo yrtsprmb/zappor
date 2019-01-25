@@ -26,8 +26,8 @@ class SurveyForm(FlaskForm):
     Form for changing the status of a survey. Is used for display the details of a survey.
     '''
     status = SelectField('Status:', choices=[('created','created'),('active','active'),('paused','paused'),('done','done')], validators=[DataRequired()])
-    mychoices = [('created','created'),('active','active'),('done','done')]
-    submit = SubmitField('Change Status')
+    mychoices = [('created','created'),('active','active'),('paused','paused'),('done','done')]
+    submit = SubmitField('Set status')
 
 
 class CreateSurveyForm(FlaskForm):

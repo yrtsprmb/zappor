@@ -166,12 +166,13 @@ def inquiries_privacy(id):
         abort(404)
 
     form = PrivacyForm()
+
     if form.validate_on_submit():
         #answer = form.answer.data
         locked = form.locked.data
         f = form.f.data
-        p = form.p.data
-        q = form.q.data
+        p = convert_range(form.p.data)
+        q = convert_range(form.q.data)
 
         if not check_fpq(f,p,q):
             print("Only values between 0 and 1 allowed for f,p,q!") #debug
@@ -188,6 +189,15 @@ def inquiries_privacy(id):
 
     return render_template('inquiries/privacy.html', inq=inq, form=form, title='privacy')
 
+def convert_range(value):
+    '''
+    Convert from the range [-1;1] of chernoff-faces to the rappor-range [0;1]
+    https://stackoverflow.com/questions/929103/convert-a-number-range-to-another-range-maintaining-ratio
+    '''
+    old_range = 1 - (-1)
+    new_range = 1 - 0
+
+    return ((value - (-1)) * new_range) / old_range
 
 @app.route('/inquiries/<int:id>/', methods=['GET','POST'])
 def inquiries_detail(id):
@@ -348,7 +358,8 @@ def internal_data():
     questions = ServerInquiriesModel.query.all()
     reports = ReportModel.query.all()
     stats = ArchiveModel.query.all()
-    return render_template('internal_data.html', answers=answers, questions=questions, reports=reports, stats=stats, title='internal data: inquiries, reports & archive')
+    cnfg = ConfigurationModel.query.first()
+    return render_template('internal_data.html', answers=answers, questions=questions, reports=reports, stats=stats, cnfg=cnfg, title='internal data: inquiries, reports & archive')
 
 
 @app.route('/settings', methods=['GET','POST'])
@@ -387,7 +398,7 @@ def settings():
                 return render_template('/error_pages/500.html', title='error while trying to save inquiries.')
 
 
-    return render_template('settings.html', form=form, title='client settings')
+    return render_template('settings.html', form=form, cnfg=cnfg, title='client settings')
 
 
 @app.route('/tests', methods=['GET','POST'])

@@ -28,55 +28,43 @@
                 <svg height="300" width="1000"></svg>
             </div>
 
-            <div id="params">
-                <label>
-                    f: <input name="f" id="param-f" type="text" disabled value="">
-                </label>
-                <label>
-                    p: <input name="p" id="param-p" type="text" disabled value="">
-                </label>
-                <label>
-                    q: <input name="q" id="param-q" type="text" disabled value="">
-                </label>
-            </div>
+            <form method="POST">
 
-            <form>
+              {# This hidden_tag is a CSRF security feature. #}
+              {{ form.hidden_tag() }}
+
+                <div id="params">
+                    <label>
+                        f: <input name="f" id="param-f" type="text" disabled value="{{ inq.f }}">
+                    </label>
+                    <label>
+                        p: <input name="p" id="param-p" type="text" disabled value="{{ inq.p }}">
+                    </label>
+                    <label>
+                        q: <input name="q" id="param-q" type="text" disabled value="{{ inq.q }}">
+                    </label>
+                </div>
+
                 <div class="form-group">
                     <label for="formControlRange">Range input f (Lie factor)</label>
-                    <input type="range" class="form-control-range" id="formControlRange-f" min="0" max="1" step="0.01">
+                    <input value="" type="range" name="f" class="form-control-range" id="formControlRange-f" min="0" max="1" step="0.01">
                 </div>
 
                 <div class="form-group">
                     <label for="formControlRange">Example Range input p (noise)</label>
-                    <input type="range" class="form-control-range" id="formControlRange-p" min="-1" max="1" step="0.01">
+                    <input value="" type="range" name="p" class="form-control-range" id="formControlRange-p" min="-1" max="1" step="0.01">
                 </div>
 
                 <div class="form-group">
                     <label for="formControlRange">Example Range input q (signal)</label>
-                    <input type="range" class="form-control-range" id="formControlRange-q" min="-1" max="1" step="0.01">
+                    <input value="" type="range" name="q" class="form-control-range" id="formControlRange-q" min="-1" max="1" step="0.01">
                 </div>
-            </form>
-            <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Back</a>
 
-        </div>
-
-<!-- kann weg -->
-        <div class="jumbotron">
-
-            <form method="POST">
-                {# This hidden_tag is a CSRF security feature. #}
-                {{ form.hidden_tag() }}
-
-                <p> {{ form.locked.label }} {{ form.locked(checked=(inq.locked == True)) }} </p>
-                <p> {{ form.f.label }} {{ form.f(size=4) }} </p>
-                <p> {{ form.p.label }} {{ form.p(size=4) }} </p>
-                <p> {{ form.q.label }} {{ form.q(size=4) }} </p>
-                <p> {{ form.submit() }} </p>
+                <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Back</a>
+                {{ form.submit(class="btn btn-primary") }}
             </form>
 
         </div>
-
-<!-- ende kann weg -->
 
         <script type="text/javascript">
 
@@ -149,9 +137,23 @@
                     removeFace();
                     drawFace(faceState);
 
-                    $('#param-f').val(faceState.nw);
-                    $('#param-p').val(faceState.b);
-                    $('#param-q').val(faceState.m);
+                    $('#param-f').val(faceState.nw.toFixed(3));
+                    $('#param-p').val(convert_range(faceState.b));
+                    $('#param-q').val(convert_range(faceState.m));
+                }
+
+                function convert_range(value) {
+                    const old_range = 1 - (-1);
+                    const new_range = 1 - 0;
+
+                    return parseFloat((((value - (-1)) * new_range) / old_range).toFixed(3));
+                }
+
+                function convert_range_reverse(value) {
+                    const old_range = 1 - 0;
+                    const new_range = 1 + 1;
+
+                    return parseFloat(((((value - 0) * new_range) / old_range) - 1).toFixed(3));
                 }
 
                 function bindSliders() {
@@ -176,8 +178,32 @@
                 }
 
                 function init() {
+                  const old_f = parseFloat($('#param-f').val());
+                  const old_p = parseFloat($('#param-p').val());
+                  const old_q = parseFloat($('#param-q').val());
+
                     bindSliders();
-                    update();
+
+                    $('#formControlRange-f').val(
+                      old_f
+                    );
+                    $('#formControlRange-p').val(
+                      convert_range_reverse(old_p)
+                    );
+
+                    $('#formControlRange-q').val(
+                      convert_range_reverse(old_q)
+                    );
+
+                    faceState.nw = old_f;
+                    faceState.nh = old_f;
+
+                    faceState.b = convert_range_reverse(old_p);
+
+                    faceState.m = convert_range_reverse(old_q);
+                  
+                    removeFace();
+                    drawFace(faceState);
                 }
 
                 init();
