@@ -2,52 +2,42 @@
 from flask_restful import Resource
 from models.config import ConfigurationModel
 import resources.parsers
+from resources.parsers import check_fpq
 
 
 class Configuration(Resource):
-
-    # def get(self,clientname):
-    #     cnfg = ConfigurationModel.find_by_name(clientname)
-    #     if cnfg:
-    #         return cnfg.tojson()
-    #     return {'message': "Client settings not found"}, 404 #not found
-
+    '''
+    REST API for client configuration.
+    '''
     def get(self):
+        '''
+        Returns the configuration in JSON format.
+        '''
         cnfg = ConfigurationModel.find()
         if cnfg:
             return cnfg.tojson()
         return {'message': "Client settings not found"}, 404 #not found
 
-
-    def post(self,clientname):
+    def put(self):
+        '''
+        Allows to change the configuration. There is no post request, because the configuration is treated as singleton.
+        '''
         data = resources.parsers.ParseConfiguration.parser.parse_args()
-        #data = ClientConf.parser.parse_args()
+        cnfg = ConfigurationModel.find()
+        if cnfg is None:
+            return {'message': "No configuration available"}, 400 #bad request
 
-        if ConfigurationModel.find_by_name(clientname):
-             return {'message': "client with name '{}' already exist in database.".format(clientname)}, 400 #bad request
+        if not check_fpq(data['global_f'],data['global_p'],data['global_q']):
+            return {'message': "Global f,p and q must have values between 0.0 and 1.0"}, 400 #bad request
 
-        # self.clientname = "rapporclient"
-        # self.global_f = config_f
-        # self.global_p = config_p
-        # self.global_q = config_q
-        # self.dsgvo = config_dsgvo
-        # self.serveraddress = serveraddress_config
-        # self.serverport = serverport_config
-        # self.get_surveys = serviceprovider_surveys
-        # self.post_reports = serviceprovider_reports
+        cnfg.global_f = data['global_f']
+        cnfg.global_p = data['global_p']
+        cnfg.global_q = data['global_q']
+        cnfg.dsgvo = data['dsgvo']
+        cnfg.quizmode = data['quizmode']
 
-        cnfg = ConfigurationModel(clientname,
-                                data['serveraddress'],
-                                data['global_f'],
-                                data['global_p'],
-                                data['global_q'],
-                                data['dsgvo'],
-                                data['serveraddress'],
-                                data['serverport'],
-                                data['get_surveys'],
-                                data['post_reports'])
         try:
             cnfg.save_to_db()
         except:
-            return {'message': "error while setting personal settings for '{}'. ".format(clientname)}, 500
+            return {'message': "Error while setting configuration data."}, 500
         return cnfg.tojson(), 201 # created

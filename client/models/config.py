@@ -41,35 +41,24 @@ class ConfigurationModel(db.Model):
         '''
         Object representaion of the client settings.
         '''
-        return f" dsgvo: {bool(self.dsgvo)}, quizmode: {bool(self.quizmode)}, f: {self.global_f}, p: {self.global_p}, q: {self.global_q}"
+        return f" dsgvo: {bool(self.dsgvo)}, quizmode: {bool(self.quizmode)}, global_f: {self.global_f}, global_p: {self.global_p}, global_q: {self.global_q}"
 
     def tojson(self):
         '''
         JSON representaion of the client settings.
         '''
-        return {'clientname': self.clientname, 'f': self.global_f, 'p': self.global_p,'q': self.global_q, 'dsgvo': bool(self.dsgvo), 'quizmode': bool(self.quizmode) }
-        # return {'clientname': self.clientname,
-        #     'f': self.global_f,
-        #     'p': self.global_p,
-        #     'q': self.global_q,
-        #     'dsgvo': self.dsgvo,
-        #     'serveraddress': self.serveraddress,
-        #     'serverport': self.serverport,
-        #     'get_surveys': self.get_surveys,
-        #     'post_reports': self.post_reports}
-
-    @classmethod
-    def find_by_name(cls, clientname):
-        return ConfigurationModel.query.filter_by(clientname=clientname).first()
+        return {'clientname': self.clientname, 'global_f': self.global_f, 'global_p': self.global_p,'global_q': self.global_q, 'dsgvo': bool(self.dsgvo), 'quizmode': bool(self.quizmode) }
 
     @classmethod
     def find(cls):
+        '''
+        Returns the configuration. Since the configuration is treated like a singleton, there is only one entry.
+        '''
         return ConfigurationModel.query.first()
 
     def save_to_db(self):
+        '''
+        Saves configuration changes to the db.
+        '''
         db.session.add(self)
-        db.session.commit()
-
-    def delete_from_db(self):
-        db.session.delete(self)
         db.session.commit()

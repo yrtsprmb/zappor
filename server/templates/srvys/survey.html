@@ -8,12 +8,12 @@
   <h1>{{ srvy.surveyname }}</h1>
   <p>Description: {{ srvy.sdescription }} </p>
 
-  <p>This page shows information about the  survey {{ srvy.surveyname }}. You can set a new status for the survey, show summaries made out of reports, or generate new summaries which include recently added reports.</p>
+  <p>Information about the  survey '{{ srvy.surveyname }}'.<br>
+    You can set a new status for the survey, show existing summaries, or generate new summaries which includes recently added reports.</p>
   <div class="">
     surveyid: {{ srvy.surveyid }} </br>
     serviceprovider: {{ srvy.serviceprovider }} </br>
-    Status: {{ srvy.status }} </br>
-    Created on: {{ srvy.created_on }} </br>
+    created: {{ srvy.created_on }} </br>
   </div>
 
   <form method="POST">

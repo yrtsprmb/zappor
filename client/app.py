@@ -102,7 +102,7 @@ api.add_resource(ListServerInquiries, '/lsi')
 
 
 
-api.add_resource(Configuration, '/configuration/')
+api.add_resource(Configuration, '/configuration')
 
 
 # API's for client/server communication
@@ -151,6 +151,14 @@ def inquiries_list():
     '''
     List all client inquiries (web GUI).
     '''
+    #access is only allowed if gdpr is set to true
+    cnfg = ConfigurationModel.find()
+    if cnfg is None:
+        abort(404)
+    if cnfg.dsgvo != 1:
+        print("info works")
+        return redirect(url_for('gdpr'))
+
     inqs = (db.session.query(ClientInquiriesModel).order_by(ClientInquiriesModel.id.desc()).all())
     return render_template('inquiries/inquiries.html', inqs=inqs, title='list of inquiries')
 
@@ -160,7 +168,14 @@ def inquiries_privacy(id):
     '''
     This is for privacy settings.
     '''
-    #inq = db.session.query(ClientInquiriesModel).get(id)
+    #access is only allowed if gdpr is set to true
+    cnfg = ConfigurationModel.find()
+    if cnfg is None:
+        abort(404)
+    if cnfg.dsgvo != 1:
+        print("info works")
+        return redirect(url_for('gdpr'))
+
     inq = ClientInquiriesModel.find_by_id(id)
     if inq is None:
         abort(404)
@@ -204,8 +219,15 @@ def inquiries_detail(id):
     '''
     Detailed view of an inquiry (web GUI).
     '''
+    #access is only allowed if gdpr is set to true
+    cnfg = ConfigurationModel.find()
+    if cnfg is None:
+        abort(404)
+    if cnfg.dsgvo != 1:
+        print("info works")
+        return redirect(url_for('gdpr'))
+
     inq = ClientInquiriesModel.find_by_id(id)
-    #inq = db.session.query(ClientInquiriesModel).get(id)
     if inq is None:
         abort(404)
 
@@ -232,22 +254,6 @@ def inquiries_detail(id):
     if form.validate_on_submit():
         answer = form.answer.data
         locked = form.locked.data
-        # f = form.f.data
-        # p = form.p.data
-        # q = form.q.data
-
-        #print("answer")
-        #print((answer))
-        # print(len(json.loads(answer)))
-        # print(len(json.loads(inq.answer)))
-
-        #validation checks:
-        #print(len(json.loads(answer)))
-        # if fpq is between 0 and 1
-        # if not check_fpq(f,p,q):
-        #     print("Only values between 0 and 1 allowed for f,p,q!") #debug
-        #     flash("Only values between 0 and 1 allowed for f,p,q!")
-        #     return render_template('inquiries/inquiry.html', inq=inq, form=form, title='question')
         f = inq.f
         p = inq.p
         q = inq.q
@@ -367,15 +373,20 @@ def settings():
     '''
     Configuration page (web GUI).
     '''
-    #cnfg = ConfigurationModel.find_by_name("rapporclient")
-    # cnfg = ConfigurationModel.find()
-    # if cnfg is None:
-    #     client = ConfigurationModel()
-    #     client.save_to_db()
     cnfg = ConfigurationModel.find()
     if cnfg is None:
         abort(404)
     form = SettingsForm()
+
+    #sets the values in the form
+    if request.method != 'POST':
+        form.dsgvo.default = cnfg.dsgvo
+        form.quiz.default = cnfg.quizmode
+        form.f.default = cnfg.global_f
+        form.p.default = cnfg.global_p
+        form.q.default = cnfg.global_q
+        form.process()
+
     if form.validate_on_submit():
             dsgvo = form.dsgvo.data
             quiz = form.quiz.data
@@ -436,6 +447,13 @@ def info():
     Infomation page (web GUI).
     '''
     return render_template('info.html')
+
+@app.route('/gdpr')
+def gdpr():
+    '''
+    DSGVO/GDPR info (web GUI).
+    '''
+    return render_template('gdpr.html')
 
 
 '''

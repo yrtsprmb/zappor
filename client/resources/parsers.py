@@ -250,31 +250,31 @@ class ParseConfiguration:
     TODO: Parser for configuration of the client.
     '''
     parser = reqparse.RequestParser()
-    parser.add_argument('clientname',
-        type=str,
-        required=False,
-        help="clientname"
-    )
     parser.add_argument('global_f',
         type=float,
-        required=False,
+        required=True,
         help="global f is missing"
     )
     parser.add_argument('global_p',
         type=float,
-        required=False,
+        required=True,
         help="global p is missing"
     )
     parser.add_argument('global_q',
         type=float,
-        required=False,
+        required=True,
         help="global q missing"
     )
     parser.add_argument('dsgvo',
         type=bool,
-        required=False,
+        required=True,
         help="dsgvo"
     )
+    parser.add_argument('quizmode',
+        type=bool,
+        required=True,
+        help="quizmode"
+        )
 
 def check_bool(type,list):
     '''
