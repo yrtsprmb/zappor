@@ -8,6 +8,7 @@ from internal.config import serviceprovider_reports, config_quizmode
 from models.reports import ReportModel
 from models.server_inquiries import ServerInquiriesModel
 from models.archive import ArchiveModel
+from models.config import ConfigurationModel
 from datetime import datetime
 
 
@@ -20,6 +21,10 @@ class SendReport(Resource):
         '''
         Sends a report to the server. After the report was sent, it deletes the report from the client and server inquiries belonging to them.
         '''
+        cnfg = ConfigurationModel.find()
+        if cnfg is None or cnfg.dsgvo != 1:
+            return {'message': "Can't send reports with GDPR/DSGVO consent."}, 400 #bad request
+
         if ReportModel.query.first():
             report = ReportModel.query.first()
             print('report')                                     #debug

@@ -3,6 +3,7 @@ from db import db
 from internal.config import serveraddress_config, serverport_config, serviceprovider_reports, serviceprovider_surveys
 from internal.config import config_dsgvo, config_quizmode, config_f, config_p, config_q
 
+
 class ConfigurationModel(db.Model):
     '''
     Configuration settings for the client.

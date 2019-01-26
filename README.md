@@ -25,7 +25,9 @@ Server: http://localhost:5001
 
 
 For first usage:
-Please note that tables will be created when the first request is made. after startup of the app (server & client). 
+Please note that the sqllite tables will be created after startup with the first request which is made.
+Also consider, that you can't edit client inquiries without consent to the GDPR assignement. 
+You can do this over the requests for the configuration or in the WEB GUI under settings.
 
 ## Description
 
@@ -33,3 +35,4 @@ Please note that tables will be created when the first request is made. after st
 Ports can be changed in the responsible internal/config.py file.
 
 ## Implementation
+Thanks to...  for....

@@ -98,26 +98,18 @@ app.register_blueprint(error_pages)
 api.add_resource(ClientInquiries, '/ci/<string:name>')
 api.add_resource(ListClientInquiries, '/lci')
 api.add_resource(ListServerInquiries, '/lsi')
-
-
-
-
 api.add_resource(Configuration, '/configuration')
 
-
-# API's for client/server communication
+# APIs for client/server communication
 api.add_resource(RequestSurvey, '/requestsurveys/')
 api.add_resource(SendReport, '/sendreports/')
 
+# APIs for client interaction
 api.add_resource(MatchInquiries, '/matchinquiries/')
-
 api.add_resource(Report, '/reports/<string:surveyid>')
 api.add_resource(ListReports, '/listreports/')
 
-##################################################################
-# testing:
-# allows  access to server inquiries through the REST API
-##################################################################
+# test API: allows  access to server inquiries through the REST API
 api.add_resource(ServerInquiries, '/si/<string:name>')
 
 
@@ -296,6 +288,9 @@ def inquiries_create():
     '''
     Create new inquiries (web GUI).
     '''
+    cnfg = ConfigurationModel.find()
+    if cnfg is None:
+        abort(404)
     form = InquiryCreateForm()
 
     if form.validate_on_submit():
@@ -324,12 +319,9 @@ def inquiries_create():
                                         qdescription = inquiry['description'],
                                         responded = False,
                                         locked = True,
-                                        f = config_f,
-                                        p = config_p,
-                                        q = config_q)
-            print("inq test")
-            print(inq)
-            print(type(inq))
+                                        f = cnfg.global_f,
+                                        p = cnfg.global_p,
+                                        q = cnfg.global_q)
             try:
                 inq.save_to_db()
             except:

@@ -5,7 +5,8 @@ from flask_restful import Resource, reqparse
 from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
 from models.archive import ArchiveModel
-from internal.config import serviceprovider_surveys, config_quizmode, config_locked, config_f, config_p, config_q
+from models.config import ConfigurationModel
+from internal.config import serviceprovider_surveys, config_locked
 from resources.parsers import check_type
 
 
@@ -19,16 +20,21 @@ class RequestSurvey(Resource):
         server inquiries table. If quizmode is activated, they will be also saved in the client inquiries table.
         '''
         # contact the server of the serviceprovider. get surveys if suceed
+        cnfg = ConfigurationModel.find()
+        if cnfg is None:
+            return {'message': "Configuration error."}, 500 #internal server error
         try:
             r = requests.get(serviceprovider_surveys)
             umfragen = r.json()
             listevonsurveys = (umfragen['surveys'])
         except requests.exceptions.ConnectionError as e:
             print(e)    #debug
-            return {'message': "server not available. no survey was requested: {} ".format(e)}, 500 #ok
+            return {'message': "server not available. no survey was requested: {} ".format(e)}, 500 #internal server error
 
         #this creates client inquiries if quizmode is set.
-        if config_quizmode is True:
+        print(cnfg.quizmode)
+        if cnfg.quizmode is 1:
+            print("quizmode is true")
             for survey in listevonsurveys:
                 inquiries = (survey['questions']) #fuer jedes dictonairy in der liste
                 for inq in inquiries:
@@ -42,9 +48,9 @@ class RequestSurvey(Resource):
                     qdescription = inq['description']
                     responded = False
                     locked = config_locked
-                    f = config_f    #todo, gegen db settings tauschen
-                    p = config_p    #todo, gegen db settings tauschen
-                    q = config_q    #todo, gegen db settings tauschen
+                    f = cnfg.global_f
+                    p = cnfg.global_p
+                    q = cnfg.global_q
 
                     if ClientInquiriesModel.find_by_name(name):
                         print("client inquiry with name " + name + "already in db" ) #debug
@@ -94,7 +100,7 @@ class RequestSurvey(Resource):
                     print("qdescription: " + qdescription)          #debug
                     print("____________________________")           #debug
                     if check_type(qtype):
-                        frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),qdescription,config_locked,config_quizmode)
+                        frage = ServerInquiriesModel(qid,surveyid,serviceprovider,name,qtype,json.dumps(options),qdescription,config_locked,cnfg.quizmode)
                         frage.save_to_db()
                         print("new survey with surveyid '{}' available and fetched from the server.".format(surveyid))
                     print("error: Type '{}' not correct.".format(qtype))

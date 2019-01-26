@@ -24,19 +24,30 @@ class ArchiveModel(db.Model):
         self.entry = datetime.now().strftime('%d.%m.%Y - %H:%M:%S')
         self.exit = ""
 
-    #json representaion of a survey object
     def __repr__(self):
+        '''
+        Representation of an archive object.
+        '''
         return f" surveyid: {self.surveyid}, processed: {bool(self.processed)}, entry: {self.entry}, exit: {self.exit}"
 
     @classmethod
     def find_by_surveyid(cls, surveyid):
+        '''
+        Returns an archive object by it's surveyid.
+        '''
         return cls.query.filter_by(surveyid=surveyid).first()
 
     def save_to_db(self):
+        '''
+        Saves an archive object.
+        '''
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self):
+        '''
+        Deletes an archive object.
+        '''
         db.session.delete(self)
         db.session.commit()
 

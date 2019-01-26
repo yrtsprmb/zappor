@@ -1,8 +1,8 @@
 #resources/client_inquiries.py
 import json
 from flask_restful import Resource
-
 from models.client_inquiries import ClientInquiriesModel
+from models.config import ConfigurationModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 from internal.config import config_locked, config_f, config_p, config_q
 import resources.parsers
@@ -26,6 +26,10 @@ class ClientInquiries(Resource):
         '''
         Creates a new client inquriy, if not already existing under the same name.
         '''
+        cnfg = ConfigurationModel.find()
+        if cnfg is None or cnfg.dsgvo != 1:
+                return {'message': "Configuration error. Check your GDPR/DSGVO settings."}, 400 #bad request
+
         if ClientInquiriesModel.find_by_name(name):
             return {'message': "Inquiry with name '{}' already exists.".format(name)}, 400 #bad request
             #schreibe zeugs in db
@@ -63,9 +67,9 @@ class ClientInquiries(Resource):
                                 description,
                                 False, #responded is False, because inquiry is created but not answered yet.
                                 config_locked, #data['locked'],
-                                config_f, #until first edit by the user global values are used instead of data['f'],
-                                config_p, #until first edit by the user global values are used instead of data['p'],
-                                config_q) #until first edit by the user global values are used instead of data['q'])
+                                cnfg.global_f, #config_f, until first edit by the user global values are used instead of data['f'],
+                                cnfg.global_p, #config_p, #until first edit by the user global values are used instead of data['p'],
+                                cnfg.global_q) #config_q) #until first edit by the user global values are used instead of data['q'])
         try:
             inquiry.save_to_db()
         except:
@@ -78,6 +82,10 @@ class ClientInquiries(Resource):
         Changes a client inquiry by its name.
         The following values can be changed by the user: answers, description, locked, f,p and q.
         '''
+        cnfg = ConfigurationModel.find()
+        if cnfg is None or cnfg.dsgvo != 1:
+                return {'message': "Configuration error. Check your GDPR/DSGVO settings."}, 400 #bad request
+
         data = resources.parsers.ParseClientInquiriesPut.parser.parse_args()
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry is None:
@@ -138,7 +146,7 @@ class ClientInquiries(Resource):
 
     def delete(self,name):
         '''
-        Deletes a client inquiry by its name.
+        Deletes a client inquiry by it's name.
         '''
         inquiry = ClientInquiriesModel.find_by_name(name)
         if inquiry:
