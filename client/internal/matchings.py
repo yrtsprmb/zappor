@@ -1,14 +1,6 @@
 #internal/matchings.py
 import json
 
-#############################################################
-# operates on all answer and question inquiries
-# takes whole dictionairies as input
-# returns a list of matches from server and client questions
-# in the following form:
-# {'qid': 3, 'surveyid': 'digitalhelga', 'name': 'mtu'},
-#############################################################
-
 
 def find_matches(client,server):
     '''
@@ -18,7 +10,9 @@ def find_matches(client,server):
     '''
     def compare_data(c, s, results):
         '''
-        Compare client inquiries with server inquieres and returns matching qids.
+        Compares client inquiries with server inquieres.
+        Returns the results after matching between the question.fdsa
+        Because of One-Time RAPPOR, the PRR answer is chosen.
         '''
         if (c.name == s.name and
             c.type == s.type and
@@ -26,7 +20,7 @@ def find_matches(client,server):
             # data from client and server inquiries are gone be mixed here
             #results.append({'surveyid': s["surveyid"], 'qid': s["qid"], 'question': s["name"], 'options': c["randomanswer"], 'f': c["f"], 'p': c["p"], 'q': c["q"] })
             #results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': c.irr_answer, 'f': c.f, 'p': c.p, 'q': c.q })
-            results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': json.loads(c.irr_answer), 'f': c.f, 'p': c.p, 'q': c.q })
+            results.append({'surveyid': s.surveyid, 'qid': s.qid, 'question': s.name, 'options': json.loads(c.prr_answer), 'f': c.f, 'p': c.p, 'q': c.q })
             return True
         else:
             return False

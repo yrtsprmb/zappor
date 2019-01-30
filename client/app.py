@@ -24,7 +24,7 @@ import requests
 
 # import of configurations:
 from internal.config import secretkey_config, repeat_send_reports, repeat_request_surveys, serviceprovider_reports, serviceprovider_surveys
-from internal.config import config_f, config_p, config_q, config_client
+from internal.config import config_client
 from resources.config import Configuration
 
 # for requests
@@ -32,6 +32,7 @@ from resources.request_surveys import RequestSurvey
 from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
 from resources.reports import Report, ListReports
+from resources.simulation import Simulate
 
 ### app #########################################################
 ## app and db settings
@@ -111,6 +112,7 @@ api.add_resource(ListReports, '/listreports/')
 
 # test API: allows  access to server inquiries through the REST API
 api.add_resource(ServerInquiries, '/si/<string:name>')
+api.add_resource(Simulate, '/simulate/<string:inq>')
 
 
 ### views ########################################################
@@ -272,9 +274,9 @@ def inquiries_detail(id):
         inq.answer = answer
         inq.responded = True # if a answer was given by the user, responed will be set to TRUE
         inq.locked = locked
-        inq.f = config_f
-        inq.p = config_p
-        inq.q = config_q
+        # inq.f = inq.f
+        # inq.p = inq.p
+        # inq.q = inq.q
         try:
             inq.save_to_db()
         except:

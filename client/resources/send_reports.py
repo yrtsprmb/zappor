@@ -15,7 +15,7 @@ from datetime import datetime
 class SendReport(Resource):
     '''
     This resource is responsible for sending reports to the server.
-    If a report was sent, it will be deletetd from the db with all belonging server_inquiries.
+    If a report was sent, it will be deleted from the db with all belonging server_inquiries.
     '''
     def get(self):
         '''

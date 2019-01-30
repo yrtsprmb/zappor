@@ -12,7 +12,9 @@ class ArchiveModel(db.Model):
     __tablename__ = "archive"
     id = db.Column(db.Integer, primary_key=True)
     surveyid = db.Column(db.String(100))              # id of the survey
-    #longterm = db.Column(db.Integer)                 # for future use. Longitudinal surveys.
+    #modus                # for future use. Longitudinal surveys.
+    #enddate
+    #repeat
     processed = db.Column(db.Integer)                 # if the survey is answered
     entry = db.Column(db.String(50))                  # timestamp. when survey arrived from the server
     exit = db.Column(db.String(50))                   # timestamp, when survey was sent to the server
