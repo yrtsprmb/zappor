@@ -32,11 +32,13 @@ class Simulate(Resource):
         prr = json.loads(inquiry.prr_answer)
         irr = json.loads(inquiry.irr_answer)
         buckets = len(json.loads(inquiry.answer))
-        # print(answer)
+
+        histogram = [0]* buckets
+        print(histogram)
         print(buckets)
-        counts = 100000
+        counts = 10000
         f = 0.1
-        histogram = [0,0,0,0,0,0,0]
+
         for x in range (0,counts):
             new = permanent_RandomizedResponse(f,answer)
             #print(new)
@@ -44,8 +46,13 @@ class Simulate(Resource):
             #print(histogram)
             #print("-------------------------------------")
 
-        print(histogram)
-        # first = [0,0,0,0,0,8,0]
-        # second = [0,0,0,0,0,8,0]
-        # print([x + y for x,y in zip(first,second) ])
+        # angenommen ich habe hier unten 2 bis 3 listen beliebiger länge (aber alle 3 sind gleich lang)
+        # die möchte ich als histogramme darstellen, wobei ein listenelemet ein bucket darstellen.
+        # so das ich sie neben oder vielleicht übeinander legen kann.
+        # beispiel:
+        #[503, 483, 534, 528, 481, 9459, 510]
+        #[537, 531, 509, 504, 484, 9516, 546]
+        #[514, 471, 527, 524, 470, 9530, 522]
+        # die neben, bzw. hintereinaderlegen.
+
         return {'message': "histogram after {} counts with value f {} : {}.".format(counts,f,histogram)},200 #ok
