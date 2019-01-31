@@ -3,7 +3,7 @@ import json
 from flask_restful import Resource
 from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
-from internal.basicrappor import permanent_RandomizedResponse
+from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 
 
 class Simulate(Resource):
@@ -31,20 +31,36 @@ class Simulate(Resource):
         answer = json.loads(inquiry.answer)
         prr = json.loads(inquiry.prr_answer)
         irr = json.loads(inquiry.irr_answer)
+        f = inquiry.f
+        p = inquiry.p
+        q = inquiry.q
         buckets = len(json.loads(inquiry.answer))
+        # print(g)
+        # print(type(g))
 
-        histogram = [0]* buckets
-        print(histogram)
-        print(buckets)
+        histogram_prr = [0]* buckets
+        histogram_irr = [0]* buckets
+
         counts = 10000
-        f = 0.1
 
+        #prr berechnen
         for x in range (0,counts):
             new = permanent_RandomizedResponse(f,answer)
             #print(new)
-            histogram = [x + y for x,y in zip(histogram,new)]
-            #print(histogram)
-            #print("-------------------------------------")
+            histogram_prr = [x + y for x,y in zip(histogram_prr,new)]
+
+        print("-------------------------------------")
+        print(histogram_prr)
+
+        #irr berechnen
+        for x in range (0,counts):
+             new_irr = instantaneous_RandomizedResponse(p,q,answer)
+             #print(new)
+             histogram_irr = [x + y for x,y in zip(histogram_irr,new_irr)]
+             #print(histogram)
+             #print("-------------------------------------")
+        print("-------------------------------------")
+        print(histogram_irr)
 
         # angenommen ich habe hier unten 2 bis 3 listen beliebiger länge (aber alle 3 sind gleich lang)
         # die möchte ich als histogramme darstellen, wobei ein listenelemet ein bucket darstellen.
@@ -54,5 +70,13 @@ class Simulate(Resource):
         #[537, 531, 509, 504, 484, 9516, 546]
         #[514, 471, 527, 524, 470, 9530, 522]
         # die neben, bzw. hintereinaderlegen.
+        return {'original value': inquiry.answer,
+            'users': counts,
+            'value f': f,
+            'prr histogram': histogram_prr,
+            'value p': p,
+            'value q': q,
+            'irr histogram': histogram_irr
+        }
 
-        return {'message': "histogram after {} counts with value f {} : {}.".format(counts,f,histogram)},200 #ok
+        #return {'message': "histogram after {} counts with value f {} : {}.".format(counts,f,histogram)},200 #ok
