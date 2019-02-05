@@ -20,8 +20,8 @@
 
 
         <div class="jumbotron">
-          <h1>name: {{ inq.name }}</h1>
-          <p>Description: {{ inq.qdescription }}</p>
+          <h1>{{ inq.name }}</h1>
+          <p>{{ inq.qdescription }}</p>
           <p>f: {{ inq.f }} p: {{ inq.p }} q: {{ inq.q }} </p>
 
             <div id="face">
@@ -51,12 +51,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="formControlRange">Example Range input p (noise)</label>
+                    <label for="formControlRange">Range input p (noise) for longitudinal reports</label>
                     <input value="" type="range" name="p" class="form-control-range" id="formControlRange-p" min="-1" max="1" step="0.01">
                 </div>
 
                 <div class="form-group">
-                    <label for="formControlRange">Example Range input q (signal)</label>
+                    <label for="formControlRange">Range input q (signal) for longitudinal reports</label>
                     <input value="" type="range" name="q" class="form-control-range" id="formControlRange-q" min="-1" max="1" step="0.01">
                 </div>
 
@@ -201,7 +201,7 @@
                     faceState.b = convert_range_reverse(old_p);
 
                     faceState.m = convert_range_reverse(old_q);
-                  
+
                     removeFace();
                     drawFace(faceState);
                 }
