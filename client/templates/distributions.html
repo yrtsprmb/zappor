@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+    <style>
+        .plot {
+          display: inline-block;
+        }
+        .plot rect.bar1 {
+            fill: steelblue;
+        }
+
+        .plot rect.bar2 {
+            fill: coral;
+        }
+
+        .plot text {
+            font: 10px sans-serif;
+        }
+
+        .axis text {
+            font: 10px sans-serif;
+            fill: #000;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .slider {
+            display: block;
+        }
+
+        .slider label {
+            display: inline-block;
+            width: 25px;
+        }
+
+        .slider .value-box {
+            display: inline-block;
+        }
+
+        .legend {
+          margin: 10px 0px 50px 100px;
+        }
+
+        .legend div {
+          width: 20px;
+          height: 20px;
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        .legend .without {
+          background-color: steelblue;
+        }
+
+        .legend .within {
+          background-color: coral;
+        }
+    </style>
+    <h2>{{ inquiry_id }}</h2>
+    <div class="plot" id="plot-original">
+      <h4>Original</h4>
+    </div>
+    <div class="plot" id="plot-random">
+      <h4>Randomized</h4>
+    </div>
+
+    <div class="legend">
+      <div class="without"></div> without
+      <div class="within"></div> within
+    </div>
+
+    <button id="refresh">Refresh Histogram</button>
+
+    <div class="slider">
+        <label for="f-slider">f:</label>
+        <input type="range" name="f" id="f-slider" value=0.75 min="0.001" max="1" step="0.001">
+        <div id="f-box" class="value-box"></div>
+        <div id="epsilon-wrapper">
+          &epsilon;=<span id="epsilon-value"></span>
+        </div>
+    </div>
+
+<script src="//code.jquery.com/jquery-3.2.1.min.js"
+        crossorigin="anonymous"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="../static/chart.js"></script>
+
+<script type="application/javascript">
+    $(function () {
+
+        setupSliders();
+
+        setupRefreshButton();
+
+        initializeChart();
+
+        function setupSliders() {
+
+            // display the sliders' initial value next to them in the value-box
+            $('.value-box').each(function () {
+                $(this).text($(this).prev('input').val())
+            });
+
+            // listen to the input and change events
+            // input is when the slider is dragged and will update the display-value
+            // change is when the slider is let go and could perhaps trigger an AJAX call to query for new data
+            $('input[type=range]')
+                .on('input', function () {
+                    $(this).next('.value-box').text($(this).val());
+                })
+                .on('change', function () {
+                    const f = $(this).val();
+                    $.get('http://localhost:5001/simulates/{{inquiry_id}}?f=' + f)
+                        .done((data) => {
+                            $('#epsilon-value').html(data['epsilon']);
+                            chart(data['original_without'], data['original_within'], '#plot-original');
+                            chart(data['random_without'], data['random_within'], '#plot-random');
+                        });
+                });
+
+        }
+
+        function setupRefreshButton() {
+
+            // For testing purposes, fetch new dummy data from a simple endpoint
+
+            $('#refresh').on('click', () => {
+
+                const f = $('#f-slider').val();
+
+                $.get('http://localhost:5001/simulates/{{inquiry_id}}?f=' + f)
+                    .done((data) => {
+                        $('#epsilon-value').html(data['epsilon']);
+                        chart(data['original_without'], data['original_within'], '#plot-original');
+                        chart(data['random_without'], data['random_within'], '#plot-random');
+                    })
+            });
+        }
+
+        function initializeChart() {
+
+            // initialize the chart with dummy-data
+
+            $.get('http://localhost:5001/simulates/{{inquiry_id}}?f=0.75')
+                .done((data) => {
+                  $('#epsilon-value').html(data['epsilon']);
+                  chart(data['original_without'], data['original_within'], '#plot-original');
+                  chart(data['random_without'], data['random_within'], '#plot-random');
+                })
+        }
+
+    });
+</script>
+
+{% endblock %}

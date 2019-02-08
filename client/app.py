@@ -33,6 +33,7 @@ from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
 from resources.reports import Report, ListReports
 from resources.simulation import Simulate
+from resources.distributions import Distribution, DistributionAll
 
 ### app #########################################################
 ## app and db settings
@@ -110,9 +111,13 @@ api.add_resource(MatchInquiries, '/matchinquiries/')
 api.add_resource(Report, '/reports/<string:surveyid>')
 api.add_resource(ListReports, '/listreports/')
 
+api.add_resource(Simulate, '/simulate_old/<string:inq>')
+api.add_resource(Distribution, '/simulate')
+api.add_resource(DistributionAll, '/simulates/<string:inq>')
+
 # test API: allows  access to server inquiries through the REST API
 api.add_resource(ServerInquiries, '/si/<string:name>')
-api.add_resource(Simulate, '/simulate/<string:inq>')
+
 
 
 ### views ########################################################
@@ -448,6 +453,19 @@ def gdpr():
     DSGVO/GDPR info (web GUI).
     '''
     return render_template('gdpr.html')
+
+
+
+@app.route('/distributions/<string:id>')
+def distributions(id):
+    '''
+    This is for testing (web GUI).
+    It shows all client-, and server inquiries and reports which are stored in the client database.
+    '''
+    #inqs = ClientInquiriesModel.query.all()
+    return render_template('distributions.html', title='epsilon test', inquiry_id=id)
+
+
 
 
 '''

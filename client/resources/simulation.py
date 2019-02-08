@@ -1,7 +1,6 @@
 #resources/simulate
 import json
 from flask_restful import Resource
-from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 import math
@@ -10,7 +9,7 @@ from random import randint
 
 class Simulate(Resource):
     '''
-    Simualates
+    Simualates a distribution
     '''
     def get(self,inq):
         '''
@@ -22,16 +21,13 @@ class Simulate(Resource):
 
         inquiry = ClientInquiriesModel.find_by_name(inq)
 
-        users = 10
-        buckets = 5
-        own_option = [0,0,1,0,0]
+        users = 500
+        buckets = 6
+        own_option = [0,0,1,0,0,1]
 
-        f = 0.5
-        p = 0.75
-        q = 0.5
+        f = 0.001
 
         world_one_container_without = []
-        world_two = []
 
         #create world one without user as array (n-1 users) and fill it with random values
         for x in range(users):
@@ -114,10 +110,10 @@ class Simulate(Resource):
             'own option': own_option,
             'members within': members_within,
             'members without': members_without,
-            'world1 with user': world_one_within, #original_opt_in,
-            'world1 without user': world_one_without, #original_opt_out,
-            'world2 within user': world_two_within, #original_opt_out,
-            'world2 without user': world_two_without, #original_opt_out,
+            'scenario1 with user': world_one_within, #original_opt_in,
+            'scenario1 without user': world_one_without, #original_opt_out,
+            'scenario2 within user': world_two_within, #original_opt_out,
+            'scenario2 without user': world_two_without, #original_opt_out,
             'f': f,
             'epsilon': epsilon_prr
         }
