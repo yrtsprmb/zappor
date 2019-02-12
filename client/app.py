@@ -111,8 +111,8 @@ api.add_resource(MatchInquiries, '/matchinquiries/')
 api.add_resource(Report, '/reports/<string:surveyid>')
 api.add_resource(ListReports, '/listreports/')
 
-api.add_resource(Simulate, '/simulate_old/<string:inq>')
-api.add_resource(Distribution, '/simulate')
+api.add_resource(Simulate, '/simulate_old/<string:inq>') #TODO: kann weg
+api.add_resource(Distribution, '/simulate') #TODO: kann weg
 api.add_resource(DistributionAll, '/simulates/<string:inq>')
 
 # test API: allows  access to server inquiries through the REST API
@@ -395,7 +395,7 @@ def settings():
             if not check_fpq(f,p,q):
                 print("Only values between 0 and 1 allowed for f,p,q!") #debug
                 flash("Only values between 0 and 1 allowed for f,p,q!")
-                return render_template('settings.html', form=form, title='client settings')
+                return render_template('settings.html', form=form, cnfg=cnfg, title='client settings')
 
             cnfg.dsgvo = dsgvo
             cnfg.quizmode = quiz
@@ -454,18 +454,15 @@ def gdpr():
     '''
     return render_template('gdpr.html')
 
-
-
 @app.route('/distributions/<string:id>')
 def distributions(id):
     '''
-    This is for testing (web GUI).
-    It shows all client-, and server inquiries and reports which are stored in the client database.
+    Privacy simulation with histograms.
     '''
-    #inqs = ClientInquiriesModel.query.all()
-    return render_template('distributions.html', title='epsilon test', inquiry_id=id)
-
-
+    inq = ClientInquiriesModel.find_by_name(id)
+    if inq is None:
+         abort(404)
+    return render_template('distributions.html', title='epsilon differential privacy', inq=inq, inquiry_id=id)
 
 
 '''

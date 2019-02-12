@@ -27,7 +27,7 @@ class Distribution(Resource):
 
 class DistributionAll(Resource):
     '''
-    Simualates a distribution for all inquiries
+    Simualates a distribution for a specific client inquiries for the GUI.
     '''
     def get(self,inq):
         # find inquiry
@@ -177,12 +177,9 @@ class DistributionAll(Resource):
         }, 200, {'Access-Control-Allow-Origin': '*'}
 
 
-
-
-
 class Simulate(Resource):
     '''
-    Simualates a distribution
+    TODO: her comes the distribution for rest.
     '''
     def get(self,inq):
         '''

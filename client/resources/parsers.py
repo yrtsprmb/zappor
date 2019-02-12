@@ -300,7 +300,7 @@ def check_fpq(f,p,q):
     '''
     Checks if f,p and q values are correct (between 0.0 and 1.0).
     '''
-    return ((f <= 1.0 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
+    return ((f <= 0.1 and f >= 0.0) and (p <= 1.0 and p >= 0.0) and (q <= 1.0 and q >= 0.0))
 
 def check_if_bits(list):
     '''
