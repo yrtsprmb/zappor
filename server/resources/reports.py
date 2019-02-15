@@ -35,10 +35,6 @@ class Report(Resource):
             data = resources.parsers.ParseReportsPost.parser.parse_args()
             survey = SurveyModel.find_survey_by_id(surveyid)
 
-            print("TEST")
-            print(data)
-            print(type(data))
-
             # validity: check if global fpq values are correct.
             if not check_fpq(data['f'],data['p'],data['q']):
                 return {'message': "report discarded: f,p,q must have values between 0.0 and 1.0"}, 400 #bad request

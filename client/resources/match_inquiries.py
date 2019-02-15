@@ -4,9 +4,10 @@ from flask_restful import Resource
 from models.server_inquiries import ServerInquiriesModel
 from models.client_inquiries import ClientInquiriesModel
 from models.reports import ReportModel
+from models.config import ConfigurationModel
 
 from internal.matchings import generate_answers_by_surveyid, find_matching_surveys, find_matches
-from internal.config import config_f, config_p, config_q
+
 
 
 class MatchInquiries(Resource):
@@ -21,6 +22,7 @@ class MatchInquiries(Resource):
         '''
         # clinet inquiries which are not locked and answered by the user
         client = ClientInquiriesModel.query.filter_by(locked='0').filter_by(responded='1').all()
+        cnfg = ConfigurationModel.find()
 
         # all server inquiries
         server = ServerInquiriesModel.query.all()
@@ -46,11 +48,11 @@ class MatchInquiries(Resource):
         # 3) generate report data and save the reports to the database
         for survey in surveys:
             surveyid = survey
-            prr = 1 #deprecated
+            prr = 1 #deprecated, since every inquiry gets an PRR
             irr = 1 #deprecated
-            f = config_f
-            p = config_p
-            q = config_q
+            f = cnfg.global_f
+            p = cnfg.global_p
+            q = cnfg.global_q
 
             #3b) generate answers json.dumps(data['answers'])
             answers = generate_answers_by_surveyid(survey,matches)
