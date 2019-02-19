@@ -6,15 +6,14 @@ from datetime import datetime
 class ArchiveModel(db.Model):
     '''
     Defines the model for the archive.
-    It gives an overview which surveys were processed by the client and helps to
-    avoid duplicate reports.
+    It gives an overview which surveys were processed by the client and helps to avoid duplicate reports.
     '''
     __tablename__ = "archive"
     id = db.Column(db.Integer, primary_key=True)
     surveyid = db.Column(db.String(100))              # id of the survey
     #modus                # for future use. Longitudinal surveys.
-    #enddate
-    #repeat
+    #enddate              # for future use. Longitudinal surveys.
+    #repeat               # for future use. Longitudinal surveys.
     processed = db.Column(db.Integer)                 # if the survey is answered
     entry = db.Column(db.String(50))                  # timestamp. when survey arrived from the server
     exit = db.Column(db.String(50))                   # timestamp, when survey was sent to the server

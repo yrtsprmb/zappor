@@ -29,7 +29,7 @@ class RequestSurvey(Resource):
             listevonsurveys = (umfragen['surveys'])
         except requests.exceptions.ConnectionError as e:
             print(e)    #debug
-            return {'message': "server not available. no survey was requested: {} ".format(e)}, 500 #internal server error
+            return {'message': "server not available. no survey was requested: {} ".format(e)}, 400 #bad request
 
         #this creates client inquiries if quizmode is set.
         print(cnfg.quizmode)

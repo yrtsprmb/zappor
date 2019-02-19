@@ -32,7 +32,7 @@ from resources.request_surveys import RequestSurvey
 from resources.send_reports import SendReport
 from resources.match_inquiries import MatchInquiries
 from resources.reports import Report, ListReports
-from resources.distributions import DistributionAll, DistributionRest
+from resources.distributions import DistributionAll, DistributionRest, DistributionIRR
 
 ### app #########################################################
 ## app and db settings
@@ -113,6 +113,7 @@ api.add_resource(ListReports, '/listreports/')
 # APIs for PRR simulation
 api.add_resource(DistributionAll, '/simulates/<string:inq>') #for the GUI
 api.add_resource(DistributionRest, '/simulate_prr/<string:name>') #for the REST API
+api.add_resource(DistributionIRR, '/simulate_irr/<string:name>') #for the REST API
 
 # test API: allows  access to server inquiries through the REST API
 api.add_resource(ServerInquiries, '/si/<string:name>')

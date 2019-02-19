@@ -1,4 +1,4 @@
-let chart = function (data1, data2, parent) {
+let chart = function (data1, data2, colored_buckets = [], parent) {
     const margin = {
         top: 20,
         right: 30,
@@ -70,4 +70,18 @@ let chart = function (data1, data2, parent) {
         .attr('y', (d) => y(d))
         .attr('height', (d) => height - y(d))
         .attr('width', x.rangeBand() / 2);
+
+    let allBars = chart.selectAll('rect');
+
+    let colored_indices = [];
+    for(let i=0; i < colored_buckets.length; i++) {
+      colored_indices.push(colored_buckets[i], colored_buckets[i]+bar[0].length);
+    }
+
+    allBars.filter(function (d, i) {
+      if (colored_indices.indexOf(i) > -1) {
+        d3.select(this).classed('highlight', true);
+      }
+    });
+
 };

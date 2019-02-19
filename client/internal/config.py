@@ -47,8 +47,9 @@ config_f = 0.5
 config_p = 0.75
 config_q = 0.5
 
-# g
-config_locked = True    #determines if incoming questions are locked by the client
+
+#determines if incoming questions are locked by the client
+config_locked = True
 
 # if quizmode_config is set to 'True', incoming survey questions will also stored in client inquiries.
 config_quizmode = True

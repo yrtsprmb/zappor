@@ -3,6 +3,7 @@ import json
 from flask_restful import Resource
 from flask import request
 from models.client_inquiries import ClientInquiriesModel
+from models.simulations import SimulationModel
 from internal.basicrappor import permanent_RandomizedResponse, instantaneous_RandomizedResponse
 import math
 from random import randint
@@ -20,11 +21,14 @@ class DistributionAll(Resource):
         if not ClientInquiriesModel.find_by_name(inq):
             return {'message': "no inquiry with that name"}, 400 #bad request
 
+
         inquiry = ClientInquiriesModel.find_by_name(inq)
 
         # values from the object
         buckets = len(json.loads(inquiry.answer))
         answer = json.loads(inquiry.answer)
+        answer_buckets = [i for i, x in enumerate(answer) if x == 1]
+
         #f = inquiry.f
         f = float(request.args.get('f'))
         users = 100
@@ -159,7 +163,8 @@ class DistributionAll(Resource):
         'original_within': original_within,
         'random_without': random_without,
         'random_within': random_within,
-        'epsilon': epsilon_prr
+        'epsilon': epsilon_prr,
+        'answer_buckets': answer_buckets
         }, 200, {'Access-Control-Allow-Origin': '*'}
 
 
@@ -263,8 +268,53 @@ class DistributionIRR(Resource):
     '''
     Simualates a distribution for a specific client inquiry for the GUI.
     '''
-    def get(self,inq):
+    def get(self,name):
         '''
-        Takes the name of on inquiry and returns the distribution in JSON format.
+        Takes the name of on inquiry and returns with every refresh a new IRR of the data.
         '''
-        pass
+        # find inquiry
+        if not ClientInquiriesModel.find_by_name(name):
+            return {'message': "no inquiry with that name"}, 400 #bad request
+
+
+        inquiry = ClientInquiriesModel.find_by_name(name)
+        f = inquiry.f
+        p = inquiry.p
+        q = inquiry.q
+        answer = json.loads(inquiry.answer)
+        answer_prr = json.loads(inquiry.prr_answer)
+        answer_irr = instantaneous_RandomizedResponse(p,q,answer_prr)
+        epsilon_prr = 2 * (math.log((1 - (0.5 * f)) / (0.5 * f)))
+        empty = 0
+
+        simulation = SimulationModel.find_by_name(name)
+        if simulation is None:
+            s = SimulationModel(name)
+            s.save_to_db()
+            return {
+            'name': inquiry.name
+            }, 200 # status ok
+
+        print("helga")
+        print(simulation)
+        value = simulation.count
+        simulation.count = simulation.count + 1
+        simulation.save_to_db()
+
+#nehme die anzahl an runden und gehe durch eine forschleifes
+        counts = []
+#        for :
+
+
+        return {
+        'name': inquiry.name,
+        'number of reports': simulation.count,
+        'answer': answer,
+        'answer_prr': answer_prr,
+        'answer_irr': answer_irr,
+        'f': inquiry.f,
+        'p': inquiry.p,
+        'q': inquiry.q,
+        'epsilon': epsilon_prr,
+        'test': empty
+        }, 200 # status ok

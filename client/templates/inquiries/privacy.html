@@ -72,6 +72,17 @@
 
             $(function () {
 
+              const agent = window.navigator.userAgent;
+              let version;
+
+              if (agent.indexOf('Firefox') > -1) {
+                // Ausgangssituation, Gruppe A
+                version = 'A';
+              } else if (agent.indexOf('Safari') > -1) {
+                // Gruppe B
+                version = 'B';
+              }
+
                 // face -- shape of the face {0..1}
                 // hair -- shape of the hair {-1..1}
                 // mouth -- shape of the mouth {-1..1}
@@ -139,9 +150,16 @@
                     removeFace();
                     drawFace(faceState);
 
-                    $('#param-f').val(faceState.nw.toFixed(3));
-                    $('#param-p').val(convert_range(faceState.b));
-                    $('#param-q').val(convert_range(faceState.m));
+                    if (version === 'B') {
+                      $('#param-f').val((1 - faceState.nw).toFixed(3));
+                      $('#param-p').val(convert_range(faceState.b * -1));
+                      $('#param-q').val(convert_range(faceState.m));
+                    } else {
+                      $('#param-f').val(faceState.nw.toFixed(3));
+                      $('#param-p').val(convert_range(faceState.b));
+                      $('#param-q').val(convert_range(faceState.m * -1));
+                    }
+
                 }
 
                 function convert_range(value) {
@@ -161,20 +179,39 @@
                 function bindSliders() {
                     d3.select('#formControlRange-f').on('input', function () {
                         let nose = parseFloat($('#formControlRange-f').val());
-                        faceState.nw = nose;
-                        faceState.nh = nose;
+
+                        if (version === 'B') {
+                          faceState.nw = 1 - nose;
+                          faceState.nh = 1 - nose;
+                        } else {
+                          faceState.nw = nose;
+                          faceState.nh = nose;
+                        }
+
                         update();
                     });
 
                     d3.select('#formControlRange-p').on('input', function () {
                         let brow = parseFloat($('#formControlRange-p').val());
-                        faceState.b = brow;
+
+                        if (version === 'B') {
+                          faceState.b = brow * -1;
+                        } else {
+                          faceState.b = brow;
+                        }
+
                         update();
                     });
 
                     d3.select('#formControlRange-q').on('input', function () {
                         let mouth = parseFloat($('#formControlRange-q').val());
-                        faceState.m = mouth;
+
+                        if (version === 'B') {
+                          faceState.m = mouth;
+                        } else {
+                          faceState.m = mouth * -1;
+                        }
+
                         update();
                     });
                 }
@@ -197,12 +234,22 @@
                       convert_range_reverse(old_q)
                     );
 
-                    faceState.nw = old_f;
-                    faceState.nh = old_f;
+                    if (version === 'B') {
+                      faceState.nw = 1 - old_f;
+                      faceState.nh = 1 - old_f;
 
-                    faceState.b = convert_range_reverse(old_p);
+                      faceState.b = convert_range_reverse(old_p) * -1;
 
-                    faceState.m = convert_range_reverse(old_q);
+                      faceState.m = convert_range_reverse(old_q);
+                    } else {
+                      faceState.nw = old_f;
+                      faceState.nh = old_f;
+
+                      faceState.b = convert_range_reverse(old_p);
+
+                      faceState.m = convert_range_reverse(old_q) * -1;
+                    }
+
 
                     removeFace();
                     drawFace(faceState);

@@ -60,6 +60,10 @@
         .legend .within {
           background-color: coral;
         }
+
+        .highlight {
+          fill: #cc3c2e !important;
+        }
     </style>
     <h2>{{ inquiry_id }}</h2>
     <div class="plot" id="plot-original">
@@ -78,7 +82,7 @@
 
     <div class="slider">
         <label for="f-slider">f:</label>
-        <input type="range" name="f" id="f-slider" value=0.75 min="0.001" max="1" step="0.001">
+        <input type="range" name="f" id="f-slider" value=0.5 min="0.001" max="1" step="0.001">
         <div id="f-box" class="value-box"></div>
         <div id="epsilon-wrapper">
           &epsilon;=<span id="epsilon-value"></span>
@@ -116,8 +120,20 @@
                     $.get('http://localhost:5001/simulates/{{inquiry_id}}?f=' + f)
                         .done((data) => {
                             $('#epsilon-value').html(data['epsilon']);
-                            chart(data['original_without'], data['original_within'], '#plot-original');
-                            chart(data['random_without'], data['random_within'], '#plot-random');
+
+                            chart(
+                              data['original_without'],
+                              data['original_within'],
+                              data['answer_buckets'],
+                              '#plot-original'
+                            );
+
+                            chart(
+                              data['random_without'],
+                              data['random_within'],
+                              data['answer_buckets'],
+                              '#plot-random'
+                            );
                         });
                 });
 
@@ -134,8 +150,19 @@
                 $.get('http://localhost:5001/simulates/{{inquiry_id}}?f=' + f)
                     .done((data) => {
                         $('#epsilon-value').html(data['epsilon']);
-                        chart(data['original_without'], data['original_within'], '#plot-original');
-                        chart(data['random_without'], data['random_within'], '#plot-random');
+                        chart(
+                          data['original_without'],
+                          data['original_within'],
+                          data['answer_buckets'],
+                          '#plot-original'
+                        );
+
+                        chart(
+                          data['random_without'],
+                          data['random_within'],
+                          data['answer_buckets'],
+                          '#plot-random'
+                        );
                     })
             });
         }
@@ -144,11 +171,22 @@
 
             // initialize the chart with dummy-data
 
-            $.get('http://localhost:5001/simulates/{{inquiry_id}}?f=0.75')
+            $.get('http://localhost:5001/simulates/{{inquiry_id}}?f=0.5')
                 .done((data) => {
                   $('#epsilon-value').html(data['epsilon']);
-                  chart(data['original_without'], data['original_within'], '#plot-original');
-                  chart(data['random_without'], data['random_within'], '#plot-random');
+                  chart(
+                    data['original_without'],
+                    data['original_within'],
+                    data['answer_buckets'],
+                    '#plot-original'
+                  );
+
+                  chart(
+                    data['random_without'],
+                    data['random_within'],
+                    data['answer_buckets'],
+                    '#plot-random'
+                  );
                 })
         }
 
@@ -161,7 +199,7 @@
   <br>The left histogram shows you the data without randomization.
   <br>The right histogram shows what happens with randomization.<br>
   The blue bars show the szenario without your data (opt-out) and the orange bars shows the szenario with your data (opt in).<br>
-  Note how privacy increases with higher f. For that compare the difference between red and blue in the buckets you chose in your answer. More &epsilon; means less privacy. 
+  Note how privacy increases with higher f. For that compare the difference between red and blue in the buckets you chose in your answer. More &epsilon; means less privacy.
 </div>
 
 {% endblock %}

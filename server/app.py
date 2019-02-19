@@ -198,7 +198,7 @@ def survey_delete(id):
 @app.route('/settings', methods=['GET','POST'])
 def settings():
     '''
-    TODO: Server setting (web GUI). This is for Testing
+    Server setting (web GUI). This is for Testing
     '''
     from models.config import ConfigurationModel
     from forms import LoginForm
