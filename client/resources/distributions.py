@@ -11,7 +11,7 @@ from random import randint
 
 class DistributionAll(Resource):
     '''
-    Simualates a distribution for a specific client inquiry for the GUI.
+    Simualates a PRR distribution for a specific client inquiry for the GUI.
     '''
     def get(self,inq):
         '''
@@ -170,7 +170,7 @@ class DistributionAll(Resource):
 
 class DistributionRest(Resource):
     '''
-    Simualates a distribution for a specific client inquiry for the REST Api.
+    Simualates a PRR distribution for a specific client inquiry for the REST Api.
     '''
     def get(self,name):
         '''
@@ -266,7 +266,7 @@ class DistributionRest(Resource):
 
 class DistributionIRR(Resource):
     '''
-    Simualates a distribution for a specific client inquiry for the GUI.
+    Simualates an IRR distribution for a specific client inquiry for the GUI.
     '''
     def get(self,name):
         '''
@@ -278,43 +278,76 @@ class DistributionIRR(Resource):
 
 
         inquiry = ClientInquiriesModel.find_by_name(name)
-        f = inquiry.f
         p = inquiry.p
         q = inquiry.q
-        answer = json.loads(inquiry.answer)
-        answer_prr = json.loads(inquiry.prr_answer)
+        answer_prr = json.loads(inquiry.answer)
+        #answer_prr = json.loads(inquiry.prr_answer)
         answer_irr = instantaneous_RandomizedResponse(p,q,answer_prr)
-        epsilon_prr = 2 * (math.log((1 - (0.5 * f)) / (0.5 * f)))
+        #epsilon_prr = 2 * (math.log((1 - (0.5 * f)) / (0.5 * f)))
         empty = 0
 
         simulation = SimulationModel.find_by_name(name)
         if simulation is None:
             s = SimulationModel(name)
+            s.added_irr = json.dumps([0.0]* len(answer_irr))
+            s.average_irr = json.dumps([0.0]* len(answer_irr))
             s.save_to_db()
             return {
             'name': inquiry.name
             }, 200 # status ok
 
-        print("helga")
-        print(simulation)
-        value = simulation.count
         simulation.count = simulation.count + 1
+
+        irr_sum = [x + y for x,y in zip(answer_irr,json.loads(simulation.added_irr))]
+        simulation.added_irr = json.dumps(irr_sum)
         simulation.save_to_db()
 
-#nehme die anzahl an runden und gehe durch eine forschleifes
-        counts = []
-#        for :
+        new_average = [0]* len(answer_irr)
+        #for x in new_average:
+
+        #test = map(/simulation.count,irr_sum)
+        test = list(map(lambda x: x/simulation.count,irr_sum))
+
+        print("test")
+        print(test)
+
+
+        print("simulation")
+        print(simulation)
 
 
         return {
         'name': inquiry.name,
         'number of reports': simulation.count,
-        'answer': answer,
+        'irr_added': simulation.added_irr,
+        'irr_average': simulation.average_irr,
         'answer_prr': answer_prr,
         'answer_irr': answer_irr,
-        'f': inquiry.f,
-        'p': inquiry.p,
-        'q': inquiry.q,
-        'epsilon': epsilon_prr,
-        'test': empty
+        'rolling_irr' : test
         }, 200 # status ok
+
+        # return {
+        # 'name': inquiry.name,
+        # 'number of reports': simulation.count,
+        # 'irr_added': simulation.added_irr,
+        # 'irr_average': simulation.average_irr,
+        # 'answer': answer,
+        # 'answer_prr': answer_prr,
+        # 'answer_irr': answer_irr,
+        # 'f': inquiry.f,
+        # 'p': inquiry.p,
+        # 'q': inquiry.q,
+        # 'epsilon': epsilon_prr,
+        # 'test': empty
+        # }, 200 # status ok
+
+
+    def delete(self, name):
+        if not SimulationModel.find_by_name(name):
+            return {'message': "no simulation with that name"}, 400 #bad request
+
+        SimulationModel.find_by_name(name).delete_from_db()
+
+        return {
+            'deleted': name
+        }, 200

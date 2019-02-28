@@ -1,7 +1,6 @@
 #internal/matchings.py
 import json
 
-
 def find_matches(client,server):
     '''
     Find all matching inquiries and

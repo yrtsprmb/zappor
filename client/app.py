@@ -57,11 +57,11 @@ def create_tables():
 def activate_job():
     '''
     Starts threads with automatic background jobs.
-    To activate this comment in the above decorator.
+    To activate this uncomment in the decorator above.
     '''
     def request_survey():
         '''
-        Requests surveys from the server in a specified interval.
+        Request surveys from the server in a specified interval.
         '''
         while True:
             print("Request Survey")
@@ -417,7 +417,6 @@ def tests():
     Options for client testing (web GUI).
     '''
     form = TestsForm()
-    flash("horst")
     if form.validate_on_submit():
         if 'submit_request' in request.form:
             print("Request Survey button pressed") #debug
@@ -463,6 +462,17 @@ def distributions(id):
     if inq is None:
          abort(404)
     return render_template('distributions.html', title='epsilon differential privacy', inq=inq, inquiry_id=id)
+
+@app.route('/rollingirr/<string:name>')
+def rolling(name):
+    '''
+    Privacy simulation with histograms.
+    '''
+    inq = ClientInquiriesModel.find_by_name(name)
+    if inq is None:
+         abort(404)
+    return render_template('rolling_irr.html', title='irr simulation', inq=inq, name=name)
+
 
 
 '''

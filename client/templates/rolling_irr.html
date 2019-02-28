@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <style>
+        .plot {
+          display: inline-block;
+        }
+        .plot rect.bar1 {
+            fill: red;
+        }
+
+        .plot rect.bar2 {
+            fill: coral;
+        }
+
+        .plot text {
+            font: 10px sans-serif;
+        }
+
+        .axis text {
+            font: 10px sans-serif;
+            fill: #000;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .slider {
+            display: block;
+        }
+
+        .slider label {
+            display: inline-block;
+            width: 25px;
+        }
+
+        .slider .value-box {
+            display: inline-block;
+        }
+
+        .legend {
+          margin: 10px 0px 50px 100px;
+        }
+
+        .legend div {
+          width: 20px;
+          height: 20px;
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        .highlight {
+          fill: #cc3c2e !important;
+        }
+    </style>
+    <h2>{{ name }}</h2>
+    <div class="plot" id="plot-original">
+    </div>
+
+    <br><br>
+    <button id="refresh">Fetch IRR</button>
+    <span id="count"></span>
+    <br><br>
+    <button id="clear">Clear Simulation</button>
+
+<script src="//code.jquery.com/jquery-3.2.1.min.js"
+        crossorigin="anonymous"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="../static/chart.js"></script>
+
+<script type="application/javascript">
+    $(function () {
+
+        setupRefreshButton();
+        setupClearButton();
+        initializeChart();
+
+        function setupRefreshButton() {
+
+            $('#refresh').on('click', () => {
+
+                $.get('http://localhost:5001/simulate_irr/{{name}}')
+                    .done((data) => {
+                        chart(
+                          data['answer_prr'],
+                          data['rolling_irr'],
+                          [],
+                          '#plot-original'
+                        );
+
+                        $('#count').text(data['number of reports']);
+                    })
+            });
+        }
+
+        function setupClearButton() {
+          $('#clear').on('click', () => {
+            $.ajax({
+              url: 'http://localhost:5001/simulate_irr/{{name}}',
+              method: 'DELETE'
+            }).done(() => { window.location.reload(true) });
+          });
+        }
+
+        function initializeChart() {
+
+            // initialize the chart with dummy-data
+
+            $.get('http://localhost:5001/simulate_irr/{{name}}')
+                .done((data) => {
+
+                  if (typeof data['number of reports'] === 'undefined') {
+                    $('#plot-original').append('Simulation was freshly created, please reload the page!');
+                    return;
+                  }
+
+                  chart(
+                    data['answer_prr'],
+                    data['rolling_irr'],
+                    [],
+                    '#plot-original'
+                  );
+
+                  $('#count').text(data['number of reports']);
+                })
+        }
+
+    });
+</script>
+
+<div class="jumbotron">
+  <a class="btn btn-secondary" href="{{ url_for('inquiries_detail', id=inq.id) }}">Back</a>
+  <p>This simulation tries to show the effect of the parameter <b>f</b> for the privacy of your user data and the corresponding <b>&epsilon;</b>-value. It takes your inquiry '<b>{{ inq.name }}</b>' and 100 randomly generated answers to the same question and counts them.
+  <br>The left histogram shows you the data without randomization.
+  <br>The right histogram shows what happens with randomization.<br>
+  The blue bars show the szenario without your data (opt-out) and the orange bars shows the szenario with your data (opt in).<br>
+  Note how privacy increases with higher f. For that compare the difference between red and blue in the buckets you chose in your answer. More &epsilon; means less privacy.
+</div>
+
+{% endblock %}

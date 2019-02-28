@@ -6,18 +6,23 @@ import resources.parsers
 from resources.parsers import check_fpq, check_if_bits
 
 
-##################################################################
-## only for testing, reports are generated automatic internally
-##################################################################
 class Report(Resource):
-
+    '''
+    This ressource is for testing. Reports are generated automatically.
+    '''
     def get(self,surveyid):
+        '''
+        Returns a report by it's surveyid.
+        '''
         reports = ReportModel.find_by_surveyid(surveyid)
         if reports:
             return {'reports': [ x.tojson() for x in ReportModel.find_by_surveyid(surveyid).query.all()]}
         return {'message': "report not found"}, 404 #not found
 
     def post(self,surveyid):
+        '''
+        Creates a new report by it's surveyid.
+        '''
         data = resources.parsers.ParseTestReports.parser.parse_args()
         #data = Report.parser.parse_args()
 
@@ -32,7 +37,12 @@ class Report(Resource):
         return report.tojson(), 201 # created
 
 
-#show all reports
 class ListReports(Resource):
+    '''
+    This ressource is for testing.
+    '''
     def get(self):
+        '''
+        Return all reports stored on the client.
+        ''' 
         return {'reports': [ x.tojson() for x in ReportModel.query.all()]}

@@ -24,15 +24,15 @@ Client: http://localhost:5001
 Server: http://localhost:5001
 
 
-For first usage:
+## For first usage:
 Please note that the sqllite tables will be created after startup with the first request which is made.
-Also consider, that you can't edit client inquiries without consent to the GDPR assignement. 
-You can do this over the requests for the configuration or in the WEB GUI under settings.
+After first start, open always the homepage first and make a request to avoid sqllite errors.
+
+Also consider, that you can't edit any client inquiries without consent to the data protection assignement. 
+You can do this over the REST-endpoint for client-configuration or in the WEB GUI under settings tab.
+
+Keep in mind that the client behaves differently in firefox and safari browsers. For more information on that, see the part 'Nuterstudie' in my thesis.
+
 
 ## Description
-
-
-Ports can be changed in the responsible internal/config.py file.
-
-## Implementation
-Thanks to...  for....
+See section 'prototyp' in my thesis.

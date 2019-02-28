@@ -19,6 +19,15 @@ class ClientInquiries(Resource):
         '''
         answer = ClientInquiriesModel.find_by_name(name)
         if answer:
+            print("IRR before")
+            print(answer.irr_answer)
+            prr = json.loads(answer.prr_answer)
+            new_irr = instantaneous_RandomizedResponse(answer.p,answer.q,prr)
+            answer.irr_answer = json.dumps(new_irr)
+            #answer.save_to_db() # this would change an object with a GET-Request which is not allowed by the REST Definition
+            print("IRR afterwards")
+            print(answer.irr_answer)
+
             return answer.tojson(), 200 #ok
         return {'message': "Inquiry with name '{}' not found.".format(name)}, 404 #not found
 

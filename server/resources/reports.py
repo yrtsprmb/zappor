@@ -8,9 +8,6 @@ from models.surveys import SurveyModel
 import resources.parsers
 from resources.parsers import check_fpq, check_incoming_report
 
-############################################
-## Ressources for reports
-############################################
 
 class Report(Resource):
 
@@ -23,7 +20,6 @@ class Report(Resource):
         if reports == []:
             return {'message': "no reports found for surveyid '{}' ".format(surveyid)}, 400 #bad request
         return {'reports': [ x.tojson() for x in ReportModel.query.filter_by(surveyid=surveyid)]}, 200 #ok
-
 
     def post(self, surveyid):
         '''
