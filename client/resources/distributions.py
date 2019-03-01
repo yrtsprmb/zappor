@@ -276,7 +276,6 @@ class DistributionIRR(Resource):
         if not ClientInquiriesModel.find_by_name(name):
             return {'message': "no inquiry with that name"}, 400 #bad request
 
-
         inquiry = ClientInquiriesModel.find_by_name(name)
         p = inquiry.p
         q = inquiry.q
@@ -303,9 +302,7 @@ class DistributionIRR(Resource):
         simulation.save_to_db()
 
         new_average = [0]* len(answer_irr)
-        #for x in new_average:
 
-        #test = map(/simulation.count,irr_sum)
         test = list(map(lambda x: x/simulation.count,irr_sum))
 
         print("test")
@@ -320,7 +317,7 @@ class DistributionIRR(Resource):
         'name': inquiry.name,
         'number of reports': simulation.count,
         'irr_added': simulation.added_irr,
-        'irr_average': simulation.average_irr,
+        'answer': inquiry.answer,
         'answer_prr': answer_prr,
         'answer_irr': answer_irr,
         'rolling_irr' : test
@@ -331,15 +328,11 @@ class DistributionIRR(Resource):
         # 'number of reports': simulation.count,
         # 'irr_added': simulation.added_irr,
         # 'irr_average': simulation.average_irr,
-        # 'answer': answer,
         # 'answer_prr': answer_prr,
         # 'answer_irr': answer_irr,
-        # 'f': inquiry.f,
-        # 'p': inquiry.p,
-        # 'q': inquiry.q,
-        # 'epsilon': epsilon_prr,
-        # 'test': empty
+        # 'rolling_irr' : test
         # }, 200 # status ok
+
 
 
     def delete(self, name):

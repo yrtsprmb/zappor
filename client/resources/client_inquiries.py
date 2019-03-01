@@ -106,8 +106,11 @@ class ClientInquiries(Resource):
             description = inquiry.qdescription
 
         #check if the lengt of the answer is correct (still the same).
-        if not (len(json.dumps(data['answer'])) == len(inquiry.answer)):
-                    return {'message': "old and new answer must have the same amount of options."}, 400 #bad request
+        if not (len(data['answer']) == len(json.loads(inquiry.answer))):
+            print("laenge")
+            print(len(data['answer']))
+            print(len(json.loads(inquiry.answer)))
+            return {'message': "old and new answer must have the same amount of options."}, 400 #bad request
 
         #check bool
         if not check_bool(inquiry.type,data['answer']):

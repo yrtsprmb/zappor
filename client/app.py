@@ -456,7 +456,7 @@ def gdpr():
 @app.route('/distributions/<string:id>')
 def distributions(id):
     '''
-    Privacy simulation with histograms.
+    PRR privacy simulation.
     '''
     inq = ClientInquiriesModel.find_by_name(id)
     if inq is None:
@@ -466,7 +466,7 @@ def distributions(id):
 @app.route('/rollingirr/<string:name>')
 def rolling(name):
     '''
-    Privacy simulation with histograms.
+    IRR privacy simulation.
     '''
     inq = ClientInquiriesModel.find_by_name(name)
     if inq is None:
