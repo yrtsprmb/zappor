@@ -33,19 +33,14 @@
   </div>
 
 <div class="">
-  {% if srvy.status == 'created' or srvy.status == 'paused' %}
+  {% if srvy.status == 'created' %}
       <div>
-        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
-      </div>
-  {% elif srvy.status == 'active' %}
-      <div>
-        <a class="btn btn-outline-primary" href="{{ url_for('survey_summaries', id=srvy.id) }}">Show summaries</a>
-        <a class="btn btn-outline-secondary" href="{{ url_for('survey_eval_summaries', id=srvy.id) }}">New evaluation</a>
         <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
       </div>
   {% else %}
       <div>
         <a class="btn btn-outline-primary" href="{{ url_for('survey_summaries', id=srvy.id) }}">Show summaries</a>
+        <a class="btn btn-outline-secondary" href="{{ url_for('survey_eval_summaries', id=srvy.id) }}">New evaluation</a>
         <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#del_modal">Delete survey</button>
       </div>
   {% endif %}

@@ -49,7 +49,7 @@ class MatchInquiries(Resource):
         for survey in surveys:
             surveyid = survey
             prr = 1 #deprecated, since every inquiry gets an PRR
-            irr = 1 #deprecated
+            irr = 1 #for future usage: Basic RAPPOR mode.
             f = cnfg.global_f
             p = cnfg.global_p
             q = cnfg.global_q
